@@ -837,6 +837,8 @@ def cmd_config(book: Book, args) -> str:
                         continue
                     shutil.move(str(item), str(destination))
                 moved.append("images/")
+                if not any(old_images.iterdir()):
+                    old_images.rmdir()      # 빈 껍데기를 남기지 않는다
 
         config = store.load_config()
         config["data_path"] = str(target)

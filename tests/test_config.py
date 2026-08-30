@@ -89,6 +89,7 @@ class TestMove(ConfigCase):
         self.assertTrue(target.exists())
         self.assertFalse(source.exists())
         self.assertTrue((self.cloud / "images" / "capture.png").exists())
+        self.assertFalse(images.exists(), "옮긴 뒤 빈 images 폴더가 남았습니다")
 
         # 이제 경로를 주지 않아도 옮긴 장부를 쓴다
         self.assertEqual(store.default_path(), target)
