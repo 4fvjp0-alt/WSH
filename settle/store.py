@@ -18,6 +18,13 @@ def default_path() -> Path:
     return Path(override).expanduser() if override else DEFAULT_PATH
 
 
+def images_dir(path: Path | None = None) -> Path:
+    """장부 옆에 캡쳐 이미지를 모아 둔다. 지출에서 원본을 되짚을 수 있게."""
+    target = (Path(path) if path else default_path()).parent / "images"
+    target.mkdir(parents=True, exist_ok=True)
+    return target
+
+
 def load(path: Path | None = None) -> Book:
     target = Path(path) if path else default_path()
     if not target.exists():

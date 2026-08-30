@@ -141,6 +141,14 @@ tbody tr:hover{background:var(--panel-2)}
 .note{background:var(--warn-soft);color:var(--warn);border-radius:9px;padding:9px 12px;
   font-size:12.5px;margin-bottom:8px}
 .empty{text-align:center;color:var(--faint);padding:36px 16px;font-size:13px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:22px 16px;text-align:center;
+  cursor:pointer;transition:.15s;background:var(--panel-2)}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{font-weight:650;font-size:14px;margin-bottom:3px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);
+  border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;
+  vertical-align:-2px;margin-right:7px}
+@keyframes sp{to{transform:rotate(360deg)}}
 
 /* ── 알림 ─────────────────────────────────────────── */
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:99;
@@ -656,10 +664,26 @@ function expenseForm(){
 let parsed = [];
 function tabImport(){
   const box = el(`<div class="stack"></div>`);
+  const img = el(`<div class="card"><h3>결제내역 캡쳐 이미지</h3><div class="body">
+    <div class="drop" id="iDrop">
+      <div class="big">캡쳐 이미지를 끌어다 놓거나 클릭해서 고르세요</div>
+      <div class="dim tiny">PNG · JPG · WEBP · HEIC · 여러 장 한꺼번에 가능</div>
+      <input type="file" id="iFile" accept="image/*" multiple class="hidden">
+    </div>
+    <p class="dim tiny" style="margin:10px 0 0">
+      컴퓨터에 설치된 <b>Claude Code CLI(<code>claude</code>)</b>로 읽습니다.
+      쓰고 계신 구독 플랜 안에서 동작하고, 별도 API 키가 필요 없으며,
+      이미지가 외부 OCR 업체로 나가지 않습니다.
+      읽은 결과는 아래 표에서 확인·수정한 뒤에만 등록됩니다.</p>
+    <div id="iBusy" class="hidden" style="margin-top:10px">
+      <span class="spin"></span><span class="dim tiny" id="iBusyText"></span></div>
+  </div></div>`);
+  box.appendChild(img);
+
   const c = el(`<div class="card"><h3>카드 문자 · 결제 알림 붙여넣기</h3><div class="body">
     <p class="dim tiny" style="margin:0 0 10px">
       받은 문자를 그대로 붙여넣으세요. 여러 건을 한꺼번에 넣어도 됩니다.
-      인식 결과를 확인한 뒤에만 등록됩니다.</p>
+      문자 쪽이 이미지보다 정확해서, 문자를 받으신다면 이쪽을 권합니다.</p>
     <textarea id="iText" placeholder="[Web발신]&#10;신한카드(1234)승인 홍*동&#10;5,500원 일시불&#10;08/29 12:33&#10;스타벅스강남2호점&#10;누적1,234,500원"></textarea>
     <div class="row" style="margin-top:10px">
       <button class="btn primary" id="iGo">인식하기</button>
@@ -668,6 +692,48 @@ function tabImport(){
   const q = id => c.querySelector(id);
 
   q("#iClear").onclick = () => { q("#iText").value = ""; q("#iOut").innerHTML = ""; parsed = []; };
+
+  // ── 이미지 ───────────────────────────────────────
+  const drop = img.querySelector("#iDrop"), file = img.querySelector("#iFile");
+  const busy = img.querySelector("#iBusy"), busyText = img.querySelector("#iBusyText");
+  drop.onclick = () => file.click();
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = e => {
+    e.preventDefault(); drop.classList.remove("over");
+    if(e.dataTransfer.files.length) readImages([...e.dataTransfer.files]);
+  };
+  file.onchange = () => { if(file.files.length) readImages([...file.files]); file.value = ""; };
+
+  const toBase64 = f => new Promise((ok, no) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result).split(",")[1]);
+    r.onerror = () => no(new Error("파일을 읽지 못했습니다"));
+    r.readAsDataURL(f);
+  });
+
+  async function readImages(files){
+    busy.classList.remove("hidden");
+    const found = [];
+    try{
+      for(let i = 0; i < files.length; i++){
+        busyText.textContent =
+          `이미지를 읽는 중… (${i+1}/${files.length}) 30초~1분 걸릴 수 있습니다`;
+        try{
+          const out = await call("/api/parse_image",
+            {name: files[i].name, data: await toBase64(files[i])});
+          found.push(...out.items);
+        }catch(e){ toast(`${files[i].name}: ${e.message}`, true); }
+      }
+    } finally { busy.classList.add("hidden"); }
+    if(!found.length) return;
+    parsed = found;
+    const out = document.getElementById("iOut");
+    out.innerHTML = "";
+    out.appendChild(parsedTable());
+    out.scrollIntoView({behavior:"smooth", block:"nearest"});
+    toast(found.length + "건 인식했습니다. 확인 후 등록하세요");
+  }
   q("#iGo").onclick = async () => {
     const text = q("#iText").value;
     if(!text.trim()) return toast("붙여넣은 내용이 없습니다", true);
@@ -693,6 +759,7 @@ function parsedTable(){
 
   parsed.forEach((it, i) => {
     const extra = [];
+    if(it.source === "image") extra.push("이미지 인식");
     if(it.card) extra.push(esc(it.card));
     if(it.installment) extra.push(esc(it.installment));
     if(it.converted_amount) extra.push("청구 " + money(it.converted_amount, it.converted_currency));
@@ -741,7 +808,8 @@ function parsedTable(){
         payer_id: get("payer").value,
         rate: src.rate || null,
         note: src.note || "",
-        source: "text",
+        source: src.source || "text",
+        image_path: src.image_path || "",
       });
     });
     if(!items.length) return toast("등록할 항목을 선택하세요", true);

@@ -26,7 +26,8 @@ from .models import Book
 
 STATIC = Path(__file__).parent / "static"
 TOKEN_HEADER = "X-Settle-Token"
-MAX_BODY = 4 * 1024 * 1024      # 붙여넣기 텍스트를 넉넉히 받되 무한정은 아니게
+# 캡쳐 이미지를 base64 로 받으므로(원본의 약 1.34배) 넉넉히 잡는다.
+MAX_BODY = 24 * 1024 * 1024
 FAVICON = (
     b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
     b'<rect width="32" height="32" rx="7" fill="#2f6df6"/>'
@@ -120,18 +121,26 @@ def _handler_class(state: _State):
             self._dispatch("POST", path, payload)
 
         def _dispatch(self, method: str, path: str, payload: dict) -> None:
-            with state.lock:
-                book = state.load()
-                try:
-                    result = api.handle(book, method, path, payload)
-                except api.ApiError as exc:
-                    self._json(exc.status, {"error": exc.message})
-                    return
-                except Exception as exc:                      # noqa: BLE001
-                    self._json(500, {"error": f"처리 중 오류: {exc}"})
-                    return
-                if path not in api.READ_ONLY:
-                    state.save(book)
+            read_only = path in api.READ_ONLY
+            try:
+                if read_only:
+                    # 이미지 인식은 Claude CLI 응답을 1분 넘게 기다릴 수 있다.
+                    # 그동안 락을 쥐고 있으면 화면 전체가 멈추므로, 읽기 전용
+                    # 요청은 장부만 잠깐 읽고 락 밖에서 처리한다.
+                    with state.lock:
+                        book = state.load()
+                    result = api.handle(book, method, path, payload, state.path)
+                else:
+                    with state.lock:
+                        book = state.load()
+                        result = api.handle(book, method, path, payload, state.path)
+                        state.save(book)
+            except api.ApiError as exc:
+                self._json(exc.status, {"error": exc.message})
+                return
+            except Exception as exc:                      # noqa: BLE001
+                self._json(500, {"error": f"처리 중 오류: {exc}"})
+                return
             self._json(200, result)
 
     return Handler

@@ -1,6 +1,11 @@
 """GUI가 쓰는 API 계층 테스트. HTTP 없이 순수 함수로 검증한다."""
 
+import base64
+import json
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
 from helpers import *  # noqa: F401,F403
 from settle import api
@@ -164,6 +169,108 @@ class TestImport(ApiCase):
         self.assertEqual(out["added"], 0)
         self.assertEqual(len(out["skipped"]), 1)
         self.assertIn("환율", out["skipped"][0])
+
+
+class TestImageImport(ApiCase):
+    """캡쳐 이미지 -> Claude Code CLI. CLI 응답은 목으로 대체한다."""
+
+    def setUp(self):
+        super().setUp()
+        self.dir = tempfile.TemporaryDirectory()
+        self.data = Path(self.dir.name) / "data.json"
+        self.png = base64.b64encode(b"\x89PNG\r\n\x1a\nfake").decode()
+
+    def tearDown(self):
+        os.environ.pop("TRAVEL_SETTLE_OCR_MOCK", None)
+        self.dir.cleanup()
+
+    def use_mock(self, payload):
+        mock = Path(self.dir.name) / "resp.json"
+        mock.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        os.environ["TRAVEL_SETTLE_OCR_MOCK"] = str(mock)
+
+    def parse(self, **kw):
+        body = {"name": "capture.png", "data": self.png}
+        body.update(kw)
+        return handle(self.book, "POST", "/api/parse_image", body, self.data)
+
+    def test_extract_classify_and_register(self):
+        self.use_mock({"transactions": [
+            {"date": "2025-09-06", "merchant": "스타벅스제주점", "amount": 5500,
+             "currency": "KRW", "confidence": 0.95}]})
+        out = self.parse()
+        item = out["items"][0]
+        self.assertEqual(item["amount"], 5500)
+        self.assertEqual(item["category"], "카페/간식")     # 자동 분류
+        self.assertEqual(item["source"], "image")
+        self.assertTrue(item["image_path"].endswith(".png"))
+        # 원본 이미지는 장부 옆에 남는다
+        self.assertTrue(Path(item["image_path"]).exists())
+        # 인식만으로는 장부가 바뀌지 않는다
+        self.assertEqual(self.state()["settlement"]["total"], 0)
+
+        item["payer_id"] = self.ids["민수"]
+        handle(self.book, "POST", "/api/import", {"items": [item]})
+        expense = self.book.current().expenses[0]
+        self.assertEqual(expense.source, "image")
+        self.assertEqual(expense.image_path, item["image_path"])
+        self.assertEqual(self.state()["settlement"]["total"], 5500)
+
+    def test_low_confidence_is_surfaced(self):
+        self.use_mock({"transactions": [
+            {"date": "2025-09-06", "merchant": "흐릿한가게", "amount": 8000,
+             "currency": "KRW", "confidence": 0.4, "note": "마지막 자리 불확실"}]})
+        item = self.parse()["items"][0]
+        self.assertTrue(any("신뢰도" in w for w in item["warnings"]))
+        self.assertTrue(any("불확실" in w for w in item["warnings"]))
+
+    def test_data_url_prefix_accepted(self):
+        self.use_mock({"transactions": [
+            {"date": "2025-09-06", "merchant": "김밥천국", "amount": 8000,
+             "currency": "KRW", "confidence": 0.9}]})
+        out = self.parse(data="data:image/png;base64," + self.png)
+        self.assertEqual(out["items"][0]["amount"], 8000)
+
+    def test_unsupported_extension_rejected(self):
+        self.use_mock({"transactions": []})
+        with self.assertRaises(ApiError) as ctx:
+            self.parse(name="notes.txt")
+        self.assertIn("형식", ctx.exception.message)
+
+    def test_path_traversal_in_filename_is_harmless(self):
+        self.use_mock({"transactions": [
+            {"date": "2025-09-06", "merchant": "x", "amount": 100,
+             "currency": "KRW", "confidence": 0.9}]})
+        out = self.parse(name="../../../../etc/passwd.png")
+        saved = Path(out["image_path"])
+        self.assertEqual(saved.parent, self.data.parent / "images")
+
+    def test_broken_base64_rejected(self):
+        self.use_mock({"transactions": []})
+        with self.assertRaises(ApiError):
+            self.parse(data="!!!not base64!!!")
+
+    def test_oversized_image_rejected(self):
+        self.use_mock({"transactions": []})
+        huge = base64.b64encode(b"\x00" * (api.MAX_IMAGE_BYTES + 1)).decode()
+        with self.assertRaises(ApiError) as ctx:
+            self.parse(data=huge)
+        self.assertIn("너무 큽니다", ctx.exception.message)
+
+    def test_missing_claude_cli_gives_a_clear_message(self):
+        os.environ.pop("TRAVEL_SETTLE_OCR_MOCK", None)
+        os.environ["TRAVEL_SETTLE_CLAUDE_CMD"] = "definitely-not-a-real-command-xyz"
+        try:
+            with self.assertRaises(ApiError) as ctx:
+                self.parse()
+            self.assertIn("Claude Code CLI", ctx.exception.message)
+            self.assertEqual(ctx.exception.status, 503)
+        finally:
+            os.environ.pop("TRAVEL_SETTLE_CLAUDE_CMD", None)
+
+    def test_image_route_is_read_only_and_needs_the_data_path(self):
+        self.assertIn("/api/parse_image", api.READ_ONLY)
+        self.assertIn("/api/parse_image", api.NEEDS_DATA_PATH)
 
 
 class TestRouting(ApiCase):

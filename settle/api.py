@@ -6,10 +6,14 @@ HTTP와 분리해 둔 이유는 두 가지다. 소켓 없이 테스트할 수 �
 
 from __future__ import annotations
 
-from datetime import date
+import base64
+import binascii
+import hashlib
+from datetime import date, datetime
+from pathlib import Path
 from typing import Any, Callable, Optional
 
-from . import category as category_mod
+from . import category as category_mod, ocr_claude, store
 from .cliutil import parse_day
 from .engine import Settlement, compute
 from .invariants import cross_check_total, verify
@@ -388,7 +392,8 @@ def _expense_add(book: Book, payload: dict) -> dict:
     if not trip.members:
         raise ApiError("참가자를 먼저 추가하세요")
     expense = Expense(id=new_id("e_"), title="", amount=0,
-                      source=str(payload.get("source") or "gui"))
+                      source=str(payload.get("source") or "gui"),
+                      image_path=str(payload.get("image_path") or ""))
     _apply_expense_fields(trip, book, expense, payload)
     trip.expenses.append(expense)
     compute(trip)      # 잘못된 입력이면 여기서 걸린다
@@ -481,6 +486,67 @@ def _parse(book: Book, payload: dict) -> dict:
     return {"items": items}
 
 
+# 캡쳐 이미지 한 장의 상한. 폰 스크린샷은 보통 1~3MB다.
+MAX_IMAGE_BYTES = 12 * 1024 * 1024
+
+
+def _parse_image(book: Book, payload: dict, data_path: Optional[Path] = None) -> dict:
+    """캡쳐 이미지 -> Claude Code CLI -> 거래내역 후보.
+
+    별도 OCR 서비스나 API 키를 쓰지 않고 사용자가 이미 쓰는 `claude` 명령을
+    호출한다. 결과는 자동 확정하지 않고 검토 화면으로 넘어간다.
+    """
+    trip = _trip(book)
+    if not ocr_claude.is_available():
+        raise ApiError(
+            "Claude Code CLI(`claude`)를 찾을 수 없습니다. 설치했다면 실행 경로를 "
+            "TRAVEL_SETTLE_CLAUDE_CMD 환경변수로 알려주세요. "
+            "대신 문자 내용을 붙여넣는 쪽이 더 정확합니다.", 503)
+
+    raw = str(_need(payload, "data"))
+    if "," in raw[:64] and raw.lstrip().startswith("data:"):
+        raw = raw.split(",", 1)[1]          # data:image/png;base64,....
+    try:
+        blob = base64.b64decode(raw, validate=True)
+    except (binascii.Error, ValueError) as exc:
+        raise ApiError("이미지를 해석할 수 없습니다") from exc
+    if not blob:
+        raise ApiError("빈 이미지입니다")
+    if len(blob) > MAX_IMAGE_BYTES:
+        raise ApiError(f"이미지가 너무 큽니다 ({len(blob)/1024/1024:.1f}MB). "
+                       f"{MAX_IMAGE_BYTES // 1024 // 1024}MB 이하로 줄여주세요")
+
+    # 파일명은 클라이언트가 준다. 확장자만 취해 경로 조작을 막는다.
+    suffix = Path(str(payload.get("name") or "capture.png")).suffix.lower()
+    if suffix not in ocr_claude.SUPPORTED_SUFFIXES:
+        raise ApiError(f"지원하지 않는 이미지 형식입니다: {suffix or '(확장자 없음)'} "
+                       f"(지원: {', '.join(sorted(ocr_claude.SUPPORTED_SUFFIXES))})")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    digest = hashlib.sha256(blob).hexdigest()[:8]
+    target = store.images_dir(data_path) / f"{stamp}-{digest}{suffix}"
+    target.write_bytes(blob)
+
+    try:
+        found = ocr_claude.extract(target, _trip_year(trip))
+    except ocr_claude.OcrError as exc:
+        raise ApiError(str(exc), 502) from exc
+
+    items = []
+    for tx in found:
+        items.append({
+            "amount": tx.amount, "currency": tx.currency, "merchant": tx.merchant,
+            "day": tx.day.isoformat() if tx.day else None, "time": tx.time,
+            "card": tx.card, "installment": tx.installment, "is_refund": tx.is_refund,
+            "converted_amount": tx.converted_amount,
+            "converted_currency": tx.converted_currency,
+            "rate": tx.implied_rate,
+            "category": category_mod.classify(tx.merchant, book.category_hints),
+            "note": tx.note, "warnings": list(tx.warnings), "ok": tx.ok,
+            "image_path": str(target), "source": "image",
+        })
+    return {"items": items, "image_path": str(target)}
+
+
 def _import(book: Book, payload: dict) -> dict:
     trip = _trip(book)
     items = payload.get("items") or []
@@ -507,6 +573,7 @@ def _import(book: Book, payload: dict) -> dict:
                 "rate": rate,
                 "note": item.get("note") or "",
                 "source": item.get("source") or "text",
+                "image_path": item.get("image_path") or "",
             })["id"])
         except (ApiError, SettleError, ValueError) as exc:
             skipped.append(f"{item.get('merchant') or '이름 없음'}: {exc}")
@@ -542,17 +609,26 @@ ROUTES: dict[tuple[str, str], Callable[[Book, dict], dict]] = {
     ("POST", "/api/transfer/add"): _transfer_add,
     ("POST", "/api/transfer/remove"): _transfer_remove,
     ("POST", "/api/parse"): _parse,
+    ("POST", "/api/parse_image"): _parse_image,
     ("POST", "/api/import"): _import,
     ("POST", "/api/share"): _share,
     ("POST", "/api/demo"): _demo,
 }
 
 # 장부를 바꾸지 않는 요청. 저장을 건너뛴다.
-READ_ONLY = {"/api/state", "/api/parse", "/api/share"}
+READ_ONLY = {"/api/state", "/api/parse", "/api/parse_image", "/api/share"}
+
+# 장부 외에 실행 환경(저장 경로)을 알아야 하는 라우트
+NEEDS_DATA_PATH = {"/api/parse_image"}
 
 
-def handle(book: Book, method: str, path: str, payload: dict | None = None) -> dict:
-    """(book, 메서드, 경로, 본문) -> 응답 dict. 실패는 ApiError."""
+def handle(book: Book, method: str, path: str, payload: dict | None = None,
+           data_path: Optional[Path] = None) -> dict:
+    """(book, 메서드, 경로, 본문) -> 응답 dict. 실패는 ApiError.
+
+    `data_path` 는 장부 파일 경로. 캡쳐 이미지를 그 옆에 보관해야 하는
+    라우트만 쓴다.
+    """
     payload = payload or {}
     if method == "GET" and path == "/api/state":
         return _state(book)
@@ -560,7 +636,8 @@ def handle(book: Book, method: str, path: str, payload: dict | None = None) -> d
     if route is None:
         raise ApiError(f"알 수 없는 요청: {method} {path}", 404)
     try:
-        result = route(book, payload)
+        result = (route(book, payload, data_path) if path in NEEDS_DATA_PATH
+                  else route(book, payload))
     except ApiError:
         raise
     except SettleError as exc:
