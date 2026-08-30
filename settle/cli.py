@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
+import shutil
 import sys
 from datetime import date, timedelta
 from pathlib import Path
@@ -793,6 +795,79 @@ def cmd_import_file(book: Book, args) -> str:
 
 # ---------------------------------------------------------------- demo
 
+def cmd_config(book: Book, args) -> str:
+    """장부를 어디에 둘지 정한다.
+
+    OneDrive·iCloud 같은 동기화 폴더에 두면 기기 사이에서 같은 장부를 쓸 수 있다.
+    매번 --data 를 붙이지 않도록 위치를 설정 파일에 기억해 둔다.
+    """
+    if args.reset:
+        config = store.load_config()
+        config.pop("data_path", None)
+        store.save_config(config)
+        return f"기본 위치로 되돌렸습니다: {store.DEFAULT_PATH}"
+
+    if args.data_path:
+        target = Path(args.data_path).expanduser()
+        if target.is_dir() or not target.suffix:
+            target = target / "data.json"     # 폴더를 주면 그 안에 만든다
+        target = target.resolve()
+        source = (Path(args.data).expanduser() if args.data
+                  else store.default_path()).resolve()
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        moved: list[str] = []
+        if args.move and source != target and source.exists():
+            if target.exists() and not args.force:
+                raise CliError(
+                    f"{target} 에 이미 장부가 있습니다. 덮어쓰려면 --force 를 붙이세요."
+                )
+            shutil.move(str(source), str(target))
+            moved.append(target.name)
+            backup = source.with_suffix(source.suffix + ".bak")
+            if backup.exists():
+                shutil.move(str(backup), str(target.with_suffix(target.suffix + ".bak")))
+            old_images = source.parent / "images"
+            if old_images.is_dir() and any(old_images.iterdir()):
+                new_images = target.parent / "images"
+                new_images.mkdir(parents=True, exist_ok=True)
+                for item in old_images.iterdir():
+                    destination = new_images / item.name
+                    if destination.exists() and not args.force:
+                        continue
+                    shutil.move(str(item), str(destination))
+                moved.append("images/")
+
+        config = store.load_config()
+        config["data_path"] = str(target)
+        store.save_config(config)
+
+        lines = [f"장부 위치를 지정했습니다: {target}"]
+        if moved:
+            lines.append(f"  옮긴 것: {', '.join(moved)}")
+        elif args.move:
+            lines.append("  옮길 기존 장부가 없어 새로 시작합니다.")
+        if os.environ.get(store.ENV_PATH):
+            lines.append(f"  주의: 환경변수 {store.ENV_PATH} 가 설정되어 있어 "
+                         "그쪽이 우선합니다. 해제하거나 같은 값으로 맞추세요.")
+        lines.append(f"  설정 파일: {store.CONFIG_PATH}")
+        return "\n".join(lines)
+
+    # 인자가 없으면 지금 상태를 보여준다
+    active = Path(args.data).expanduser() if args.data else store.default_path()
+    out = [rule("장부 위치")]
+    out.append(f"  지금 쓰는 파일   {active}")
+    out.append(f"  존재 여부       {'있음' if active.exists() else '아직 없음'}")
+    out.append(f"  캡쳐 이미지     {active.parent / 'images'}")
+    out.append("")
+    out.append(table(["우선순위", "값"],
+                     [[name, value] for name, value in
+                      store.describe_paths(Path(args.data) if args.data else None)]))
+    out.append("")
+    out.append("  옮기려면:  config --data \"<새 경로>\" --move")
+    return "\n".join(out)
+
+
 def cmd_web(book: Book, args) -> str:
     """브라우저로 여는 GUI. 이 명령은 서버가 멈출 때까지 돌아간다."""
     from . import web
@@ -1004,6 +1079,13 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("export", help="내보내기")
     p.add_argument("format", choices=["json", "csv"]); p.add_argument("path")
     p.add_argument("--trip"); p.set_defaults(func=cmd_export)
+    p = sub.add_parser("config", help="장부 저장 위치 확인 · 변경")
+    p.add_argument("data_path", nargs="?",
+                   help="새 장부 경로 또는 폴더 (예: ~/OneDrive/여행)")
+    p.add_argument("--move", action="store_true", help="기존 장부와 이미지를 그리로 옮김")
+    p.add_argument("--force", action="store_true", help="대상에 파일이 있어도 덮어씀")
+    p.add_argument("--reset", action="store_true", help="기본 위치로 되돌림")
+    p.set_defaults(func=cmd_config)
     p = sub.add_parser("gui", aliases=["web"], help="브라우저로 GUI 열기")
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--no-browser", action="store_true", help="브라우저를 자동으로 열지 않음")
@@ -1017,7 +1099,8 @@ def build_parser() -> argparse.ArgumentParser:
 # (cmd_web 은 서버가 자기 요청마다 직접 저장하므로 여기 포함한다)
 READ_ONLY = {cmd_trip_list, cmd_trip_show, cmd_member_list, cmd_rate_list,
              cmd_expense_list, cmd_expense_show, cmd_transfer_list,
-             cmd_settle, cmd_share, cmd_verify, cmd_export, cmd_web}
+             cmd_settle, cmd_share, cmd_verify, cmd_export, cmd_web,
+             cmd_config}
 
 
 def main(argv: Optional[list[str]] = None) -> int:

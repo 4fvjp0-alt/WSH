@@ -176,7 +176,7 @@ python3 -m settle expense add --title "숙소" --amount 63000 --currency JPY --p
 
 ```bash
 python3 -m settle verify --fuzz 20000     # 무작위 여행 2만 건 자가검사
-python3 tests/run.py                       # 전체 테스트 (177개)
+python3 tests/run.py                       # 전체 테스트 (202개)
 python3 tests/run.py --fuzz 50000          # 검증 강도 올리기
 ```
 
@@ -282,6 +282,7 @@ python3 -m settle import text --payer 민수  # 확인됐으면 등록
 
 ```
 gui                                           브라우저 GUI 열기
+config    [경로] [--move] [--reset]           장부 저장 위치 확인 · 변경
 trip      new / list / use / show / set / delete
 member    add / list / set / remove
 rate      set / list                          환율
@@ -326,7 +327,7 @@ tests/
   test_property.py                              무작위 폐루프 검증
   test_parse_text.py test_parse_real.py             실제 카드사 문자 형식
   test_ocr_claude.py
-  test_store.py test_cli.py test_api.py
+  test_store.py test_cli.py test_api.py test_config.py
   run.py                                        전체 실행기
 .github/workflows/tests.yml                     CI: 파이썬 4개 버전 테스트 + 폐루프 5만 건
 pyproject.toml                                  설치용 메타데이터 (런타임 의존성 없음)
@@ -354,8 +355,25 @@ DP가 실제 최적해를 내는지는 완전탐색과 대조해 테스트로 �
 
 - 쓰기는 임시 파일에 쓴 뒤 원자적으로 교체합니다. 저장 도중에 죽어도 원본이 남습니다.
 - CLI와 GUI가 **같은 파일**을 씁니다. GUI로 넣고 CLI로 정산해도 됩니다.
-- 경로를 바꾸려면 `--data /경로/장부.json` 또는 환경변수 `TRAVEL_SETTLE_DATA`.
-  여행별로 파일을 나누고 싶을 때 씁니다.
+### 저장 위치 옮기기 (OneDrive · iCloud 등)
+
+동기화 폴더에 두면 기기가 바뀌어도 같은 장부를 씁니다.
+
+```bash
+python3 -m settle config                        # 지금 어디에 있는지 확인
+python3 -m settle config "~/OneDrive/여행" --move   # 장부와 이미지를 그리로 옮김
+python3 -m settle config --reset                # 기본 위치로 되돌림
+```
+
+한 번 지정하면 위치를 기억하므로 이후에는 `--data` 를 붙일 필요가 없습니다.
+CLI와 GUI 모두 옮긴 위치를 따라갑니다. 캡쳐 이미지 폴더도 장부 옆으로 같이 갑니다.
+
+우선순위는 `--data` 옵션 > 환경변수 `TRAVEL_SETTLE_DATA` > 설정 파일 > 기본 위치 순입니다.
+설정은 `~/.travel-settle/config.json` 에 저장됩니다.
+
+> **동기화 폴더 주의** — 두 기기에서 동시에 열어 고치면 OneDrive가 충돌 사본
+> (`data-사용자이름.json`)을 만듭니다. 한 번에 한 기기에서만 쓰고, 다른 기기로
+> 넘어가기 전에 동기화가 끝났는지 확인하세요.
 - `export json` 으로 백업하고 `import json` 으로 되돌립니다. `export csv` 는 엑셀용입니다.
 
 **밖으로 나가는 것:** 문자 붙여넣기 인식은 전부 이 컴퓨터 안에서 정규식으로 처리하므로
