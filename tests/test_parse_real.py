@@ -117,6 +117,40 @@ CU제주공항점""", 5000, "CU제주공항점", date(Y, 8, 29)),
                 self.assertFalse(tx.is_refund)
 
 
+class TestNoiseLines(unittest.TestCase):
+    """문자 끝 안내 꼬리말과 라벨형 형식. 가맹점 오인의 주범이다."""
+
+    def test_trailing_notice_is_not_the_merchant(self):
+        tx = one("""[Web발신]
+신한카드(1234)승인 홍*동
+5,500원 일시불
+08/29 12:33
+스타벅스강남2호점
+※본인 이용이 아닌 경우 고객센터 1588-1234""")
+        self.assertEqual(tx.merchant, "스타벅스강남2호점")
+        self.assertEqual(tx.amount, 5500)
+
+    def test_labelled_format(self):
+        tx = one("""[Web발신]
+비씨카드 승인
+거래금액 12,500원
+가맹점 스타벅스제주공항점
+거래일시 08/29 12:33""")
+        self.assertEqual(tx.amount, 12500)
+        self.assertEqual(tx.merchant, "스타벅스제주공항점")
+        self.assertEqual(tx.day, date(Y, 8, 29))
+
+    def test_phone_number_is_not_an_amount(self):
+        tx = one("""[Web발신]
+롯데카드 승인
+8,900원
+08/30 12:10
+롯데리아제주점
+문의 1588-8100""")
+        self.assertEqual(tx.amount, 8900)
+        self.assertEqual(tx.merchant, "롯데리아제주점")
+
+
 class TestBankAndPay(unittest.TestCase):
     def test_bank_withdrawal_ignores_balance(self):
         tx = one("""[Web발신]

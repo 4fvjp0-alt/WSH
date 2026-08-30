@@ -47,19 +47,27 @@ AMOUNT_PATTERN = re.compile(rf"(?<![\d.]){_NUMBER}\s*({_UNITS})?", re.I)
 PREFIX_AMOUNT_PATTERN = re.compile(rf"(?<!\d)({_UNITS})\s*{_NUMBER}", re.I)
 
 # --- 잡음 -------------------------------------------------------------
-# 이 단어가 있는 줄의 금액은 거래액이 아니다.
-NOISE_AMOUNT_HINTS = (
+# 이 단어가 있는 줄은 통째로 무시한다. 거래액도 가맹점도 여기서 나오지 않는다.
+# 뒤쪽 절반은 카드 문자 끝에 붙는 안내 꼬리말이다
+# ("※본인 이용이 아닌 경우 고객센터 1588-1234"). 이걸 안 걸러내면
+# 가맹점명을 '마지막 줄'에서 고르는 규칙이 꼬리말을 집어 온다.
+NOISE_LINE_HINTS = (
     "누적", "잔액", "합계", "총액", "한도", "포인트", "적립", "잔여", "가용",
     "승인번호", "거래번호", "이용가능", "캐시백", "마일리지", "할인금액",
+    "본인", "명의도용", "고객센터", "수신거부", "문의", "광고",
 )
 
-# 가맹점명을 고를 때 지워야 하는 상용구.
+# 가맹점명을 고를 때 지워야 하는 상용구. 긴 것을 먼저 지운다
+# ("가맹점명"을 "가맹점"으로 먼저 지우면 "명"이 남는다).
 NOISE_TOKENS = (
     "[web발신]", "(web발신)", "web발신", "[국외]", "[해외]", "해외승인", "국외승인",
-    "해외이용", "승인취소", "부분취소", "매입취소", "결제취소", "정상승인", "승인",
-    "결제완료", "결제", "일시불", "무이자", "개월", "할부", "체크카드", "신용카드",
-    "선불카드", "체크", "신용", "누적", "매입", "출금", "입금", "이체", "사용",
-    "알림", "정기결제", "자동이체", "페이머니", "카드",
+    "해외이용", "승인취소", "부분취소", "매입취소", "결제취소", "정상승인",
+    "가맹점명", "가맹점", "거래일시", "승인일시", "이용일시", "거래금액",
+    "승인금액", "이용금액", "거래내용", "이용내역", "결제수단",
+    "승인", "결제완료", "결제", "일시불", "무이자", "개월", "할부",
+    "체크카드", "신용카드", "선불카드", "체크", "신용", "누적", "매입",
+    "출금", "입금", "이체", "사용", "알림", "정기결제", "자동이체",
+    "페이머니", "카드",
 )
 
 REFUND_HINTS = ("취소", "환불", "반품", "refund", "cancel", "void")
@@ -214,7 +222,7 @@ def _is_amount_like(whole: str, unit) -> bool:
 def _candidates(block: str) -> list[_Candidate]:
     found: list[_Candidate] = []
     for line in block.splitlines():
-        noisy = any(hint in line for hint in NOISE_AMOUNT_HINTS)
+        noisy = any(hint in line for hint in NOISE_LINE_HINTS)
         masked = _mask(line)
         for start, end, whole, frac, unit in _iter_amounts(masked):
             if not _is_amount_like(whole, unit):
@@ -366,7 +374,7 @@ def _pick_merchant(block: str) -> str:
     """가맹점명은 마지막에 온다. 뒤에서부터 첫 번째로 그럴듯한 줄을 고른다."""
     picks: list[str] = []
     for line in block.splitlines():
-        if any(hint in line for hint in NOISE_AMOUNT_HINTS):
+        if any(hint in line for hint in NOISE_LINE_HINTS):
             continue
         cleaned = _clean_merchant_line(line)
         if _looks_like_merchant(cleaned, line):
