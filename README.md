@@ -1,4 +1,15 @@
-# WSH — Windows 디스크 용량 분석 스크립트
+# WSH
+
+이 저장소에 담긴 것
+
+| 디렉터리 | 내용 |
+|----------|------|
+| (루트) | Windows 디스크 용량 분석 PowerShell 스크립트 — 아래 문서 |
+| [`travel-settle/`](travel-settle/) | 여행 정산 계산기 (Python CLI) |
+
+---
+
+# Windows 디스크 용량 분석 스크립트
 
 C 드라이브(또는 다른 드라이브)의 용량을 빠르게 분석하고, 정리 가능한 항목을 식별해주는 PowerShell 스크립트입니다.
 
