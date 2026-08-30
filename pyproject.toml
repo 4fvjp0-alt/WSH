@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "travel-settle"
+version = "1.0.0"
+description = "여행 경비 정산 계산기 — 정수 기반 정확 정산과 폐루프 자가검증"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["travel", "expense", "settlement", "split-bill", "정산"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+    "Natural Language :: Korean",
+    "Topic :: Office/Business :: Financial :: Accounting",
+]
+# 런타임 의존성 없음 — 표준 라이브러리만 사용한다.
+dependencies = []
+
+[project.scripts]
+travel-settle = "settle.cli:main"
+
+[tool.setuptools]
+packages = ["settle"]
