@@ -52,7 +52,7 @@ class _State:
 
 
 def _handler_class(state: _State):
-    index_html = (STATIC / "index.html").read_text(encoding="utf-8")
+    index_page = STATIC / "index.html"
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "travel-settle"
@@ -83,7 +83,10 @@ def _handler_class(state: _State):
         def do_GET(self) -> None:
             path = self.path.split("?", 1)[0]
             if path in ("/", "/index.html"):
-                page = index_html.replace("__SETTLE_TOKEN__", state.token)
+                # 요청할 때마다 다시 읽는다. 시작할 때 한 번만 읽어두면
+                # 코드를 새로 받고 새로고침해도 옛 화면이 그대로 나온다.
+                page = index_page.read_text(encoding="utf-8")
+                page = page.replace("__SETTLE_TOKEN__", state.token)
                 self._send(200, page.encode("utf-8"), "text/html; charset=utf-8")
                 return
             if path == "/favicon.ico":
