@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>여행 정산 계산기</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --panel-2:#fbfcfd; --line:#e3e6ea;
+  --text:#1b1f24; --muted:#6b7480; --faint:#9aa3ae;
+  --accent:#2f6df6; --accent-soft:#e8f0ff;
+  --plus:#0f8a55; --plus-soft:#e4f5ec;
+  --minus:#c8452f; --minus-soft:#fdecea;
+  --warn:#8a6100; --warn-soft:#fdf3dc;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.05),0 4px 12px rgba(16,24,40,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#12151a; --panel:#1a1f26; --panel-2:#20262f; --line:#2c333d;
+    --text:#e8ecf1; --muted:#98a2b0; --faint:#6d7684;
+    --accent:#6f9bff; --accent-soft:#1d2b46;
+    --plus:#4ecf95; --plus-soft:#16302a;
+    --minus:#ff8a72; --minus-soft:#3a1f1c;
+    --warn:#e8c168; --warn-soft:#332a13;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard",
+    "Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+a{color:var(--accent)}
+
+/* ── 레이아웃 ─────────────────────────────────────── */
+header{position:sticky;top:0;z-index:20;background:var(--panel);
+  border-bottom:1px solid var(--line);padding:10px 16px;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:700;font-size:15px;white-space:nowrap}
+.brand small{color:var(--faint);font-weight:500;margin-left:6px}
+header .spacer{flex:1}
+main{max-width:1180px;margin:0 auto;padding:16px;
+  display:grid;grid-template-columns:250px 1fr;gap:16px;align-items:start}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+
+.card{background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow)}
+.card>h3{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;
+  color:var(--muted);font-weight:600;letter-spacing:.02em}
+.card>.body{padding:14px}
+.stack{display:flex;flex-direction:column;gap:14px}
+
+/* ── 컨트롤 ───────────────────────────────────────── */
+.btn{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;
+  padding:7px 12px;cursor:pointer;font-size:13px;font-weight:550;
+  transition:.12s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted);padding:5px 8px}
+.btn.ghost:hover{background:var(--panel-2);color:var(--minus)}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{background:var(--panel-2);border:1px solid var(--line);
+  border-radius:9px;padding:8px 10px;width:100%;transition:.12s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical;min-height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:12.5px;line-height:1.6}
+label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:550}
+.field{flex:1;min-width:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick label{display:inline-flex;align-items:center;gap:5px;margin:0;font-size:12.5px;
+  color:var(--text);background:var(--panel-2);border:1px solid var(--line);
+  border-radius:999px;padding:4px 11px;cursor:pointer;font-weight:500}
+.pick input{width:auto;margin:0}
+.pick label:has(input:checked){background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* ── 탭 ───────────────────────────────────────────── */
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);overflow-x:auto}
+.tabs button{flex:1;background:transparent;border:0;border-radius:9px;padding:9px 10px;
+  cursor:pointer;font-weight:600;font-size:13px;color:var(--muted);white-space:nowrap}
+.tabs button.on{background:var(--accent-soft);color:var(--accent)}
+
+/* ── 표 ───────────────────────────────────────────── */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11.5px;
+  padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--panel-2)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dim{color:var(--muted)}
+.tiny{font-size:11.5px}
+
+/* ── 정산 ─────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;box-shadow:var(--shadow)}
+.kpi .k{font-size:11.5px;color:var(--muted);font-weight:600}
+.kpi .v{font-size:22px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
+.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.person{border:1px solid var(--line);border-radius:11px;padding:12px;
+  background:var(--panel-2);display:flex;flex-direction:column}
+.person .nm{font-weight:650;margin-bottom:8px;display:flex;justify-content:space-between;
+  align-items:center;gap:8px}
+.person .line{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);
+  font-variant-numeric:tabular-nums}
+.person .net{margin-top:auto;padding-top:8px;border-top:1px dashed var(--line);
+  display:flex;justify-content:space-between;align-items:baseline;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.plus{color:var(--plus)} .minus{color:var(--minus)}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
+.badge.plus{background:var(--plus-soft)} .badge.minus{background:var(--minus-soft)}
+.badge.zero{background:var(--panel-2);color:var(--muted)}
+
+.transfer{display:flex;align-items:center;gap:12px;padding:13px 14px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel-2);margin-bottom:8px}
+.transfer .who{font-weight:650;font-size:15px}
+.transfer .arrow{color:var(--faint);font-size:17px}
+.transfer .amt{margin-left:auto;font-weight:700;font-size:16px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.transfer .no{width:22px;height:22px;border-radius:50%;background:var(--accent-soft);
+  color:var(--accent);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+
+.bar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+
+.check{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:12.5px}
+.check .mk{width:15px;flex:none;font-weight:700}
+.ok{color:var(--plus)} .bad{color:var(--minus)}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:9px;padding:9px 12px;
+  font-size:12.5px;margin-bottom:8px}
+.empty{text-align:center;color:var(--faint);padding:36px 16px;font-size:13px}
+
+/* ── 알림 ─────────────────────────────────────────── */
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:99;
+  display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:#1b1f24;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:min(620px,92vw)}
+.toast.err{background:var(--minus)}
+@media (prefers-color-scheme:dark){.toast{background:#e8ecf1;color:#12151a}}
+.hidden{display:none!important}
+details>summary{cursor:pointer;color:var(--muted);font-size:12.5px;
+  padding:6px 0;user-select:none;font-weight:550}
+details[open]>summary{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">여행 정산<small>계산기</small></div>
+  <select id="tripPick" style="width:auto;min-width:170px" class="hidden"></select>
+  <button class="btn sm" id="newTrip">+ 새 여행</button>
+  <div class="spacer"></div>
+  <div id="headTotal" class="dim tiny"></div>
+</header>
+
+<main id="app"><div class="empty">불러오는 중…</div></main>
+<div id="toast"></div>
+
+<script>
+const TOKEN = "__SETTLE_TOKEN__";
+let S = null;                 // 서버 상태
+let TAB = "settle";
+let draft = { advanced:false, participants:null };
+
+/* ── 통신 ─────────────────────────────────────────── */
+async function call(path, body){
+  const res = await fetch(path, {
+    method: body === undefined ? "GET" : "POST",
+    headers: {"Content-Type":"application/json", "X-Settle-Token":TOKEN},
+    body: body === undefined ? undefined : JSON.stringify(body)
+  });
+  let data = {};
+  try { data = await res.json(); } catch(e){}
+  if(!res.ok) throw new Error(data.error || ("요청 실패 (" + res.status + ")"));
+  return data;
+}
+async function act(path, body, okMsg){
+  try{
+    const out = await call(path, body || {});
+    if(out.state) { S = out.state; render(); }
+    else await refresh();
+    if(okMsg) toast(okMsg);
+    return out;
+  }catch(e){ toast(e.message, true); throw e; }
+}
+async function refresh(){ S = await call("/api/state"); render(); }
+
+function toast(msg, isError){
+  const el = document.createElement("div");
+  el.className = "toast" + (isError ? " err" : "");
+  el.textContent = msg;
+  document.getElementById("toast").appendChild(el);
+  setTimeout(()=>el.remove(), isError ? 6000 : 2600);
+}
+
+/* ── 표시 도우미 ──────────────────────────────────── */
+const SUFFIX = {KRW:"원", JPY:"엔"}, PREFIX = {USD:"$", EUR:"€", GBP:"£", CNY:"¥"};
+function money(minor, cur){
+  if(minor === null || minor === undefined) return "-";
+  cur = cur || (S.trip ? S.trip.currency : "KRW");
+  const d = (S.minor_digits && S.minor_digits[cur] != null) ? S.minor_digits[cur] : 2;
+  const neg = minor < 0, v = Math.abs(minor);
+  let s;
+  if(d === 0) s = v.toLocaleString("ko-KR");
+  else{
+    const p = Math.pow(10, d);
+    s = Math.floor(v/p).toLocaleString("ko-KR") + "." + String(v % p).padStart(d, "0");
+  }
+  const sign = neg ? "-" : "";
+  if(SUFFIX[cur]) return sign + s + SUFFIX[cur];
+  if(PREFIX[cur]) return sign + PREFIX[cur] + s;
+  return sign + s + " " + cur;
+}
+function moneyPlain(minor, cur){
+  // 입력칸에 넣을 값: 통화 기호 없이 숫자만 (예: "12,500", "42.35")
+  if(minor === null || minor === undefined) return "";
+  cur = cur || (S.trip ? S.trip.currency : "KRW");
+  const d = (S.minor_digits && S.minor_digits[cur] != null) ? S.minor_digits[cur] : 2;
+  const neg = minor < 0, v = Math.abs(minor);
+  let s;
+  if(d === 0) s = v.toLocaleString("ko-KR");
+  else{
+    const p = Math.pow(10, d);
+    s = Math.floor(v/p).toLocaleString("ko-KR") + "." + String(v % p).padStart(d, "0");
+  }
+  return (neg ? "-" : "") + s;
+}
+function esc(s){ return String(s == null ? "" : s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function el(html){
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  // 루트가 여러 개면 첫 번째만 남고 나머지가 조용히 사라진다. 바로 드러나게 한다.
+  if(t.content.children.length > 1)
+    throw new Error("el(): 최상위 요소가 " + t.content.children.length + "개입니다. 하나로 감싸세요.");
+  return t.content.firstElementChild;
+}
+function memberName(id){
+  if(!S.trip) return id;
+  if(id === S.pot_id) return S.pot_name;
+  const m = S.trip.members.find(m => m.id === id);
+  return m ? m.name : id;
+}
+function today(){
+  const t = S.trip;
+  if(t && t.start){
+    const now = new Date().toISOString().slice(0,10);
+    if(t.end && now > t.end) return t.end;
+    if(now < t.start) return t.start;
+  }
+  return new Date().toISOString().slice(0,10);
+}
+function memberOptions(sel, withPot){
+  let out = S.trip.members.map(m =>
+    `<option value="${m.id}"${m.id===sel?" selected":""}>${esc(m.name)}</option>`).join("");
+  if(withPot) out += `<option value="${S.pot_id}"${S.pot_id===sel?" selected":""}>${esc(S.pot_name)}</option>`;
+  return out;
+}
+function catOptions(sel){
+  return S.categories.map(c =>
+    `<option value="${c}"${c===sel?" selected":""}>${c}</option>`).join("");
+}
+
+/* ── 렌더 ─────────────────────────────────────────── */
+function render(){
+  const pick = document.getElementById("tripPick");
+  const head = document.getElementById("headTotal");
+  if(S.trips.length){
+    pick.classList.remove("hidden");
+    pick.innerHTML = S.trips.map(t =>
+      `<option value="${t.id}"${S.trip && t.id===S.trip.id?" selected":""}>${esc(t.name)}</option>`).join("");
+  } else pick.classList.add("hidden");
+
+  const app = document.getElementById("app");
+  if(!S.trip){ head.textContent = ""; app.innerHTML = ""; app.appendChild(welcome()); return; }
+
+  const st = S.settlement;
+  head.textContent = "총 " + money(st.total) + " · " + S.trip.members.length + "명";
+  app.innerHTML = "";
+  app.appendChild(sidebar());
+  const right = el(`<div class="stack"></div>`);
+  right.appendChild(tabs());
+  right.appendChild(
+    TAB==="settle" ? tabSettle() :
+    TAB==="expense" ? tabExpense() :
+    TAB==="import" ? tabImport() : tabMore());
+  app.appendChild(right);
+}
+
+function welcome(){
+  const w = el(`<div class="card" style="grid-column:1/-1"><div class="body">
+    <h2 style="margin-bottom:6px">여행 정산 계산기</h2>
+    <p class="dim" style="margin-top:0">
+      여행을 만들고 같이 간 사람을 넣으면, 누가 누구한테 얼마 보내면 되는지
+      1원 오차 없이 계산합니다.</p>
+    <div class="row" style="margin-top:14px">
+      <div class="field" style="max-width:280px"><label>여행 이름</label>
+        <input id="wName" placeholder="예: 제주 3박4일"></div>
+      <div class="field" style="max-width:160px"><label>시작일</label><input type="date" id="wStart"></div>
+      <div class="field" style="max-width:160px"><label>종료일</label><input type="date" id="wEnd"></div>
+      <button class="btn primary" id="wGo">만들기</button>
+      <button class="btn" id="wDemo">예제로 둘러보기</button>
+    </div></div></div>`);
+  w.querySelector("#wGo").onclick = async () => {
+    const name = w.querySelector("#wName").value.trim();
+    if(!name) return toast("여행 이름을 입력하세요", true);
+    await act("/api/trip/new", {name, start:w.querySelector("#wStart").value,
+      end:w.querySelector("#wEnd").value, rounding:100}, "여행을 만들었습니다");
+    TAB = "expense";  render();
+  };
+  w.querySelector("#wDemo").onclick = () => act("/api/demo", {}, "예제 여행을 불러왔습니다");
+  return w;
+}
+
+function tabs(){
+  const t = el(`<div class="tabs">
+    <button data-t="settle">정산 결과</button>
+    <button data-t="expense">지출 ${S.expenses.length ? "· " + S.expenses.length : ""}</button>
+    <button data-t="import">문자 가져오기</button>
+    <button data-t="more">회비 · 송금 · 설정</button></div>`);
+  t.querySelectorAll("button").forEach(b => {
+    if(b.dataset.t === TAB) b.classList.add("on");
+    b.onclick = () => { TAB = b.dataset.t; render(); };
+  });
+  return t;
+}
+
+/* ── 사이드바: 참가자 ─────────────────────────────── */
+function sidebar(){
+  const s = el(`<div class="stack"></div>`);
+  const c = el(`<div class="card"><h3>참가자 ${S.trip.members.length}명</h3><div class="body"></div></div>`);
+  const body = c.querySelector(".body");
+
+  if(!S.trip.members.length)
+    body.appendChild(el(`<p class="dim tiny" style="margin:0 0 10px">
+      같이 간 사람을 먼저 넣어주세요. 띄어쓰기로 여러 명을 한 번에 넣을 수 있습니다.</p>`));
+
+  S.trip.members.forEach(m => {
+    const b = S.settlement.balances.find(x => x.member_id === m.id);
+    const net = b ? b.net : 0;
+    const row = el(`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;
+      border-bottom:1px solid var(--line)">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600">${esc(m.name)}${m.weight!==1?
+          ` <span class="dim tiny">${m.weight}인분</span>`:""}</div>
+        <div class="tiny ${net>0?"plus":net<0?"minus":"dim"}">${
+          net>0 ? "받을 돈 "+money(net) : net<0 ? "낼 돈 "+money(-net) : "정산 완료"}</div>
+      </div>
+      <button class="btn ghost sm" title="빼기">✕</button></div>`);
+    row.querySelector("button").onclick = () => {
+      if(confirm(m.name + " 을(를) 참가자에서 뺄까요?"))
+        act("/api/member/remove", {id:m.id}, m.name + " 을(를) 뺐습니다").catch(()=>{});
+    };
+    body.appendChild(row);
+  });
+
+  body.appendChild(el(`<div style="margin-top:12px">
+    <input id="mName" placeholder="이름 (여러 명은 띄어쓰기)">
+    <button class="btn primary sm" id="mAdd" style="width:100%;margin-top:6px">추가</button>
+    <details style="margin-top:6px"><summary>인분 · 참여 기간 지정</summary>
+      <div class="field"><label>인분 (아이 0.5 등)</label>
+        <input id="mW" type="number" step="0.5" value="1"></div>
+      <div class="field" style="margin-top:6px"><label>합류일</label><input id="mJ" type="date"></div>
+      <div class="field" style="margin-top:6px"><label>이탈일</label><input id="mL" type="date"></div>
+    </details></div>`));
+  const go = async () => {
+    const names = body.querySelector("#mName").value.trim();
+    if(!names) return;
+    const val = id => { const e = body.querySelector(id); return e ? e.value : ""; };
+    await act("/api/member/add", {names,
+      weight: parseFloat(val("#mW")) || 1,
+      joined: val("#mJ") || null,
+      left: val("#mL") || null}, "참가자를 추가했습니다");
+  };
+  body.querySelector("#mAdd").onclick = go;
+  body.querySelector("#mName").onkeydown = e => { if(e.key === "Enter") go(); };
+  s.appendChild(c);
+  return s;
+}
+
+/* ── 정산 결과 ────────────────────────────────────── */
+function tabSettle(){
+  const st = S.settlement, box = el(`<div class="stack"></div>`);
+  if(!S.expenses.length){
+    box.appendChild(el(`<div class="card"><div class="empty">
+      아직 지출이 없습니다. <b>지출</b> 탭에서 넣거나, <b>문자 가져오기</b>로 카드 문자를 붙여넣으세요.
+    </div></div>`));
+    return box;
+  }
+
+  const kpis = el(`<div class="kpis">
+    <div class="kpi"><div class="k">총 지출</div><div class="v">${money(st.total)}</div></div>
+    <div class="kpi"><div class="k">1인 평균</div><div class="v">${money(st.per_head)}</div></div>
+    <div class="kpi"><div class="k">지출 건수</div><div class="v">${S.expenses.length}건</div></div>
+    ${st.personal_total ? `<div class="kpi"><div class="k">개인 지출 (정산 제외)</div>
+      <div class="v">${money(st.personal_total)}</div></div>` : ""}</div>`);
+  box.appendChild(kpis);
+
+  // 송금안 — 이 화면의 결론
+  const plan = el(`<div class="card"><h3>최종 송금안</h3><div class="body"></div></div>`);
+  const pb = plan.querySelector(".body");
+  if(!st.plan.length) pb.appendChild(el(`<div class="empty">주고받을 돈이 없습니다. 정산 완료!</div>`));
+  else{
+    st.plan.forEach((t,i) => pb.appendChild(el(`<div class="transfer">
+      <div class="no">${i+1}</div><div class="who">${esc(t.from)}</div>
+      <div class="arrow">→</div><div class="who">${esc(t.to)}</div>
+      <div class="amt">${money(t.amount)}</div></div>`)));
+    pb.appendChild(el(`<div class="dim tiny" style="margin-top:6px">
+      송금 ${st.plan.length}회로 정산이 끝납니다. 횟수가 최소가 되도록 계산했습니다.</div>`));
+    const share = el(`<button class="btn sm" style="margin-top:10px">메신저용 요약 복사</button>`);
+    share.onclick = async () => {
+      const out = await call("/api/share", {});
+      try{ await navigator.clipboard.writeText(out.text); toast("복사했습니다"); }
+      catch(e){ prompt("복사해서 쓰세요", out.text); }
+    };
+    pb.appendChild(share);
+  }
+  box.appendChild(plan);
+
+  // 사람별
+  const per = el(`<div class="card"><h3>사람별 결제 · 부담 · 잔액</h3><div class="body">
+    <div class="people"></div>
+    <p class="dim tiny" style="margin:10px 0 0">
+      결제액 = 실제로 긁은 돈 · 부담액 = 실제로 써야 할 몫</p></div></div>`);
+  const grid = per.querySelector(".people");
+  st.balances.forEach(b => grid.appendChild(el(`<div class="person">
+    <div class="nm">${esc(b.name)}<span class="badge ${b.net>0?"plus":b.net<0?"minus":"zero"}">${
+      b.net>0?"받을 돈":b.net<0?"낼 돈":"완료"}</span></div>
+    <div class="line"><span>결제액</span><span>${money(b.paid)}</span></div>
+    <div class="line"><span>부담액</span><span>${money(b.owed)}</span></div>
+    ${b.personal?`<div class="line"><span>개인 지출</span><span>${money(b.personal)}</span></div>`:""}
+    <div class="net"><span class="dim tiny">잔액</span>
+      <span class="${b.net>0?"plus":b.net<0?"minus":"dim"}">${b.net?money(Math.abs(b.net)):"-"}</span></div>
+  </div>`)));
+  box.appendChild(per);
+
+  if(st.pot){
+    const p = st.pot;
+    box.appendChild(el(`<div class="card"><h3>공금 (회비)</h3><div class="body">
+      <div class="kpis">
+        <div class="kpi"><div class="k">걷은 회비</div><div class="v">${money(p.contributed)}</div></div>
+        <div class="kpi"><div class="k">공금 지출</div><div class="v">${money(p.spent)}</div></div>
+        <div class="kpi"><div class="k">남은 공금</div>
+          <div class="v ${p.balance<0?"minus":""}">${money(p.balance)}</div></div>
+      </div>
+      <div class="scroll" style="margin-top:12px"><table><thead><tr><th>납부자</th>
+        <th class="num">납부액</th></tr></thead><tbody>${
+        p.per_member.map(x=>`<tr><td>${esc(x.name)}</td>
+          <td class="num">${money(x.amount)}</td></tr>`).join("")}</tbody></table></div>
+    </div></div>`));
+  }
+
+  if(st.by_category.length){
+    const top = Math.max(...st.by_category.map(c => Math.abs(c.amount))) || 1;
+    box.appendChild(el(`<div class="card"><h3>어디에 썼나</h3><div class="body"><div class="scroll">
+      <table><tbody>${st.by_category.map(c=>`<tr>
+        <td style="width:110px">${esc(c.name)}</td>
+        <td class="num" style="width:110px">${money(c.amount)}</td>
+        <td class="num dim tiny" style="width:52px">${(c.amount*100/(st.total||1)).toFixed(1)}%</td>
+        <td><div class="bar"><i style="width:${Math.abs(c.amount)*100/top}%"></i></div></td>
+      </tr>`).join("")}</tbody></table></div></div></div>`));
+  }
+
+  const v = S.verification;
+  const ver = el(`<div class="card"><h3>검증 (폐루프)</h3><div class="body">
+    <div class="${v.ok?"ok":"bad"}" style="font-weight:650;margin-bottom:8px">${
+      v.ok ? "✔ 모든 검증을 통과했습니다. 이 결과는 신뢰할 수 있습니다."
+           : "✘ 검증에 실패했습니다. 아래를 확인하세요."}</div>
+    <details${v.ok?"":" open"}><summary>검사 항목 ${v.checks.length}개 보기</summary>
+      ${v.checks.map(c=>`<div class="check">
+        <span class="mk ${c.ok?"ok":"bad"}">${c.ok?"✔":"✘"}</span>
+        <span>${esc(c.title)}${c.detail?` <span class="dim">— ${esc(c.detail)}</span>`:""}</span>
+      </div>`).join("")}</details></div></div>`);
+  box.appendChild(ver);
+
+  if(st.warnings.length){
+    const w = el(`<div class="card"><h3>참고</h3><div class="body"></div></div>`);
+    const body = w.querySelector(".body");
+    const rounding = st.warnings.filter(x => x.includes("반올림"));
+    const rest = st.warnings.filter(x => !x.includes("반올림"));
+    rest.forEach(x => body.appendChild(el(`<div class="note">${esc(x)}</div>`)));
+    if(rounding.length){
+      // 인원수만큼 쌓이므로 한 줄로 접어 둔다
+      body.appendChild(el(`<div class="note">
+        <details><summary style="color:inherit">송금액을 ${
+          S.trip.rounding_unit.toLocaleString("ko-KR")}원 단위로 맞추며
+          ${rounding.length}명의 잔액이 100원 미만으로 조정되었습니다</summary>
+          ${rounding.map(x=>`<div class="tiny">${esc(x)}</div>`).join("")}</details></div>`));
+    }
+    box.appendChild(w);
+  }
+  return box;
+}
+
+/* ── 지출 ─────────────────────────────────────────── */
+function tabExpense(){
+  const box = el(`<div class="stack"></div>`);
+  box.appendChild(expenseForm());
+
+  const list = el(`<div class="card"><h3>지출 ${S.expenses.length}건</h3>
+    <div class="body" style="padding:0"></div></div>`);
+  const body = list.querySelector(".body");
+  if(!S.expenses.length) body.appendChild(el(`<div class="empty">아직 지출이 없습니다.</div>`));
+  else{
+    const t = el(`<div class="scroll"><table><thead><tr>
+      <th>날짜</th><th>내용</th><th>카테고리</th><th class="num">금액</th>
+      <th>결제</th><th>분할</th><th></th></tr></thead><tbody></tbody></table></div>`);
+    const tb = t.querySelector("tbody");
+    S.expenses.forEach(e => {
+      const conv = (e.currency !== S.trip.currency && e.base_total != null)
+        ? `<div class="dim tiny">${money(e.base_total, S.trip.currency)}</div>` : "";
+      const tags = [];
+      if(e.personal) tags.push("개인");
+      if(Object.keys(e.adjustments||{}).length) tags.push("추가부담");
+      if(e.source && e.source !== "gui" && e.source !== "manual") tags.push(e.source==="text"?"문자":"이미지");
+      const row = el(`<tr>
+        <td class="dim tiny">${esc(e.day||"-")}</td>
+        <td><div style="font-weight:550">${esc(e.title)}</div>${
+          tags.length?`<div class="tiny dim">${tags.join(" · ")}</div>`:""}</td>
+        <td class="tiny">${esc(e.category)}</td>
+        <td class="num" style="font-weight:600">${money(e.amount, e.currency)}${conv}</td>
+        <td class="tiny">${esc(e.payments.map(p=>p.name).join(", "))}</td>
+        <td class="tiny dim">${({equal:"균등",weight:"인분",exact:"금액지정",percent:"비율"})[e.split_method]||e.split_method}</td>
+        <td class="num"><button class="btn ghost sm">✕</button></td></tr>`);
+      row.querySelector("button").onclick = () => {
+        if(confirm(`'${e.title}' 을 삭제할까요?`))
+          act("/api/expense/remove", {id:e.id}, "삭제했습니다").catch(()=>{});
+      };
+      tb.appendChild(row);
+    });
+    body.appendChild(t);
+  }
+  box.appendChild(list);
+  return box;
+}
+
+function expenseForm(){
+  const members = S.trip.members;
+  if(!members.length)
+    return el(`<div class="card"><div class="empty">
+      왼쪽에서 참가자를 먼저 추가하세요.</div></div>`);
+
+  const c = el(`<div class="card"><h3>지출 추가</h3><div class="body">
+    <div class="row">
+      <div class="field" style="flex:2;min-width:150px"><label>내용</label>
+        <input id="eTitle" placeholder="예: 흑돼지 저녁"></div>
+      <div class="field" style="flex:1;min-width:110px"><label>금액</label>
+        <input id="eAmount" placeholder="120,000" inputmode="decimal"></div>
+      <div class="field" style="flex:1;min-width:120px"><label>결제한 사람</label>
+        <select id="ePayer">${memberOptions(members[0].id, true)}</select></div>
+      <div class="field" style="flex:1;min-width:130px"><label>날짜</label>
+        <input type="date" id="eDay" value="${today()}"></div>
+      <div class="field" style="flex:1;min-width:110px"><label>카테고리</label>
+        <select id="eCat">${catOptions("기타")}</select></div>
+      <button class="btn primary" id="eGo">추가</button>
+    </div>
+    <details id="eAdv"><summary>분할 방식 · 참여자 · 추가 부담 · 외화</summary>
+      <div class="row" style="margin-bottom:10px">
+        <div class="field" style="max-width:150px"><label>분할 방식</label>
+          <select id="eSplit">
+            <option value="equal">균등하게 나누기</option>
+            <option value="weight">인분(가중치)대로</option>
+            <option value="exact">금액 직접 지정</option>
+            <option value="percent">비율(%)로</option></select></div>
+        <div class="field" style="max-width:130px"><label>통화</label>
+          <input id="eCur" value="${esc(S.trip.currency)}" style="text-transform:uppercase"></div>
+        <div class="field" style="max-width:150px"><label>환율 (비우면 여행 환율)</label>
+          <input id="eRate" placeholder="예: 9.2" inputmode="decimal"></div>
+        <div class="field" style="max-width:170px"><label>&nbsp;</label>
+          <label class="chip" style="cursor:pointer;margin:0">
+            <input type="checkbox" id="ePersonal" style="width:auto"> 개인 지출 (정산 제외)</label></div>
+      </div>
+      <div style="margin-bottom:10px"><label>나눠 낼 사람 (비우면 그날 참여 중인 전원)</label>
+        <div class="pick" id="ePart">${members.map(m=>
+          `<label><input type="checkbox" value="${m.id}"> ${esc(m.name)}</label>`).join("")}</div></div>
+      <div id="eValsWrap" class="hidden" style="margin-bottom:10px">
+        <label id="eValsLabel">값</label><div class="row" id="eVals"></div></div>
+      <div><label>더 내기로 한 금액 (먼저 떼고 나머지를 나눕니다)</label>
+        <div class="row" id="eExtra">${members.map(m=>
+          `<div class="field" style="max-width:130px">
+            <label class="tiny">${esc(m.name)}</label>
+            <input data-m="${m.id}" placeholder="0" inputmode="decimal"></div>`).join("")}</div></div>
+    </details></div></div>`);
+
+  const q = id => c.querySelector(id);
+  const splitSel = q("#eSplit"), valsWrap = q("#eValsWrap"), vals = q("#eVals");
+
+  function renderVals(){
+    const m = splitSel.value;
+    if(m === "equal"){ valsWrap.classList.add("hidden"); return; }
+    valsWrap.classList.remove("hidden");
+    q("#eValsLabel").textContent =
+      m === "weight" ? "인분 (비우면 참가자 기본값)" :
+      m === "exact" ? "각자 낼 금액 (합계가 지출 금액과 같아야 합니다)" : "비율 % (합계 100)";
+    vals.innerHTML = members.map(x =>
+      `<div class="field" style="max-width:130px"><label class="tiny">${esc(x.name)}</label>
+        <input data-m="${x.id}" inputmode="decimal" placeholder="${
+          m==="weight" ? x.weight : m==="percent" ? "0" : "0"}"></div>`).join("");
+  }
+  splitSel.onchange = renderVals;
+
+  q("#eTitle").oninput = () => {
+    // 가맹점명으로 카테고리를 추천하되, 사용자가 고른 값은 건드리지 않는다
+    if(q("#eCat").dataset.touched) return;
+  };
+  q("#eCat").onchange = () => { q("#eCat").dataset.touched = "1"; };
+
+  const submit = async () => {
+    const body = {
+      title: q("#eTitle").value.trim(),
+      amount: q("#eAmount").value.trim(),
+      payer_id: q("#ePayer").value,
+      day: q("#eDay").value,
+      category: q("#eCat").value,
+      currency: (q("#eCur").value || S.trip.currency).toUpperCase().trim(),
+      split_method: splitSel.value,
+      personal: q("#ePersonal").checked,
+      participants: [...c.querySelectorAll("#ePart input:checked")].map(x=>x.value),
+    };
+    const rate = q("#eRate").value.trim();
+    if(rate) body.rate = parseFloat(rate);
+    if(splitSel.value !== "equal"){
+      const v = {};
+      c.querySelectorAll("#eVals input").forEach(i => {
+        if(i.value.trim()) v[i.dataset.m] = i.value.trim(); });
+      body.split_values = v;
+    }
+    const adj = {};
+    c.querySelectorAll("#eExtra input").forEach(i => {
+      if(i.value.trim() && parseFloat(i.value.replace(/,/g,"")) > 0) adj[i.dataset.m] = i.value.trim(); });
+    if(Object.keys(adj).length) body.adjustments = adj;
+
+    if(!body.title) return toast("내용을 입력하세요", true);
+    if(!body.amount) return toast("금액을 입력하세요", true);
+    await act("/api/expense/add", body, "추가했습니다");
+  };
+  q("#eGo").onclick = submit;
+  q("#eAmount").onkeydown = e => { if(e.key === "Enter") submit(); };
+  q("#eTitle").onkeydown = e => { if(e.key === "Enter") q("#eAmount").focus(); };
+  return c;
+}
+
+/* ── 문자 가져오기 ────────────────────────────────── */
+let parsed = [];
+function tabImport(){
+  const box = el(`<div class="stack"></div>`);
+  const c = el(`<div class="card"><h3>카드 문자 · 결제 알림 붙여넣기</h3><div class="body">
+    <p class="dim tiny" style="margin:0 0 10px">
+      받은 문자를 그대로 붙여넣으세요. 여러 건을 한꺼번에 넣어도 됩니다.
+      인식 결과를 확인한 뒤에만 등록됩니다.</p>
+    <textarea id="iText" placeholder="[Web발신]&#10;신한카드(1234)승인 홍*동&#10;5,500원 일시불&#10;08/29 12:33&#10;스타벅스강남2호점&#10;누적1,234,500원"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn primary" id="iGo">인식하기</button>
+      <button class="btn" id="iClear">지우기</button></div>
+    <div id="iOut" style="margin-top:14px"></div></div></div>`);
+  const q = id => c.querySelector(id);
+
+  q("#iClear").onclick = () => { q("#iText").value = ""; q("#iOut").innerHTML = ""; parsed = []; };
+  q("#iGo").onclick = async () => {
+    const text = q("#iText").value;
+    if(!text.trim()) return toast("붙여넣은 내용이 없습니다", true);
+    try{
+      const out = await call("/api/parse", {text});
+      parsed = out.items;
+      q("#iOut").innerHTML = "";
+      q("#iOut").appendChild(parsedTable());
+    }catch(e){ toast(e.message, true); }
+  };
+  box.appendChild(c);
+  return box;
+}
+
+function parsedTable(){
+  if(!parsed.length) return el(`<div class="empty">인식된 거래가 없습니다.</div>`);
+  const members = S.trip.members;
+  const wrap = el(`<div></div>`);
+  const t = el(`<div class="scroll"><table><thead><tr>
+    <th style="width:34px"></th><th>날짜</th><th>가맹점</th><th class="num">금액</th>
+    <th>카테고리</th><th>결제한 사람</th><th style="min-width:150px">비고</th></tr></thead><tbody></tbody></table></div>`);
+  const tb = t.querySelector("tbody");
+
+  parsed.forEach((it, i) => {
+    const extra = [];
+    if(it.card) extra.push(esc(it.card));
+    if(it.installment) extra.push(esc(it.installment));
+    if(it.converted_amount) extra.push("청구 " + money(it.converted_amount, it.converted_currency));
+    if(it.rate) extra.push("환율 " + it.rate.toFixed(4));
+    const warn = it.warnings.length
+      ? `<div class="tiny" style="color:var(--warn)">${it.warnings.map(esc).join(" · ")}</div>` : "";
+    const row = el(`<tr>
+      <td><input type="checkbox" data-i="${i}" style="width:auto"${it.ok?" checked":""}></td>
+      <td><input type="date" data-f="day" data-i="${i}" value="${it.day||""}" style="min-width:135px"></td>
+      <td><input data-f="merchant" data-i="${i}" value="${esc(it.merchant)}" style="min-width:150px"></td>
+      <td class="num"><input data-f="amount" data-i="${i}" class="num"
+          value="${moneyPlain(it.amount, it.currency)}"
+          style="min-width:100px;text-align:right">
+        <div class="tiny dim">${esc(it.currency)}</div></td>
+      <td><select data-f="category" data-i="${i}" style="min-width:110px">${catOptions(it.category)}</select></td>
+      <td><select data-f="payer" data-i="${i}" style="min-width:110px">${
+        memberOptions(members.length?members[0].id:"", true)}</select></td>
+      <td class="tiny dim" style="white-space:nowrap">${extra.join("<br>")}${warn}</td></tr>`);
+    if(!it.ok) row.style.opacity = ".6";
+    tb.appendChild(row);
+  });
+  wrap.appendChild(t);
+
+  const bar = el(`<div class="row" style="margin-top:12px;align-items:center">
+    <button class="btn primary" id="pAdd">선택 항목 등록</button>
+    <span class="dim tiny" id="pCount"></span></div>`);
+  const count = () => {
+    const n = wrap.querySelectorAll("tbody input[type=checkbox]:checked").length;
+    bar.querySelector("#pCount").textContent = n + "건 선택됨";
+  };
+  wrap.addEventListener("change", count);
+  wrap.appendChild(bar);
+  setTimeout(count, 0);
+
+  bar.querySelector("#pAdd").onclick = async () => {
+    const items = [];
+    wrap.querySelectorAll("tbody input[type=checkbox]:checked").forEach(cb => {
+      const i = cb.dataset.i, src = parsed[i];
+      const get = f => wrap.querySelector(`[data-f="${f}"][data-i="${i}"]`);
+      items.push({
+        merchant: get("merchant").value.trim(),
+        amount: get("amount").value.trim(),
+        currency: src.currency,
+        day: get("day").value || null,
+        category: get("category").value,
+        payer_id: get("payer").value,
+        rate: src.rate || null,
+        note: src.note || "",
+        source: "text",
+      });
+    });
+    if(!items.length) return toast("등록할 항목을 선택하세요", true);
+    const out = await act("/api/import", {items});
+    let msg = out.added + "건 등록했습니다";
+    if(out.skipped.length) msg += " · " + out.skipped.length + "건 건너뜀";
+    toast(msg);
+    out.skipped.forEach(s => toast(s, true));
+    parsed = [];
+    TAB = "expense"; render();
+  };
+  return wrap;
+}
+
+/* ── 회비 · 송금 · 설정 ───────────────────────────── */
+function tabMore(){
+  const box = el(`<div class="stack"></div>`), members = S.trip.members;
+
+  const tr = el(`<div class="card"><h3>이미 주고받은 돈 · 회비</h3><div class="body">
+    <p class="dim tiny" style="margin:0 0 10px">
+      여행 중 미리 보낸 돈이나 걷은 회비를 넣으면 최종 정산에서 차감됩니다.
+      받는 사람을 <b>${esc(S.pot_name)}</b>으로 하면 회비가 되고, 남은 회비는 자동으로 환급 계산됩니다.</p>
+    <div class="row">
+      <div class="field" style="max-width:140px"><label>보낸 사람</label>
+        <select id="tFrom">${memberOptions(members[0]&&members[0].id, true)}</select></div>
+      <div class="field" style="max-width:140px"><label>받은 사람</label>
+        <select id="tTo">${memberOptions(S.pot_id, true)}</select></div>
+      <div class="field" style="max-width:130px"><label>금액</label>
+        <input id="tAmt" placeholder="100,000" inputmode="decimal"></div>
+      <div class="field" style="max-width:150px"><label>날짜</label>
+        <input type="date" id="tDay" value="${today()}"></div>
+      <div class="field" style="min-width:120px"><label>메모</label><input id="tNote"></div>
+      <button class="btn primary" id="tGo">기록</button></div>
+    <div id="tList" style="margin-top:12px"></div></div></div>`);
+  if(!members.length) tr.querySelector(".body").innerHTML = `<div class="empty">참가자를 먼저 추가하세요.</div>`;
+  else{
+    tr.querySelector("#tGo").onclick = () => act("/api/transfer/add", {
+      from_id: tr.querySelector("#tFrom").value, to_id: tr.querySelector("#tTo").value,
+      amount: tr.querySelector("#tAmt").value.trim(), day: tr.querySelector("#tDay").value,
+      note: tr.querySelector("#tNote").value.trim()}, "기록했습니다").catch(()=>{});
+    const list = tr.querySelector("#tList");
+    if(!S.transfers.length) list.innerHTML = `<div class="dim tiny">아직 기록이 없습니다.</div>`;
+    else{
+      const t = el(`<div class="scroll"><table><thead><tr><th>날짜</th><th>내용</th>
+        <th class="num">금액</th><th>구분</th><th>메모</th><th></th></tr></thead><tbody></tbody></table></div>`);
+      S.transfers.forEach(x => {
+        const row = el(`<tr><td class="tiny dim">${esc(x.day||"-")}</td>
+          <td>${esc(x.from)} → ${esc(x.to)}</td>
+          <td class="num">${money(x.amount, x.currency)}</td>
+          <td class="tiny">${x.kind==="pot_in"?"회비":"송금"}</td>
+          <td class="tiny dim">${esc(x.note)}</td>
+          <td class="num"><button class="btn ghost sm">✕</button></td></tr>`);
+        row.querySelector("button").onclick = () =>
+          act("/api/transfer/remove", {id:x.id}, "삭제했습니다").catch(()=>{});
+        t.querySelector("tbody").appendChild(row);
+      });
+      list.appendChild(t);
+    }
+  }
+  box.appendChild(tr);
+
+  const rates = Object.entries(S.trip.rates);
+  const rc = el(`<div class="card"><h3>환율</h3><div class="body">
+    <p class="dim tiny" style="margin:0 0 10px">
+      해외 승인 문자에 원화 청구액이 함께 오면 그 건의 환율이 자동으로 잡힙니다.
+      여기 등록한 값은 그 정보가 없는 건에 쓰입니다.</p>
+    <div class="row">
+      <div class="field" style="max-width:120px"><label>통화</label>
+        <input id="rCur" placeholder="JPY" style="text-transform:uppercase"></div>
+      <div class="field" style="max-width:160px"><label>1단위 = ? ${esc(S.trip.currency)}</label>
+        <input id="rVal" placeholder="9.2" inputmode="decimal"></div>
+      <button class="btn primary" id="rGo">등록</button></div>
+    ${rates.length?`<div style="margin-top:10px" class="pick">${rates.map(([k,v])=>
+      `<span class="chip">1 ${esc(k)} = ${v} ${esc(S.trip.currency)}</span>`).join("")}</div>`:""}
+  </div></div>`);
+  rc.querySelector("#rGo").onclick = () => act("/api/rate/set", {
+    currency: rc.querySelector("#rCur").value.trim(),
+    rate: rc.querySelector("#rVal").value.trim()}, "환율을 등록했습니다").catch(()=>{});
+  box.appendChild(rc);
+
+  const t = S.trip;
+  const sc = el(`<div class="card"><h3>여행 설정</h3><div class="body"><div class="row">
+    <div class="field" style="min-width:150px"><label>이름</label>
+      <input id="sName" value="${esc(t.name)}"></div>
+    <div class="field" style="max-width:150px"><label>시작일</label>
+      <input type="date" id="sStart" value="${t.start||""}"></div>
+    <div class="field" style="max-width:150px"><label>종료일</label>
+      <input type="date" id="sEnd" value="${t.end||""}"></div>
+    <div class="field" style="max-width:170px"><label>송금액 반올림</label>
+      <select id="sRound">
+        <option value="1">1원 단위 (정확히)</option>
+        <option value="100">100원 단위</option>
+        <option value="1000">1000원 단위</option></select></div>
+    <button class="btn primary" id="sGo">저장</button>
+    <button class="btn ghost" id="sDel">이 여행 삭제</button></div></div></div>`);
+  sc.querySelector("#sRound").value = String(t.rounding_unit);
+  sc.querySelector("#sGo").onclick = () => act("/api/trip/update", {
+    name: sc.querySelector("#sName").value.trim(),
+    start: sc.querySelector("#sStart").value || null,
+    end: sc.querySelector("#sEnd").value || null,
+    rounding: parseInt(sc.querySelector("#sRound").value)}, "저장했습니다").catch(()=>{});
+  sc.querySelector("#sDel").onclick = () => {
+    if(confirm(`'${t.name}' 을(를) 삭제할까요? 되돌릴 수 없습니다.`))
+      act("/api/trip/delete", {id:t.id}, "삭제했습니다").catch(()=>{});
+  };
+  box.appendChild(sc);
+  return box;
+}
+
+/* ── 시작 ─────────────────────────────────────────── */
+document.getElementById("tripPick").onchange = e =>
+  act("/api/trip/use", {id:e.target.value});
+document.getElementById("newTrip").onclick = async () => {
+  const name = prompt("새 여행 이름");
+  if(!name || !name.trim()) return;
+  await act("/api/trip/new", {name:name.trim(), rounding:100}, "여행을 만들었습니다");
+  TAB = "expense"; render();
+};
+refresh().catch(e => {
+  document.getElementById("app").innerHTML =
+    `<div class="card" style="grid-column:1/-1"><div class="empty">
+      서버에 연결하지 못했습니다: ${e.message}</div></div>`;
+});
+</script>
+</body>
+</html>

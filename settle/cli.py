@@ -793,6 +793,18 @@ def cmd_import_file(book: Book, args) -> str:
 
 # ---------------------------------------------------------------- demo
 
+def cmd_web(book: Book, args) -> str:
+    """브라우저로 여는 GUI. 이 명령은 서버가 멈출 때까지 돌아간다."""
+    from . import web
+
+    try:
+        web.serve(Path(args.data) if args.data else None,
+                  port=args.port, open_browser=not args.no_browser)
+    except RuntimeError as exc:
+        raise CliError(str(exc)) from exc
+    return ""
+
+
 def cmd_demo(book: Book, args) -> str:
     """실제로 일어나는 상황을 모아 놓은 예제 여행."""
     start = date(2025, 8, 28)
@@ -992,14 +1004,20 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("export", help="내보내기")
     p.add_argument("format", choices=["json", "csv"]); p.add_argument("path")
     p.add_argument("--trip"); p.set_defaults(func=cmd_export)
+    p = sub.add_parser("gui", aliases=["web"], help="브라우저로 GUI 열기")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--no-browser", action="store_true", help="브라우저를 자동으로 열지 않음")
+    p.set_defaults(func=cmd_web)
     p = sub.add_parser("demo", help="예제 여행 만들기")
     p.set_defaults(func=cmd_demo)
     return parser
 
 
+# 장부를 바꾸지 않는 명령. 저장을 건너뛴다.
+# (cmd_web 은 서버가 자기 요청마다 직접 저장하므로 여기 포함한다)
 READ_ONLY = {cmd_trip_list, cmd_trip_show, cmd_member_list, cmd_rate_list,
              cmd_expense_list, cmd_expense_show, cmd_transfer_list,
-             cmd_settle, cmd_share, cmd_verify, cmd_export}
+             cmd_settle, cmd_share, cmd_verify, cmd_export, cmd_web}
 
 
 def main(argv: Optional[list[str]] = None) -> int:

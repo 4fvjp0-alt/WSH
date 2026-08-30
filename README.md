@@ -4,9 +4,10 @@
 파이썬 표준 라이브러리만 씁니다. 설치할 것도, 서버도, API 키도 없습니다.
 
 ```bash
-git clone https://github.com/4fvjp0-alt/travel-settle.git
+git clone -b travel-settle-standalone https://github.com/4fvjp0-alt/WSH.git travel-settle
 cd travel-settle
-python3 -m settle demo      # 예제 여행으로 바로 확인
+python3 -m settle gui       # 브라우저로 GUI 열기
+python3 -m settle demo      # 또는 터미널에서 예제 여행 확인
 ```
 
 설치해서 어디서나 `travel-settle` 명령으로 쓰고 싶다면:
@@ -51,6 +52,37 @@ Python 3.10 이상이면 동작합니다 (CI에서 3.10 / 3.11 / 3.12 / 3.13 검
 | 최소 횟수 송금안 (최적해 계산) | ✔ |
 | 100원/1000원 단위 반올림 송금 | ✔ |
 | 카톡에 붙여넣을 요약, CSV/JSON 내보내기 | ✔ |
+| **브라우저 GUI** (설치 없이, 다크 모드·모바일 대응) | ✔ |
+
+## GUI — 브라우저로 쓰기
+
+```bash
+python3 -m settle gui
+```
+
+브라우저가 열리고 바로 쓸 수 있습니다. 설치할 것도, 인터넷도 필요 없습니다.
+표준 라이브러리 `http.server` 로 돌아가는 로컬 서버라 **의존성은 여전히 0** 입니다.
+
+| 화면 | 하는 일 |
+|------|---------|
+| **정산 결과** | 총 지출, 사람별 결제·부담·잔액, 최종 송금안, 카테고리 분해, 검증 배지 |
+| **지출** | 지출 추가·삭제. 분할 방식·참여자·추가 부담·외화는 접힌 영역에 |
+| **문자 가져오기** | 카드 문자를 붙여넣고 인식 결과를 표에서 고친 뒤 선택 등록 |
+| **회비·송금·설정** | 회비 입금, 중간 송금, 환율, 반올림 단위, 여행 설정 |
+
+터미널의 CLI와 **같은 장부 파일**을 씁니다. GUI로 넣고 CLI로 정산하거나 그 반대도 됩니다.
+운영체제 설정을 따라 다크 모드로 바뀌고, 폰 브라우저 폭에서도 한 칸으로 접힙니다.
+
+### 접근 제한
+
+가계부라 아무나 열면 곤란합니다. 두 가지로 막았습니다.
+
+- **`127.0.0.1` 에만 바인딩** — 같은 와이파이의 다른 기기에서 접속되지 않습니다.
+- **실행마다 임의 토큰** — 모든 API 요청에 헤더로 요구합니다. 브라우저는 커스텀 헤더가
+  붙은 교차 출처 요청을 사전 확인 없이 보낼 수 없으므로, 다른 사이트가 열어둔 이 서버에
+  몰래 쓰기 요청을 보내는 것을 막습니다.
+
+포트를 바꾸려면 `--port 9000`, 브라우저를 자동으로 열지 않으려면 `--no-browser`.
 
 ## 5분 사용법
 
@@ -144,7 +176,7 @@ python3 -m settle expense add --title "숙소" --amount 63000 --currency JPY --p
 
 ```bash
 python3 -m settle verify --fuzz 20000     # 무작위 여행 2만 건 자가검사
-python3 tests/run.py                       # 전체 테스트 (132개)
+python3 tests/run.py                       # 전체 테스트 (177개)
 python3 tests/run.py --fuzz 50000          # 검증 강도 올리기
 ```
 
@@ -249,6 +281,7 @@ python3 -m settle import text --payer 민수  # 확인됐으면 등록
 ## 명령어 전체
 
 ```
+gui                                           브라우저 GUI 열기
 trip      new / list / use / show / set / delete
 member    add / list / set / remove
 rate      set / list                          환율
@@ -284,13 +317,16 @@ settle/
   report.py       결과 출력
   textui.py       한글 폭을 고려한 표 정렬
   cli.py          명령행 인터페이스
+  api.py          화면용 API 계층 (HTTP와 분리 — 소켓 없이 테스트 가능)
+  web.py          로컬 웹 서버 (표준 라이브러리만)
+  static/index.html  GUI 화면 (프레임워크 없음)
 tests/
   test_money.py test_split.py test_engine.py    단위 테스트
   test_scenarios.py                             현실 상황 19종
   test_property.py                              무작위 폐루프 검증
   test_parse_text.py test_parse_real.py             실제 카드사 문자 형식
   test_ocr_claude.py
-  test_store.py test_cli.py
+  test_store.py test_cli.py test_api.py
   run.py                                        전체 실행기
 .github/workflows/tests.yml                     CI: 파이썬 4개 버전 테스트 + 폐루프 5만 건
 pyproject.toml                                  설치용 메타데이터 (런타임 의존성 없음)

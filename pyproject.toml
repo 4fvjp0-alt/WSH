@@ -25,3 +25,7 @@ travel-settle = "settle.cli:main"
 
 [tool.setuptools]
 packages = ["settle"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+settle = ["static/*"]
