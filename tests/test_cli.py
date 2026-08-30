@@ -8,6 +8,8 @@ from pathlib import Path
 from helpers import *  # noqa: F401,F403
 from settle import store
 from settle.cli import main
+from settle.engine import compute
+from settle.invariants import verify
 from settle.models import Book
 
 
@@ -179,6 +181,66 @@ class TestImportText(CliCase):
         self.assertEqual(trip.expenses[0].category, "카페/간식")
         self.assertEqual(trip.expenses[0].source, "text")
         self.assertEqual(trip.expenses[0].day.year, 2025)
+
+
+class TestImportRealSms(CliCase):
+    def setUp(self):
+        super().setUp()
+        self.run_cli("trip", "new", "오사카", "--start", "2025-09-20", "--end", "2025-09-24")
+        self.run_cli("member", "add", "민수", "지영", "현우")
+
+    def write(self, text: str) -> str:
+        path = Path(self.dir.name) / "sms.txt"
+        path.write_text(text, encoding="utf-8")
+        return str(path)
+
+    def test_preview_does_not_register_anything(self):
+        source = self.write("[Web발신]\n신한카드(1234)승인 홍*동\n5,500원 일시불\n"
+                            "09/20 12:33\n스타벅스강남2호점\n누적1,234,500원")
+        output = self.run_cli("import", "text", "--file", source, "--preview")
+        self.assertIn("스타벅스강남2호점", output)
+        self.assertIn("5,500원", output)
+        self.assertEqual(len(self.book().current().expenses), 0)
+
+    def test_overseas_uses_the_card_issuers_own_rate(self):
+        source = self.write("[Web발신]\n신한카드(1234) 해외승인\n3,200엔\n(29,440원)\n"
+                            "09/21 20:11\n이치란라멘")
+        self.run_cli("import", "text", "--file", source, "--payer", "민수", "--yes")
+        expense = self.book().current().expenses[0]
+        self.assertEqual((expense.amount, expense.currency), (3200, "JPY"))
+        self.assertAlmostEqual(expense.rate, 9.2, places=6)
+        # 여행 환율표가 비어 있어도 이 건은 카드사 환율로 정확히 환산된다
+        settlement = compute(self.book().current())
+        self.assertEqual(settlement.total, 29440)
+        self.assertTrue(verify(settlement).ok)
+
+    def test_foreign_expense_without_any_rate_is_skipped_not_crashed(self):
+        source = self.write("[Web발신]\nBC카드 승인\n$18.50\n09/23 08:12\nBLUE BOTTLE")
+        output = self.run_cli("import", "text", "--file", source, "--payer", "민수", "--yes")
+        self.assertIn("환율이 없습니다", output)
+        self.assertIn("0건 등록", output)
+        self.assertEqual(len(self.book().current().expenses), 0)
+
+    def test_installment_and_card_are_kept_as_a_note(self):
+        source = self.write("[Web발신]\n현대카드 승인\n김철수님\n120,000원 3개월\n"
+                            "09/20 15:10\n하나투어")
+        self.run_cli("import", "text", "--file", source, "--payer", "민수", "--yes")
+        expense = self.book().current().expenses[0]
+        self.assertEqual(expense.title, "하나투어")   # 실명을 가맹점으로 잡지 않는다
+        self.assertIn("3개월", expense.note)
+        self.assertIn("현대카드", expense.note)
+
+    def test_mixed_issuers_in_one_paste(self):
+        source = self.write(
+            "[Web발신]\n신한카드(1234)승인 홍*동\n5,500원 일시불\n09/20 12:33\n"
+            "스타벅스강남2호점\n누적1,234,500원\n\n"
+            "[Web발신]\n삼성카드 부분취소\n홍*동\n3,000원\n09/22 15:00\n다이소난바점\n\n"
+            "[Web발신]\nKB국민은행\n09/22 12:33\n출금 15,000원\n"
+            "잔액 1,234,567원\n이마트")
+        output = self.run_cli("import", "text", "--file", source, "--payer", "민수", "--yes")
+        self.assertIn("3건 등록", output)
+        amounts = sorted(e.amount for e in self.book().current().expenses)
+        self.assertEqual(amounts, [-3000, 5500, 15000])
 
 
 class TestImportImage(CliCase):

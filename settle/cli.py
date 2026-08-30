@@ -487,6 +487,46 @@ def cmd_transfer_remove(book: Book, args) -> str:
 
 # ------------------------------------------------------------- 가져오기
 
+def _preview(trip: Trip, book: Book, parsed: list[ParsedTx]) -> str:
+    """등록하지 않고 파싱 결과만 보여준다.
+
+    쓰는 카드사 문자 형식이 제대로 읽히는지 먼저 확인할 때 쓴다.
+    """
+    if not parsed:
+        return "인식된 거래가 없습니다."
+    rows = []
+    for index, tx in enumerate(parsed, 1):
+        currency = tx.currency or trip.base_currency
+        extra = []
+        if tx.converted_amount:
+            extra.append(f"청구 {format_money(tx.converted_amount, tx.converted_currency)}")
+        if tx.implied_rate:
+            extra.append(f"환율 {tx.implied_rate:,.4f}")
+        if tx.installment:
+            extra.append(tx.installment)
+        rows.append([
+            str(index),
+            str(tx.day or "?"),
+            tx.time or "",
+            format_money(tx.amount, currency) if tx.amount is not None else "?",
+            tx.merchant or "?",
+            category_mod.classify(tx.merchant, book.category_hints),
+            tx.card or "",
+            " / ".join(extra),
+        ])
+    out = [table(["#", "날짜", "시각", "금액", "가맹점", "카테고리", "카드", "비고"], rows,
+                 ["right", "left", "left", "right", "left", "left", "left", "left"])]
+    problems = [(i, w) for i, tx in enumerate(parsed, 1) for w in tx.warnings]
+    if problems:
+        out.append("")
+        out.append(rule("확인 필요"))
+        for index, warning in problems:
+            out.append(f"  [{index}] {warning}")
+    out.append("")
+    out.append(f"  {len(parsed)}건 인식. 등록하려면 --preview 를 빼고 다시 실행하세요.")
+    return "\n".join(out)
+
+
 def _review_and_add(trip: Trip, book: Book, parsed: list[ParsedTx], args) -> str:
     """OCR/파서 결과를 사람이 확인하고 장부에 넣는 단계.
 
@@ -495,6 +535,8 @@ def _review_and_add(trip: Trip, book: Book, parsed: list[ParsedTx], args) -> str
     """
     if not parsed:
         return "가져올 거래내역이 없습니다."
+    if getattr(args, "preview", False):
+        return _preview(trip, book, parsed)
     interactive = sys.stdin.isatty() and not args.yes
     added: list[Expense] = []
     skipped = 0
@@ -544,12 +586,35 @@ def _review_and_add(trip: Trip, book: Book, parsed: list[ParsedTx], args) -> str
         if cat not in CATEGORIES:
             cat = "기타"
 
+        # 해외 승인 문자에는 원통화 금액과 원화 청구액이 함께 온다.
+        # 그 둘의 비가 이 거래에 실제로 적용된 환율이라, 여행 평균 환율보다
+        # 정확하다. 이 건에만 쓰는 환율로 붙인다.
+        rate = None
+        if currency != trip.base_currency:
+            if tx.converted_currency == trip.base_currency and tx.implied_rate:
+                rate = tx.implied_rate
+                print(f"      · 적용 환율 {rate:,.4f} "
+                      f"(청구 {format_money(tx.converted_amount, tx.converted_currency)})")
+            elif currency not in trip.rates:
+                message = (f"{currency} → {trip.base_currency} 환율이 없습니다")
+                if interactive:
+                    answer = ask(f"      {message}. 환율 입력 (건너뛰려면 Enter)", "")
+                    if not answer:
+                        print("      → 건너뜁니다")
+                        skipped += 1
+                        continue
+                    rate = float(answer)
+                else:
+                    print(f"      → {message}. `rate set {currency} <환율>` 후 다시 시도하세요")
+                    skipped += 1
+                    continue
+
         expense = Expense(
             id=new_id("e_"), title=title, amount=tx.amount, currency=currency,
             day=day, category=cat,
             payments=parse_payers(trip, payer_spec, tx.amount, currency),
             split_method=SPLIT_EQUAL, participants=parse_members(trip, args.who),
-            note=" ".join(x for x in [tx.card, tx.time] if x),
+            rate=rate, note=tx.note,
             source=args.source, image_path=getattr(args, "image_path", "") or "",
         )
         trip.expenses.append(expense)
@@ -581,7 +646,7 @@ def cmd_import_text(book: Book, args) -> str:
         raw = "\n".join(lines)
     if not raw.strip():
         raise CliError("입력이 비어 있습니다")
-    parsed = parse_text(raw, trip_year(trip))
+    parsed = parse_text(raw, trip_year(trip), trip.base_currency)
     args.source = "text"
     return _review_and_add(trip, book, parsed, args)
 
@@ -900,10 +965,14 @@ def build_parser() -> argparse.ArgumentParser:
     p = imp.add_parser("text", help="카드 문자·결제 알림 붙여넣기")
     p.add_argument("--file"); p.add_argument("--payer"); p.add_argument("--who")
     p.add_argument("--date"); p.add_argument("--yes", action="store_true")
+    p.add_argument("--preview", action="store_true",
+                   help="등록하지 않고 인식 결과만 표로 보여줍니다")
     p.set_defaults(func=cmd_import_text, source="text")
     p = imp.add_parser("image", help="캡쳐 이미지에서 추출 (Claude Code CLI 사용)")
     p.add_argument("paths", nargs="+"); p.add_argument("--payer"); p.add_argument("--who")
     p.add_argument("--date"); p.add_argument("--yes", action="store_true")
+    p.add_argument("--preview", action="store_true",
+                   help="등록하지 않고 인식 결과만 표로 보여줍니다")
     p.set_defaults(func=cmd_import_image, source="image")
     p = imp.add_parser("json", help="내보낸 JSON 되돌리기")
     p.add_argument("path"); p.add_argument("--overwrite", action="store_true")
@@ -940,8 +1009,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     try:
         book = store.load(path)
         output = args.func(book, args)
-        if args.func not in READ_ONLY:
-            store.save(book, path)
+        if args.func not in READ_ONLY and not getattr(args, "preview", False):
+            store.save(book, path)   # 미리보기는 장부를 건드리지 않는다
         if output:
             print(output)
         return 0
