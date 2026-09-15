@@ -15,7 +15,22 @@ civsim/
 └─ unity/Assets/CivSim/    Unity 6 스크립트 (시계, 태양광, 시간 UI, 카메라, 지형 로더)
 ```
 
-## 코어 빌드·테스트 (Windows, .NET 8 SDK)
+## 윈도우 빠른 시작
+
+```powershell
+cd civsim
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\tools\Setup-Windows.ps1            # 도구 확인 → 테스트 → 합성 지형 베이크
+.\tools\Setup-Windows.ps1 -RealDem   # 실제 Copernicus DEM 사용 시
+```
+
+Unity Hub에서 `civsim\unity` 에 URP 3D 프로젝트를 만든 뒤:
+
+```powershell
+.\tools\Setup-Windows.ps1 -LinkUnity -SkipTests
+```
+
+## 코어 빌드·테스트 (수동)
 
 ```powershell
 cd civsim
@@ -44,10 +59,7 @@ python tools\bake_dem.py --synthetic --out data\baked\seoul --res 30
 ## Unity 프로젝트 설정 (M1)
 
 1. Unity 6 (6000.x) 에서 **URP 3D** 템플릿으로 `civsim/unity` 위치에 프로젝트 생성. 스타일라이즈드 룩에는 URP가 가볍고 충분하다.
-2. 코어 소스를 Assets에 링크 (관리자 PowerShell):
-   ```powershell
-   cmd /c mklink /J civsim\unity\Assets\CivSim\Core civsim\src\CivSim.Core
-   ```
+2. 코어 소스를 Assets에 링크: `.\tools\Setup-Windows.ps1 -LinkUnity` (또는 수동으로 `mklink /J unity\Assets\CivSim\Core src\CivSim.Core`).
    `CivSim.Core.asmdef`가 함께 링크되므로 Unity가 별도 어셈블리로 컴파일한다. `dotnet build` 산출물은 `civsim/build/`로 나가도록 되어 있어 Assets를 오염시키지 않는다.
 3. 씬 구성:
    - 빈 오브젝트 `SimClock` + `SimClockBehaviour`
