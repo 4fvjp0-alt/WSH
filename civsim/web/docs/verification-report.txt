@@ -1,0 +1,44 @@
+서울 문명 시뮬레이터 — 브라우저 검증
+====================================================
+  PASS  WebGL scene draws geometry — 996,772 triangles, 5 draw calls
+  PASS  starts in AD 100 — year 100.2
+  PASS  starts in the Three Kingdoms era — 삼국시대
+  PASS  sun position matches the almanac (하지 정오) — alt 74.12° vs 74.12°, az 150.4° vs 150.4°
+  PASS  sun position matches the almanac (동지 정오) — alt 28.58° vs 28.58°, az 172.0° vs 172.0°
+  PASS  sun position matches the almanac (춘분 아침) — alt 3.85° vs 3.85°, az 93.3° vs 93.3°
+  PASS  noon altitude swings with the seasons — 75.8° vs 29.0°
+  PASS  night is dark — daylight 0.000 at 01:00
+  PASS  noon is bright — daylight 1.000
+  PASS  population near the record at 400 (한성백제) — 39,962 vs 41,770 (96%)
+  PASS  buildings drawn at 400 — 11411 instances
+  PASS  population near the record at 1450 (조선 한양) — 98,521 vs 101,425 (97%)
+  PASS  buildings drawn at 1450 — 14243 instances
+  PASS  population near the record at 1900 (대한제국) — 200,701 vs 205,458 (98%)
+  PASS  buildings drawn at 1900 — 12865 instances
+  PASS  population near the record at 1975 (산업화) — 6,990,743 vs 7,234,222 (97%)
+  PASS  buildings drawn at 1975 — 90479 instances
+  PASS  population near the record at 2026 (현대 서울) — 9,188,197 vs 9,300,000 (99%)
+  PASS  buildings drawn at 2026 — 90505 instances
+  PASS  the city grows over time — 1258 → 34541 cells
+  PASS  era label reaches the modern day — 현대
+  PASS  people are summoned at street level — 4500 people drawn
+  PASS  street view still renders — 1,901,204 triangles
+  PASS  people are legible from street height — 5200 people at 200 m
+  PASS  replaying to 1500 lands in the Joseon era — 조선 전기
+  PASS  the Joseon street is populated too — 4500 people in 조선 전기
+  PASS  the crowd panel is live — 4,500명 → 4,500명
+  PASS  pause stops the clock — 1501.2464 → 1501.2464
+  PASS  a year per second advances the calendar — +384 days in 4 s at 4.8 fps
+  PASS  the macro layers keep up with the clock — 1950 → 1962.5 in 6 s at 3.2 fps
+  PASS  the population responds while running — 2,774,252
+  PASS  시간 막대 is on screen
+  PASS  현황판 is on screen
+  PASS  날짜판 is on screen
+  PASS  개입 도구 is on screen
+  PASS  all eight speed buttons exist — 8 buttons
+  PASS  the chronicle has entries — 24 entries
+  PASS  clicking a speed button selects it
+  PASS  no uncaught errors in the browser
+
+39 passed, 0 failed
+screenshots in /home/user/WSH/civsim/web/verification

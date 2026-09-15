@@ -15,9 +15,10 @@ namespace CivSim.Core.Time
             Year = year; Month = month; Day = day; DayFraction = dayFraction;
         }
 
-        public int Hour => (int)Math.Floor(DayFraction * 24.0);
-        public int Minute => (int)Math.Floor(DayFraction * 1440.0) % 60;
-        public double Second => (DayFraction * 86400.0) % 60.0;
+        private long MsOfDay => (long)Math.Round(DayFraction * 86400000.0);
+        public int Hour => (int)(MsOfDay / 3600000L);
+        public int Minute => (int)(MsOfDay / 60000L % 60L);
+        public double Second => (MsOfDay % 60000L) / 1000.0;
 
         public override string ToString() => $"{Year:0000}-{Month:00}-{Day:00} {Hour:00}:{Minute:00}";
     }
@@ -64,9 +65,12 @@ namespace CivSim.Core.Time
 
         private static CalendarDate Decode(double jd, bool gregorian)
         {
-            jd += 0.5;
-            double z = Math.Floor(jd);
-            double f = jd - z;
+            // Decompose in integer milliseconds. A JD near 1.8e6 carries ~3.5e-5 s of double-precision
+            // slop, so a plain floor would decode 13:37:00 as 13:36:59.99996.
+            const long MsPerDay = 86400000L;
+            long totalMs = (long)Math.Round((jd + 0.5) * MsPerDay);
+            long z = (long)Math.Floor((double)totalMs / MsPerDay);
+            long msOfDay = totalMs - z * MsPerDay;
             double a = z;
             if (gregorian)
             {
@@ -80,7 +84,7 @@ namespace CivSim.Core.Time
             int day = (int)(b - d - Math.Floor(30.6001 * e));
             int month = e < 14 ? (int)e - 1 : (int)e - 13;
             int year = month > 2 ? (int)c - 4716 : (int)c - 4715;
-            return new CalendarDate(year, month, day, f);
+            return new CalendarDate(year, month, day, msOfDay / (double)MsPerDay);
         }
 
         private static int FloorDiv(int a, int b) => (int)Math.Floor((double)a / b);

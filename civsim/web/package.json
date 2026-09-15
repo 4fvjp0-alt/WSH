@@ -1,0 +1,27 @@
+{
+  "name": "civsim-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "서울 문명 시뮬레이터 — 삼국시대부터 현재까지",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "node --experimental-strip-types scripts/verify-browser.ts",
+    "bake": "node --experimental-strip-types scripts/bake-world.ts"
+  },
+  "dependencies": {
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/three": "0.186.0",
+    "playwright": "1.63.0",
+    "typescript": "5.9.3",
+    "vite": "7.1.12",
+    "vitest": "3.2.4"
+  }
+}

@@ -1,79 +1,75 @@
 # CivSim — 서울 문명 시뮬레이터
 
+서울 크기의 3차원 세계에서 서기 100년부터 2026년까지 문명이 쌓이는 과정을 관찰하는 시뮬레이터.
+
 계획서: [`../docs/seoul-civilization-simulator-plan.md`](../docs/seoul-civilization-simulator-plan.md)
 
-## 구성
+## 두 갈래
+
+| | [`web/`](web/) — **지금 돌아감** | [`src/`](src/CivSim.Core) + `unity/` — Unity 경로 |
+|---|---|---|
+| 상태 | 완성. 68개 단위 테스트 + 39개 브라우저 검증 통과 | 시계·천문 코어와 M1 스크립트 초안 |
+| 실행 | `web\Run-Windows.ps1` → 브라우저 | Unity 6 프로젝트 생성 필요 |
+| 언어 | TypeScript + three.js | C# + Unity |
+| 쓰임 | 바로 보고 조작하는 완성본 | 더 높은 그래픽 품질로 갈 때의 기반 |
+
+두 갈래는 같은 모델을 쓴다. 천문·시간 코어는 검증된 파이썬 참조 구현(`tools/astro_reference.py`)을
+양쪽으로 옮긴 것이고, 지형 데이터는 같은 베이크 툴에서 나온다.
+
+## 바로 해보기
+
+```powershell
+cd civsim\web
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\Run-Windows.ps1
+```
+
+자세한 조작법과 검증 내용은 [`web/README.md`](web/README.md).
+
+![서기 2026년 서울](web/docs/screens/ad2026-seoul.jpg)
+
+## 폴더
 
 ```
 civsim/
-├─ src/CivSim.Core/        엔진 독립 시뮬레이션 코어 (netstandard2.1, Unity에 그대로 링크)
-│  ├─ Time/                JulianDay, KoreaCivilTime, TimeScale, SimClock
-│  ├─ Astronomy/           DeltaT, SolarPosition, SunEvents
-│  └─ Geo/                 LocalFrame (시청 원점 미터 좌표계)
-├─ tests/CivSim.Core.Tests xUnit (서울 일출·일몰 검증값 포함)
-├─ tools/                  astro_reference.py (검증된 파이썬 참조 구현), bake_dem.py (DEM → 하이트맵)
-└─ unity/Assets/CivSim/    Unity 6 스크립트 (시계, 태양광, 시간 UI, 카메라, 지형 로더)
+├─ web/                    TypeScript + three.js 완성본 (여기서 시작)
+│  ├─ src/core/            엔진 독립 시뮬레이션 코어
+│  ├─ src/render/          three.js 렌더링
+│  ├─ src/ui/              인터페이스
+│  ├─ public/data/         베이크된 지형·수역 (1.6 MB)
+│  ├─ tests/               단위 테스트 68개
+│  ├─ scripts/             브라우저 검증
+│  └─ docs/screens/        검증 스크린샷
+├─ src/CivSim.Core/        C# 코어 (netstandard2.1, Unity에 링크)
+├─ tests/CivSim.Core.Tests xUnit
+├─ unity/Assets/CivSim/    Unity 6 스크립트
+├─ tools/                  astro_reference.py, bake_dem.py, bake_world.py, Setup-Windows.ps1
+└─ data/                   원본 DEM 타일 (git에 포함되지 않음)
 ```
 
-## 윈도우 빠른 시작
+## Unity 경로 (선택)
+
+C# 코어를 빌드하고 테스트하려면 .NET 8 SDK가 필요하다.
 
 ```powershell
 cd civsim
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\tools\Setup-Windows.ps1            # 도구 확인 → 테스트 → 합성 지형 베이크
-.\tools\Setup-Windows.ps1 -RealDem   # 실제 Copernicus DEM 사용 시
+.\tools\Setup-Windows.ps1        # 도구 확인 → dotnet test → 지형 베이크
+.\tools\Setup-Windows.ps1 -LinkUnity -SkipTests   # Unity 프로젝트를 만든 뒤
 ```
 
-Unity Hub에서 `civsim\unity` 에 URP 3D 프로젝트를 만든 뒤:
+Unity Hub에서 Unity 6, URP 3D 템플릿으로 `civsim\unity`에 프로젝트를 만든 다음 씬을 구성한다:
+`SimClockBehaviour`, `SunLightController`, `GodViewCamera`, `TerrainLoader`, `TimeControlPanel`.
+
+참고: 이 저장소의 C# 코드는 검증된 파이썬 참조를 옮긴 것이며, 작성 환경에 .NET SDK가 없어
+`dotnet test`는 아직 실행되지 않았다. 같은 로직의 TypeScript 판은 전부 통과한다.
+
+## 지형 데이터
 
 ```powershell
-.\tools\Setup-Windows.ps1 -LinkUnity -SkipTests
-```
-
-## 코어 빌드·테스트 (수동)
-
-```powershell
-cd civsim
-dotnet test
-```
-
-파이썬 참조 구현 검증(numpy·pillow 필요):
-
-```powershell
-python tools\test_astro_reference.py
-```
-
-## 지형 베이크
-
-```powershell
-pip install numpy pillow
-# 실제 DEM (Copernicus GLO-30, 서울을 덮는 2개 타일 자동 다운로드)
+pip install numpy rasterio pillow
 python tools\bake_dem.py --download data\raw
-python tools\bake_dem.py --tiles data\raw --out data\baked\seoul --res 30
-# 데이터 없이 엔진 작업을 시작하려면 합성 지형
-python tools\bake_dem.py --synthetic --out data\baked\seoul --res 30
+python tools\bake_world.py --raw data\raw --out web\public\data
 ```
 
-생성된 `seoul.r16` / `seoul.json`을 Unity 프로젝트의 `Assets/StreamingAssets/terrain/`에 복사한다.
-
-## Unity 프로젝트 설정 (M1)
-
-1. Unity 6 (6000.x) 에서 **URP 3D** 템플릿으로 `civsim/unity` 위치에 프로젝트 생성. 스타일라이즈드 룩에는 URP가 가볍고 충분하다.
-2. 코어 소스를 Assets에 링크: `.\tools\Setup-Windows.ps1 -LinkUnity` (또는 수동으로 `mklink /J unity\Assets\CivSim\Core src\CivSim.Core`).
-   `CivSim.Core.asmdef`가 함께 링크되므로 Unity가 별도 어셈블리로 컴파일한다. `dotnet build` 산출물은 `civsim/build/`로 나가도록 되어 있어 Assets를 오염시키지 않는다.
-3. 씬 구성:
-   - 빈 오브젝트 `SimClock` + `SimClockBehaviour`
-   - Directional Light + `SunLightController`
-   - Main Camera + `GodViewCamera`
-   - 빈 오브젝트 `Terrain` + `TerrainLoader` (fileStem = `seoul`)
-   - 빈 오브젝트 `UI` + `TimeControlPanel` (sun 필드에 Directional Light 연결)
-4. 재생: 스페이스 일시정지/재개, `[` `]` 배속 변경, WASD 이동, 휠 줌, 우클릭 드래그 회전.
-
-## 현재 상태
-
-- [x] M0: 시계·달력·한국 시간대 이력·ΔT·태양 위치·일출일몰·로컬 좌표계, 테스트, DEM 베이크 툴
-- [x] M1 스크립트 초안: 태양광 연동, 배속 UI, 신 시점 카메라, 지형 로더 (Unity에서 컴파일 확인 필요)
-- [ ] M1 완료 기준: Unity에서 실제 태양이 뜨고 지는 10년/초 타임랩스 영상
-
-주의: 이 코어의 C# 코드는 검증된 파이썬 참조(`tools/astro_reference.py`)를 그대로 옮긴 것이며,
-작성 환경에 .NET SDK가 없어 `dotnet test`는 아직 실행되지 않았다. 첫 실행에서 컴파일 오류가 나면 사소한 문법 문제일 가능성이 높다.
+Copernicus DEM GLO-30, © DLR e.V. 2010-2014 및 © Airbus Defence and Space GmbH 2014-2018,
+유럽연합과 ESA가 COPERNICUS로 제공.

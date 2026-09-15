@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>서울 문명 시뮬레이터</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🏯</text></svg>" />
+    <link rel="stylesheet" href="./src/ui/style.css" />
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+
+    <div id="loading" class="loading">
+      <div class="loading-box">
+        <h1>서울 문명 시뮬레이터</h1>
+        <p id="loading-text">지형을 불러오는 중…</p>
+        <div class="bar"><div id="loading-bar"></div></div>
+      </div>
+    </div>
+
+    <header id="topbar" class="panel" hidden>
+      <div class="date-main">
+        <span id="era-label" class="era">삼국시대</span>
+        <span id="polity-label" class="polity">한성백제</span>
+      </div>
+      <div id="date-label" class="date">서기 100년 3월 21일</div>
+      <div id="clock-label" class="clock">06:00</div>
+      <div class="sun-row">
+        <span id="sun-label">일출 05:38 · 일몰 18:42</span>
+        <span id="sun-alt">태양 고도 −</span>
+      </div>
+    </header>
+
+    <aside id="stats" class="panel" hidden>
+      <h2>현황</h2>
+      <dl>
+        <dt>인구</dt><dd id="stat-pop">-</dd>
+        <dt>역사 기록</dt><dd id="stat-ref">-</dd>
+        <dt>정착지</dt><dd id="stat-settlements">-</dd>
+        <dt>시가지</dt><dd id="stat-built">-</dd>
+        <dt>농지</dt><dd id="stat-farm">-</dd>
+        <dt>식량 수급</dt><dd id="stat-food">-</dd>
+        <dt>최대 도시</dt><dd id="stat-largest">-</dd>
+        <dt>보이는 사람</dt><dd id="stat-agents">-</dd>
+      </dl>
+      <div id="popchart-wrap">
+        <canvas id="popchart" width="272" height="96"></canvas>
+        <div class="chart-caption">인구 곡선 · <span class="sim-key">시뮬</span> vs <span class="ref-key">역사</span></div>
+      </div>
+      <h2>연대기</h2>
+      <ul id="log"></ul>
+    </aside>
+
+    <section id="tools" class="panel" hidden>
+      <h2>개입</h2>
+      <div class="tool-row">
+        <button data-tool="none" class="tool active">관찰</button>
+        <button data-tool="seed" class="tool">정착지</button>
+        <button data-tool="prosper" class="tool">풍년</button>
+        <button data-tool="plague" class="tool">역병</button>
+        <button data-tool="flood" class="tool">홍수</button>
+      </div>
+      <p id="tool-hint" class="hint">지도를 클릭하면 정보를 봅니다.</p>
+      <h2>표시</h2>
+      <div class="tool-row">
+        <button data-view="people" class="toggle active">사람</button>
+        <button data-view="buildings" class="toggle active">건물</button>
+        <button data-view="water" class="toggle active">수역</button>
+      </div>
+      <h2>모드</h2>
+      <div class="tool-row">
+        <button data-mode="reproduce" class="toggle active">역사 재현</button>
+        <button data-mode="emergent" class="toggle">창발</button>
+      </div>
+    </section>
+
+    <div id="inspect" class="panel" hidden></div>
+
+    <footer id="timebar" class="panel" hidden>
+      <div class="scrub-row">
+        <span class="scrub-label">100</span>
+        <div id="scrub" class="scrub"><div id="scrub-fill"></div><div id="scrub-knob"></div></div>
+        <span class="scrub-label">2026</span>
+      </div>
+      <div id="speeds" class="speeds"></div>
+      <div class="keyhint">
+        스페이스 일시정지 · <kbd>[</kbd> <kbd>]</kbd> 배속 · <kbd>WASD</kbd> 이동 · 휠 확대 · 우클릭 회전 · <kbd>F</kbd> 도읍으로
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

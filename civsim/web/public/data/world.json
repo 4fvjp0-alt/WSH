@@ -1,0 +1,73 @@
+{
+  "origin": {
+    "lat": 37.5665,
+    "lon": 126.978
+  },
+  "metresPerDegree": 111194.92664455873,
+  "frame": "+x east, +y up, +z north, metres from Seoul City Hall",
+  "sim": {
+    "cellM": 100.0,
+    "nx": 380,
+    "nz": 324,
+    "x0": -19000.0,
+    "z0": -16200.0
+  },
+  "dem": {
+    "cellM": 50.0,
+    "nx": 761,
+    "nz": 649,
+    "x0": -19000.0,
+    "z0": -16200.0,
+    "heightMinM": 1,
+    "heightScaleM": 796,
+    "encoding": "uint16 LE, height = heightMinM + v/65535*heightScaleM"
+  },
+  "bbox": {
+    "minLon": 126.76242955486353,
+    "maxLon": 127.19357044513646,
+    "minLat": 37.42080989984116,
+    "maxLat": 37.712190100158836
+  },
+  "source": "Copernicus DEM GLO-30, © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "verification": {
+    "highestPoint": {
+      "heightM": 796.2226890337616,
+      "lat": 37.65868046460667,
+      "lon": 126.978
+    },
+    "heightRange": [
+      1.0563794001397369,
+      796.2226890337616
+    ],
+    "waterCells": 4206,
+    "waterFraction": 0.034161793372319685,
+    "waterWestEdge": 285,
+    "waterEastEdge": 158,
+    "cityHallHeightM": 32.85442585893037,
+    "fractionBelow50m": 0.5890350877192982,
+    "fractionAbove200m": 0.09553281351526965,
+    "riverWidths": {
+      "행주대교": {
+        "measuredKm": 1.5,
+        "actualKm": 1.4
+      },
+      "가양대교": {
+        "measuredKm": 1.3,
+        "actualKm": 1.0
+      },
+      "한강대교": {
+        "measuredKm": 0.7,
+        "actualKm": 1.1
+      },
+      "잠실대교": {
+        "measuredKm": 0.9,
+        "actualKm": 1.0
+      },
+      "강동대교": {
+        "measuredKm": 0.9,
+        "actualKm": 0.9
+      }
+    },
+    "waterAreaKm2": 42.06
+  }
+}

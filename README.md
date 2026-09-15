@@ -1,4 +1,26 @@
-# WSH — Windows 디스크 용량 분석 스크립트
+# WSH
+
+두 가지가 들어 있다.
+
+| 폴더 | 내용 |
+|---|---|
+| [`civsim/`](civsim/) | **서울 문명 시뮬레이터** — 서기 100년부터 2026년까지 서울에 문명이 쌓이는 과정을 관찰하는 3D 시뮬레이터 |
+| 루트의 `.ps1` | Windows 디스크 용량 분석 스크립트 |
+
+## 서울 문명 시뮬레이터
+
+```powershell
+cd civsim\web
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\Run-Windows.ps1
+```
+
+실측 지형과 실제 태양 운동 위에서 사람들이 살아간다.
+자세한 내용은 [`civsim/README.md`](civsim/README.md), 계획서는 [`docs/seoul-civilization-simulator-plan.md`](docs/seoul-civilization-simulator-plan.md).
+
+---
+
+## Windows 디스크 용량 분석 스크립트
 
 C 드라이브(또는 다른 드라이브)의 용량을 빠르게 분석하고, 정리 가능한 항목을 식별해주는 PowerShell 스크립트입니다.
 
