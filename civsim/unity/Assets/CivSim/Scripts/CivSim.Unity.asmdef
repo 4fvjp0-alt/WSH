@@ -1,0 +1,14 @@
+{
+    "name": "CivSim.Unity",
+    "rootNamespace": "CivSim.Unity",
+    "references": [ "CivSim.Core" ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

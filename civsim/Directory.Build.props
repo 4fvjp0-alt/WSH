@@ -1,0 +1,10 @@
+<Project>
+  <!-- Keep bin/obj out of src/ so the Core folder can be junction-linked into Unity's Assets/. -->
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)build/bin/$(MSBuildProjectName)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)build/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

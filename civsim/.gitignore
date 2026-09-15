@@ -1,0 +1,15 @@
+build/
+bin/
+obj/
+*.user
+.vs/
+.idea/
+data/raw/
+data/baked/*.png
+data/baked/*.r16
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/obj/
+unity/UserSettings/
+__pycache__/
