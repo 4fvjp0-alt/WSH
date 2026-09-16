@@ -1,0 +1,4 @@
+# Windows shells need CRLF; everything else keeps the repository's own line endings.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
