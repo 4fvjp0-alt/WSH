@@ -7,30 +7,46 @@
 
 ## 바로 실행 (윈도우)
 
+파일 탐색기에서 `civsim\web\Run-Windows.cmd` 를 더블클릭한다. 또는 터미널에서:
+
 ```powershell
 cd civsim\web
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\Run-Windows.ps1
+.\Run-Windows.cmd
 ```
 
-Node.js 20 이상이 필요하다. 없으면 스크립트가 winget 설치를 제안한다.
+`.cmd` 로 실행하면 PowerShell 실행 정책을 건드릴 필요가 없다.
+Node.js 20 이상이 필요하고, 없으면 스크립트가 winget 설치를 제안한다.
 브라우저가 자동으로 `http://127.0.0.1:5173/` 를 연다.
 
-스크립트를 쓰지 않고 직접 돌려도 된다. 결과는 같다.
+옵션:
 
 ```powershell
+.\Run-Windows.cmd -Build    # 정적 빌드 후 미리보기 서버
+.\Run-Windows.cmd -Test     # 단위 테스트 68개만 실행
+```
+
+### 스크립트 없이
+
+명령 프롬프트(cmd.exe)에서는 그냥 된다.
+
+```
+cd civsim\web
 npm install
-npm run dev      # 개발 서버 → http://127.0.0.1:5173/
-npm run build    # 타입 검사 + 정적 빌드 → dist/
-npm test         # 단위 테스트 68개
-npm run verify   # 실제 브라우저에서 39개 항목 검증 (빌드 먼저)
+npm run dev
+```
+
+PowerShell에서는 `npm` 이 `npm.ps1` 로 해석되어 실행 정책에 막힐 수 있다. 그럴 때는 확장자를 붙인다.
+
+```powershell
+npm.cmd install
+npm.cmd run dev
 ```
 
 ## 잘 안 될 때
 
 | 증상 | 원인과 해결 |
 |---|---|
-| `.\Run-Windows.ps1` 실행 거부 | 같은 창에서 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`를 먼저 실행한다. 창을 새로 열면 다시 해야 한다. |
+| `.ps1` 실행 거부, `npm.ps1을 로드할 수 없습니다` | PowerShell 실행 정책 때문이다. `Run-Windows.cmd` 로 실행하거나, PowerShell에서는 `npm.cmd` 처럼 확장자를 붙여 부른다. 창마다 풀려면 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`, 계정에 한 번만 걸어두려면 `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` 이다. 후자는 관리자 권한이 필요 없다. |
 | 콘솔의 한글이 깨짐 | 스크립트는 BOM이 붙은 UTF-8이라 정상이어야 한다. 그래도 깨지면 Windows Terminal에서 실행하거나 `npm run dev`를 직접 쓴다. |
 | `npm`을 찾을 수 없음 | Node.js 설치 후 PowerShell 창을 새로 열어야 PATH가 잡힌다. |
 | 화면이 검게만 나옴 | 브라우저의 하드웨어 가속이 꺼져 있다. 크롬 설정에서 켜고 새로고침한다. |

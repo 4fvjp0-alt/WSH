@@ -32,6 +32,18 @@ if ($PSVersionTable.PSVersion.Major -ge 7) { $PSNativeCommandUseErrorActionPrefe
 
 function Test-Command($name) { return $null -ne (Get-Command $name -ErrorAction SilentlyContinue) }
 
+# In PowerShell, a bare `npm` resolves to npm.ps1, which a restricted execution policy blocks.
+# npm.cmd is a batch file and runs whatever the policy says, so prefer it.
+function Resolve-Npm {
+    foreach ($candidate in 'npm.cmd', 'npm.exe', 'npm') {
+        $found = Get-Command $candidate -ErrorAction SilentlyContinue
+        if ($found -and $found.Source -and $found.Source -notmatch '\.ps1$') { return $found.Source }
+    }
+    $fallback = Get-Command 'npm' -ErrorAction SilentlyContinue
+    if ($fallback) { return $fallback.Source }
+    return $null
+}
+
 Write-Host '== Node.js 확인 ==' -ForegroundColor Cyan
 if (-not (Test-Command 'node')) {
     Write-Warning 'Node.js가 없습니다. 20 이상이 필요합니다.'
@@ -54,13 +66,17 @@ if ($nodeVersion -match '^v?(\d+)\.') { $nodeMajor = [int]$Matches[1] }
 if ($nodeMajor -lt 20) { throw "Node.js 20 이상이 필요합니다 (현재 $nodeVersion)." }
 Write-Host "[ok] Node.js $nodeVersion"
 
-if (-not (Test-Command 'npm')) {
+$npm = Resolve-Npm
+if (-not $npm) {
     throw 'npm을 찾을 수 없습니다. Node.js를 다시 설치하거나 PowerShell 창을 새로 여세요.'
+}
+if ($npm -match '\.ps1$') {
+    Write-Warning 'npm.cmd를 찾지 못해 npm.ps1을 씁니다. 실행 정책에 막히면 Run-Windows.cmd로 실행하세요.'
 }
 
 if (-not (Test-Path 'node_modules')) {
     Write-Host "`n== 의존성 설치 ==" -ForegroundColor Cyan
-    npm install
+    & $npm install
     if ($LASTEXITCODE -ne 0) {
         throw "npm install이 실패했습니다 (종료 코드 $LASTEXITCODE). 위에 찍힌 메시지를 확인하세요."
     }
@@ -77,18 +93,18 @@ if (-not (Test-Path 'public\data\dem.bin')) {
 
 if ($Test) {
     Write-Host "`n== 단위 테스트 ==" -ForegroundColor Cyan
-    npm test
+    & $npm test
     exit $LASTEXITCODE
 }
 
 if ($Build) {
     Write-Host "`n== 빌드 ==" -ForegroundColor Cyan
-    npm run build
+    & $npm run build
     if ($LASTEXITCODE -ne 0) { throw "빌드가 실패했습니다 (종료 코드 $LASTEXITCODE)." }
     $url = 'http://127.0.0.1:4173/'
     Write-Host "`n미리보기: $url  (Ctrl+C로 종료)" -ForegroundColor Green
     if (-not $NoBrowser) { Start-Process $url }
-    npm run preview
+    & $npm run preview
 } else {
     $url = 'http://127.0.0.1:5173/'
     Write-Host "`n개발 서버: $url  (Ctrl+C로 종료)" -ForegroundColor Green
@@ -109,5 +125,5 @@ if ($Build) {
             }
         } | Out-Null
     }
-    npm run dev
+    & $npm run dev
 }

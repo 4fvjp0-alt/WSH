@@ -9,7 +9,7 @@
 | | [`web/`](web/) — **지금 돌아감** | [`src/`](src/CivSim.Core) + `unity/` — Unity 경로 |
 |---|---|---|
 | 상태 | 완성. 68개 단위 테스트 + 39개 브라우저 검증 통과 | 시계·천문 코어와 M1 스크립트 초안 |
-| 실행 | `web\Run-Windows.ps1` → 브라우저 | Unity 6 프로젝트 생성 필요 |
+| 실행 | `web\Run-Windows.cmd` → 브라우저 | Unity 6 프로젝트 생성 필요 |
 | 언어 | TypeScript + three.js | C# + Unity |
 | 쓰임 | 바로 보고 조작하는 완성본 | 더 높은 그래픽 품질로 갈 때의 기반 |
 
@@ -20,8 +20,7 @@
 
 ```powershell
 cd civsim\web
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\Run-Windows.ps1
+.\Run-Windows.cmd
 ```
 
 자세한 조작법과 검증 내용은 [`web/README.md`](web/README.md).

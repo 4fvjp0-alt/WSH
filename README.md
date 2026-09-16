@@ -11,9 +11,10 @@
 
 ```powershell
 cd civsim\web
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\Run-Windows.ps1
+.\Run-Windows.cmd
 ```
+
+`Run-Windows.cmd` 를 탐색기에서 더블클릭해도 된다. PowerShell 실행 정책을 건드릴 필요가 없다.
 
 실측 지형과 실제 태양 운동 위에서 사람들이 살아간다.
 자세한 내용은 [`civsim/README.md`](civsim/README.md), 계획서는 [`docs/seoul-civilization-simulator-plan.md`](docs/seoul-civilization-simulator-plan.md).
