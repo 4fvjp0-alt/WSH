@@ -215,10 +215,15 @@ describe('a full run from AD 100 to the present', () => {
     }
   });
 
+  // Two fresh runs over fourteen centuries each; well past Vitest's five second default.
   it('is deterministic', () => {
     const a = new Simulation(world, { mode: 'reproduce', seed: 999 }).runTo(1500);
-    const worldB = world;
-    const b = new Simulation(worldB, { mode: 'reproduce', seed: 999 }).runTo(1500);
+    const b = new Simulation(world, { mode: 'reproduce', seed: 999 }).runTo(1500);
     expect(Math.round(b.population)).toBe(Math.round(a.population));
-  });
+    expect(b.builtCells).toBe(a.builtCells);
+    expect(b.settlements).toBe(a.settlements);
+    // A different seed must actually produce a different history, or the check above is vacuous.
+    const c = new Simulation(world, { mode: 'reproduce', seed: 4321 }).runTo(1500);
+    expect(Math.round(c.population)).not.toBe(Math.round(a.population));
+  }, 180000);
 });
