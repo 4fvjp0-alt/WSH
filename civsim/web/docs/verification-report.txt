@@ -16,9 +16,9 @@
   PASS  population near the record at 1900 (대한제국) — 200,701 vs 205,458 (98%)
   PASS  buildings drawn at 1900 — 12865 instances
   PASS  population near the record at 1975 (산업화) — 6,990,743 vs 7,234,222 (97%)
-  PASS  buildings drawn at 1975 — 90479 instances
+  PASS  buildings drawn at 1975 — 95611 instances
   PASS  population near the record at 2026 (현대 서울) — 9,188,197 vs 9,300,000 (99%)
-  PASS  buildings drawn at 2026 — 90505 instances
+  PASS  buildings drawn at 2026 — 120505 instances
   PASS  the city grows over time — 1258 → 34541 cells
   PASS  era label reaches the modern day — 현대
   PASS  people are summoned at street level — 4500 people drawn
@@ -28,9 +28,9 @@
   PASS  the Joseon street is populated too — 4500 people in 조선 전기
   PASS  the crowd panel is live — 4,500명 → 4,500명
   PASS  pause stops the clock — 1501.2464 → 1501.2464
-  PASS  a year per second advances the calendar — +280 days in 4 s at 7.9 fps
-  PASS  the macro layers keep up with the clock — 1950 → 1960.0 in 6 s at 5.4 fps
-  PASS  the population responds while running — 2,376,783
+  PASS  a year per second advances the calendar — +298 days in 4 s at 4.7 fps
+  PASS  the macro layers keep up with the clock — 1950 → 1955.0 in 6 s at 3.9 fps
+  PASS  the population responds while running — 1,419,259
   PASS  시간 막대 is on screen
   PASS  현황판 is on screen
   PASS  날짜판 is on screen
@@ -39,7 +39,7 @@
   PASS  the chronicle has entries — 24 entries
   PASS  clicking a speed button selects it
   PASS  mini mode turns itself on in a small window — true
-  PASS  the view still renders at 460x320 — 1,792,320 triangles
+  PASS  the view still renders at 460x320 — 1,535,792 triangles
   PASS  the compact strip is on screen
   PASS  the full panels step aside in mini mode
   PASS  the compact strip fits the window — 460x41

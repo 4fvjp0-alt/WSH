@@ -8,8 +8,8 @@ import { LandUse, World } from '../core/world/worldData.ts';
 import type { SettlementSystem } from '../core/settle/settlement.ts';
 import { hash2 } from '../core/rng.ts';
 
-const MAX_BODIES = 90000;
-const MAX_ROOFS = 90000;
+const MAX_BODIES = 120000;
+const MAX_ROOFS = 120000;
 const MAX_WALLS = 4000;
 const MAX_MONUMENTS = 3000;
 
@@ -79,6 +79,36 @@ export class CityView {
     const j0 = Math.max(0, cj - ri);
     const j1 = Math.min(w.nz - 1, cj + ri);
 
+    /** How many buildings a cell would get if there were budget for everything. */
+    const fullDetail = (k: number, x: number, z: number): number => {
+      const ratio = Math.hypot(x - focusX, z - focusZ) / Math.max(500, cameraDistance);
+      const detail = ratio < 2.5 ? 6 : ratio < 5 ? 3 : 1;
+      const density = Math.min(1, land.cellBuild[k]!);
+      return Math.max(1, Math.min(detail, Math.round(density * detail + 0.35)));
+    };
+
+    // Modern Seoul asks for about 180,000 buildings from the default view, well past what one
+    // instanced mesh holds. Rather than running out part way through and leaving a straight edge
+    // across the city, measure the demand first and thin it out evenly: every built cell keeps at
+    // least one building, and what is left of the budget is shared in proportion to demand, so the
+    // blocks nearest the camera stay the most detailed.
+    let demandCells = 0;
+    let demandTotal = 0;
+    for (let j = j0; j <= j1; j++) {
+      for (let i = i0; i <= i1; i++) {
+        const k = w.index(i, j);
+        if (land.cellWall[k] === 1 || land.cellMonument[k] === 1) continue;
+        if (land.cellBuild[k]! < 0.05) continue;
+        const c = w.cellCentre(i, j);
+        demandCells++;
+        demandTotal += fullDetail(k, c.x, c.z);
+      }
+    }
+    const spare = MAX_BODIES - demandCells;
+    const detailScale = demandTotal > MAX_BODIES && demandTotal > demandCells
+      ? Math.max(0, spare / (demandTotal - demandCells))
+      : 1;
+
     for (let j = j0; j <= j1; j++) {
       for (let i = i0; i <= i1; i++) {
         const k = w.index(i, j);
@@ -137,15 +167,10 @@ export class CityView {
         if (nb >= MAX_BODIES) continue;
         const damage = land.cellDamage[k]!;
         const density = Math.min(1, build);
-        const dist = Math.hypot(x - focusX, z - focusZ);
 
-        // A 100 m cell holds dozens of houses. Draw several of them where the camera can see
-        // them and fall back to one marker further out, so the count stays bounded.
-        // Detail is judged against how far away the camera is, not against a fixed distance, so a
-        // street view fills the visible blocks with houses and an orbital view does not try to.
-        const ratio = dist / Math.max(500, cameraDistance);
-        const detail = ratio < 2.5 ? 6 : ratio < 5 ? 3 : 1;
-        const perCell = Math.max(1, Math.min(detail, Math.round(density * detail + 0.35)));
+        // A 100 m cell holds dozens of houses. Draw several where the camera can see them, one
+        // further out, and thin everything by whatever the budget allows.
+        const perCell = Math.max(1, 1 + Math.round((fullDetail(k, x, z) - 1) * detailScale));
 
         for (let b = 0; b < perCell && nb < MAX_BODIES; b++) {
           const r1 = hash2(i * 7 + b, j * 13 + b, 13);
@@ -158,7 +183,6 @@ export class CityView {
           const width = era >= Era.Industrial ? 14 + r2 * 30 : 7 + r2 * 8;
           const depth = width * (0.6 + r3 * 0.9);
 
-          // Spread the buildings over the cell without letting them run into each other.
           // Lay the buildings out on a loose 3 x 2 grid inside the cell with a lot of slop, so a
           // block reads as houses along a lane rather than as a regular pattern.
           const cols = 3;
