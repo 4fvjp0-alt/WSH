@@ -46,6 +46,8 @@ function serve(port: number): Promise<() => Promise<void>> {
 
 interface State {
   year: number;
+  agentsSpawned: number;
+  showPeople: boolean;
   jd: number;
   scale: number;
   fps: number;
@@ -209,6 +211,48 @@ async function main(): Promise<void> {
   check('the city grows over time', marks[2026]!.builtCells > marks[1450]!.builtCells * 8,
     `${marks[1450]!.builtCells} → ${marks[2026]!.builtCells} cells`);
   check('era label reaches the modern day', marks[2026]!.eraLabel === '현대', marks[2026]!.eraLabel);
+
+  // --- the one button that has to work: show me the people ---
+  // Two conditions have to hold at once for a crowd to exist, and a fast-forward lands on an
+  // arbitrary hour, so from a standing start the city is usually empty and says nothing about why.
+  const beforeButton = await state(page);
+  check('an empty crowd explains itself', beforeButton.agentsDrawn === 0, `${beforeButton.agentsDrawn} drawn from orbit`);
+  const hintFar = await page.evaluate(() => (window as unknown as { civsim: { crowdHint: () => string } }).civsim.crowdHint());
+  check('the reason names the fix', hintFar.includes('확대'), `"${hintFar}"`);
+
+  await page.click('#btn-people');
+  const crowded = await waitForState(page, (s) => s.agentsDrawn > 500, 'the crowd to appear', 120000);
+  check('the button puts people on screen', crowded.agentsDrawn > 500, `${crowded.agentsDrawn.toLocaleString()} people`);
+  check('it moves the camera in among them', crowded.cameraDistance < 1200, `${Math.round(crowded.cameraDistance)} m`);
+  check('it slows the clock enough to watch', crowded.scale <= 2, `scale ${crowded.scale}`);
+  const hintNear = await page.evaluate(() => (window as unknown as { civsim: { crowdHint: () => string } }).civsim.crowdHint());
+  check('and then has nothing left to explain', hintNear === '', `"${hintNear}"`);
+
+  // People move. Sample two positions a moment apart.
+  const walk = await page.evaluate(async () => {
+    const api = (window as unknown as { civsim: { sim: unknown } }).civsim;
+    void api;
+    const read = (): number[] => {
+      const c = (window as unknown as { civsim: { state: () => { agentsDrawn: number } } }).civsim.state();
+      return [c.agentsDrawn];
+    };
+    const a = read();
+    await new Promise((r) => setTimeout(r, 1500));
+    return { a, b: read() };
+  });
+  check('the crowd holds steady while it walks', walk.b[0]! > 500, `${walk.b[0]} still drawn`);
+  await shot(page, '14-go-to-people');
+
+  // Night: the city keeps a few people out rather than emptying completely.
+  const nightCrowd = await page.evaluate(() => {
+    const w = window as unknown as { civsim: { setJd: (v: number) => void; sim: { clock: { jdUt: number } } } };
+    w.civsim.setJd(Math.floor(w.civsim.sim.clock.jdUt) + 0.5 + 15.5 / 24);
+    return 0;
+  });
+  void nightCrowd;
+  const atNight = await waitForState(page, (s) => s.agentsDrawn < 2000, 'night to fall', 60000);
+  check('night empties the streets without emptying the city', atNight.agentsDrawn > 20 && atNight.agentsDrawn < 2000,
+    `${atNight.agentsDrawn} still out`);
 
   // --- people appear when you zoom in and slow down ---
   await page.evaluate(() => {

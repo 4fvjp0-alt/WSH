@@ -74,6 +74,15 @@ html, body {
 #stats dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0; }
 #stats dt { color: var(--muted); font-size: 11px; }
 #stats dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
+button.wide {
+  display: block; width: 100%; margin-top: 8px;
+  font: inherit; font-size: 11px; padding: 6px;
+  border-radius: 6px; border: 1px solid var(--accent);
+  background: var(--accent-dim); color: #fff; cursor: pointer;
+}
+button.wide:hover { background: #8d7340; }
+#stat-agents .why { color: var(--muted); font-size: 10px; display: block; }
+
 #popchart-wrap { margin-top: 10px; }
 #popchart { width: 100%; height: 96px; display: block; }
 .chart-caption { font-size: 10px; color: var(--muted); text-align: center; margin-top: 2px; }

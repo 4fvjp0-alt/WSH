@@ -18,8 +18,8 @@ const PALETTE = {
   peak: new THREE.Color(0x8a8378),
   farm: new THREE.Color(0x8c9a4e),
   paddy: new THREE.Color(0x77903f),
-  village: new THREE.Color(0x7d7154),
-  town: new THREE.Color(0x7d7360),
+  village: new THREE.Color(0x8a7d5e),
+  town: new THREE.Color(0x877e68),
   urban: new THREE.Color(0x7a786f),
   dense: new THREE.Color(0x76777c),
   industrial: new THREE.Color(0x77736c),
@@ -136,7 +136,9 @@ export class TerrainView {
           const use = land.cellUse[k]! as LandUse;
           const build = land.cellBuild[k]!;
           const built = this.builtColor(use, era);
-          if (built) c.lerp(built, Math.min(1, 0.35 + build * 0.65));
+          // Keep sparsely built ground closer to the countryside it still mostly is; only a
+          // fully built cell takes the paved colour outright.
+          if (built) c.lerp(built, Math.min(1, 0.18 + build * 0.8));
           if (land.cellRoad[k]! >= 2 && build < 0.5) c.lerp(PALETTE.road, 0.4);
           if (land.cellDamage[k]! > 0.15) c.lerp(new THREE.Color(0x4a4038), Math.min(0.75, land.cellDamage[k]!));
         }

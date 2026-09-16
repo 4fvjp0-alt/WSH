@@ -14,7 +14,7 @@ import { formatLocalTime, toLocalJd, SEOUL_LAT, SEOUL_LON } from './core/time/ko
 import { dayLengthHours, sunrise, sunset } from './core/astro/sunEvents.ts';
 import { LAND_USE_NAMES, LandUse } from './core/world/worldData.ts';
 import { ROLE_NAMES, ACTIVITY_NAMES, AgentRole, AgentActivity } from './core/agents/agents.ts';
-import { ERA_PROFILES } from './core/era/eras.ts';
+import { ERA_PROFILES, Era } from './core/era/eras.ts';
 import { localToLonLat, formatLonLat } from './core/geo/localFrame.ts';
 import { Rng } from './core/rng.ts';
 import { TerrainView } from './render/terrain.ts';
@@ -28,6 +28,9 @@ import { MiniHud } from './ui/miniHud.ts';
 
 const canvas = document.getElementById('view') as HTMLCanvasElement;
 
+/** How close the camera has to be before individual people are worth drawing. */
+const PEOPLE_VISIBLE_M = 5000;
+
 async function boot(): Promise<void> {
   const hud = new Hud({
     onScale: (s) => setScale(s),
@@ -35,6 +38,7 @@ async function boot(): Promise<void> {
     onTool: (t) => { tool = t; },
     onView: (v, on) => setView(v, on),
     onMode: (m) => { sim.mode = m; },
+    onGoToPeople: () => goToPeople(),
   });
 
   hud.setLoading('지형 데이터를 불러오는 중…', 0.1);
@@ -395,6 +399,58 @@ async function boot(): Promise<void> {
     hud.showInspect(settlement ? settlement.name : '이 자리', rows);
   }
 
+  /**
+   * Put the camera where there are people to watch, and slow the clock until they walk rather than
+   * blur. Two things have to be true at once for a crowd to exist, which is one too many to expect
+   * anyone to discover.
+   */
+  function goToPeople(): void {
+    let best: { x: number; z: number } | null = null;
+    let bestPop = 0;
+    for (const s of sim.land.settlements) {
+      if (s.cohorts.total > bestPop) {
+        bestPop = s.cohorts.total;
+        best = { x: s.x, z: s.z };
+      }
+    }
+    if (!best) {
+      sim.addLog(sim.year, '아직 아무도 없습니다', '시간을 흘려보내면 사람이 모여듭니다.', 'era');
+      return;
+    }
+    showPeople = true;
+    crowd.setVisible(true);
+    for (const b of document.querySelectorAll<HTMLButtonElement>('button[data-view="people"]')) {
+      b.classList.add('active');
+    }
+
+    // Fast-forwarding lands on an arbitrary hour, and half the time that is the middle of the
+    // night. A button that promises people has to put the sun up first.
+    const localJd = toLocalJd(sim.clock.jdUt);
+    const hour = ((localJd + 0.5) % 1) * 24;
+    if (hour < 8 || hour > 17) {
+      sim.clock.jumpTo(sim.clock.jdUt + (10 - hour) / 24);
+    }
+
+    // A district of towers hides its streets from a low angle, so look down on the modern city
+    // and along the roofs of the old one.
+    const modern = sim.era >= Era.Industrial;
+    cam.flyTo(best.x, best.z, modern ? 900 : 420);
+    cam.pitchDeg = modern ? 64 : 28;
+    if (sim.clock.scale === TimeScale.Paused || sim.clock.scale > TimeScale.MinutePerSecond) {
+      setScale(TimeScale.MinutePerSecond);
+    }
+  }
+
+  /** Why the crowd is empty, in the words someone can act on. */
+  function crowdHint(): string {
+    if (!showPeople) return '"사람" 표시가 꺼져 있습니다';
+    if (sim.land.settlements.length === 0) return '아직 정착지가 없습니다';
+    if (cam.distance >= PEOPLE_VISIBLE_M) return `${(PEOPLE_VISIBLE_M / 1000).toFixed(0)} km 안으로 확대하세요`;
+    if (sim.clock.scale > TimeScale.HourPerSecond) return '1시간/초 이하로 낮추세요';
+    if (crowd.drawnCount === 0) return '모두 잠들었습니다';
+    return '';
+  }
+
   function onLogClick(entry: LogEntry): void {
     if (entry.x !== undefined && entry.z !== undefined) cam.flyTo(entry.x, entry.z, 4000);
   }
@@ -444,9 +500,10 @@ async function boot(): Promise<void> {
     // The crowd only exists when you are close enough to see it and time is slow enough to watch.
     // Paused counts as a micro speed: a frozen street should still have people standing in it.
     const micro = (sim.clock.activeLayers & SimLayers.Micro) !== 0 || sim.clock.scale === TimeScale.Paused;
-    const closeEnough = cam.distance < 4200;
+    // Below this the figures are still a pixel or two across; beyond it they are not there to see.
+    const closeEnough = cam.distance < PEOPLE_VISIBLE_M;
     if (showPeople && micro && closeEnough) {
-      const budget = cam.distance < 600 ? 5200 : cam.distance < 1200 ? 4500 : cam.distance < 2500 ? 2600 : 1400;
+      const budget = cam.distance < 600 ? 5200 : cam.distance < 1200 ? 4500 : cam.distance < 2500 ? 2600 : 1600;
       // Close in, look a little wider than the camera distance so the street ahead is populated too.
       const radius = Math.max(140, Math.min(2200, cam.distance * (cam.distance < 600 ? 1.4 : 0.8)));
       agents.refresh(sim.land, cam.target.x, cam.target.z, radius, sim.era, budget);
@@ -458,7 +515,10 @@ async function boot(): Promise<void> {
       const set = sunset(jd0, SEOUL_LAT, SEOUL_LON);
       const riseHour = rise !== null ? ((toLocalJd(rise) + 0.5) % 1) * 24 : 6;
       const setHour = set !== null ? ((toLocalJd(set) + 0.5) % 1) * 24 : 18;
-      const agentDt = sim.clock.scale === TimeScale.Paused ? 0 : dt * Math.max(1, sim.clock.simSecondsPerRealSecond / 60);
+      // Movement is sped up with the clock, but only so far: past about twelve times a walking
+      // pace a crowd stops reading as people and starts reading as noise.
+      const timeFactor = Math.min(12, Math.max(1, sim.clock.simSecondsPerRealSecond / 60));
+      const agentDt = sim.clock.scale === TimeScale.Paused ? 0 : dt * timeFactor;
       agents.update(agentDt, hour, riseHour, setHour);
       crowd.update(agents, now / 1000, cam.distance);
       crowd.setVisible(true);
@@ -512,7 +572,8 @@ async function boot(): Promise<void> {
       sky.state.sun.altitudeDeg,
       dayLengthHours(jd0, SEOUL_LAT, SEOUL_LON),
     );
-    hud.updateStats(sim.stats, crowd.drawnCount, sim.clock.progress(DEFAULT_START_JD));
+    hud.updateStats(sim.stats, crowd.drawnCount, sim.clock.progress(DEFAULT_START_JD),
+      crowd.drawnCount === 0 ? crowdHint() : '');
     hud.updateLog(sim.log, onLogClick);
 
     if (miniOn || pipHud) {
@@ -535,6 +596,8 @@ async function boot(): Promise<void> {
     setCamera: (o: { pitch?: number; yaw?: number; distance?: number }) => void;
     setJd: (jd: number) => void;
     setMini: (on: boolean) => void;
+    goToPeople: () => void;
+    crowdHint: () => string;
     pipSupported: () => boolean;
     state: () => Record<string, unknown>;
   }
@@ -550,6 +613,8 @@ async function boot(): Promise<void> {
     },
     setJd: (jd: number) => sim.clock.jumpTo(jd),
     setMini: (on: boolean) => { autoMini = false; setMini(on); },
+    goToPeople: () => goToPeople(),
+    crowdHint: () => crowdHint(),
     pipSupported: () => pipSupported(),
     state: () => ({
       year: sim.stats.year,
@@ -569,8 +634,15 @@ async function boot(): Promise<void> {
       localTime: formatLocalTime(sim.clock.jdUt),
       buildingInstances: city.instanceCount,
       agentsDrawn: crowd.drawnCount,
+      agentsSpawned: agents.count,
+      showPeople,
+      microOn: (sim.clock.activeLayers & SimLayers.Micro) !== 0 || sim.clock.scale === TimeScale.Paused,
+      settlements2: sim.land.settlements.length,
+      targetX: cam.target.x,
+      targetZ: cam.target.z,
       fastForwarding: fastForward !== null,
       cameraDistance: cam.distance,
+      cameraPitch: cam.pitchDeg,
       drawCalls: activeRenderer.info.render.calls,
       triangles: activeRenderer.info.render.triangles,
       mini: miniOn,

@@ -20,6 +20,7 @@ function formatNumber(n: number): string {
 
 export interface HudCallbacks {
   onScale(scale: TimeScale): void;
+  onGoToPeople(): void;
   onScrub(fraction: number): void;
   onTool(tool: string): void;
   onView(view: string, on: boolean): void;
@@ -72,6 +73,8 @@ export class Hud {
       });
     }
 
+    document.getElementById('btn-people')?.addEventListener('click', () => this.cb.onGoToPeople());
+
     const canvas = document.getElementById('popchart') as HTMLCanvasElement | null;
     this.chart = canvas?.getContext('2d') ?? null;
   }
@@ -108,7 +111,11 @@ export class Hud {
     $('sun-alt').textContent = `태양 고도 ${sunAltitude.toFixed(1)}° · ${timeRegimeLabel(jdUt)}`;
   }
 
-  updateStats(stats: SimStats, visibleAgents: number, progress: number): void {
+  /**
+   * @param crowdHint why nobody is on screen, when nobody is. Without it an empty city looks
+   * broken rather than simply too far away.
+   */
+  updateStats(stats: SimStats, visibleAgents: number, progress: number, crowdHint = ''): void {
     $('era-label').textContent = stats.eraLabel;
     $('polity-label').textContent = stats.polity.name;
     $('stat-pop').textContent = `${formatNumber(stats.population)}명`;
@@ -119,7 +126,14 @@ export class Hud {
     $('stat-farm').textContent = `${((stats.farmCells * 1e4) / 1e6).toFixed(1)} km²`;
     $('stat-food').textContent = `${(stats.foodRatio * 100).toFixed(0)}%`;
     $('stat-largest').textContent = `${stats.largestSettlement} ${formatNumber(stats.largestPopulation)}`;
-    $('stat-agents').textContent = `${visibleAgents.toLocaleString('ko-KR')}명`;
+    const agentsEl = $('stat-agents');
+    agentsEl.textContent = `${visibleAgents.toLocaleString('ko-KR')}명`;
+    if (crowdHint) {
+      const why = document.createElement('span');
+      why.className = 'why';
+      why.textContent = crowdHint;
+      agentsEl.appendChild(why);
+    }
 
     ($('scrub-fill') as HTMLElement).style.width = `${progress * 100}%`;
     ($('scrub-knob') as HTMLElement).style.left = `${progress * 100}%`;

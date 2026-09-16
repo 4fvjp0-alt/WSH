@@ -44,6 +44,9 @@ export const ACTIVITY_NAMES: Record<AgentActivity, string> = {
 
 export const MAX_AGENTS = 6000;
 
+/** Share of people still out after everyone else has gone in, as a percentage. */
+const NIGHT_AWAKE_PERCENT = 7;
+
 export class AgentSystem {
   /** Live agent count; the arrays below are valid for [0, count). */
   count = 0;
@@ -161,7 +164,10 @@ export class AgentSystem {
     this.role[id] = role;
 
     const p = ERA_PROFILES[era];
-    const reach = role === AgentRole.Farmer ? Math.min(900, p.commuteRange) : p.commuteRange;
+    // A modern commute is twenty kilometres, which for someone you are watching means walking off
+    // the screen and never coming back. The people on screen work close to where they live; the
+    // long commute is a fact about the city, not about what a crowd should look like.
+    const reach = Math.min(role === AgentRole.Farmer ? 320 : 420, p.commuteRange);
     const work = this.findWorkplace(land, i, j, reach, role);
     this.workX[id] = work.x;
     this.workZ[id] = work.z;
@@ -216,6 +222,7 @@ export class AgentSystem {
    */
   update(dtSeconds: number, hourOfDay: number, sunriseHour: number, sunsetHour: number): void {
     const dt = Math.min(dtSeconds, 4);
+
     for (let id = 0; id < this.count; id++) {
       const wake = sunriseHour - 0.6 + this.wakeOffset[id]!;
       const sleep = sunsetHour + 1.2 + this.wakeOffset[id]!;
@@ -223,7 +230,9 @@ export class AgentSystem {
 
       let activity: AgentActivity;
       if (hourOfDay < wake || hourOfDay > sleep) {
-        activity = AgentActivity.Asleep;
+        // A city is never entirely indoors. A few people are out at any hour: the watch, porters,
+        // travellers arriving late. Without them a night view looks like an empty stage set.
+        activity = this.seed[id]! % 100 < NIGHT_AWAKE_PERCENT ? AgentActivity.Idle : AgentActivity.Asleep;
       } else if (hourOfDay < wake + 1.1) {
         activity = AgentActivity.Commuting;
       } else if (hourOfDay > sleep - 1.6) {

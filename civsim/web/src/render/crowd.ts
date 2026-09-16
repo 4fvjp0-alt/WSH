@@ -38,10 +38,10 @@ export class CrowdView {
   /**
    * @param cameraDistance used to hold people at a readable size from a little way off. A 1.7 m
    * person is under a pixel from 800 m up, so the marker grows gently with distance and stops at
-   * 2.4x, which keeps a crowd legible without turning anyone into a giant.
+   * 3.2x, which keeps a crowd legible without turning anyone into a giant.
    */
   update(agents: AgentSystem, time: number, cameraDistance = 0): void {
-    const distanceScale = Math.max(1, Math.min(2.4, cameraDistance / 320));
+    const distanceScale = Math.max(1, Math.min(3.2, cameraDistance / 300));
     let n = 0;
     for (let id = 0; id < agents.count; id++) {
       if (!agents.isVisible(id)) continue;

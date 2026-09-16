@@ -21,16 +21,24 @@
   PASS  buildings drawn at 2026 — 120505 instances
   PASS  the city grows over time — 1258 → 34541 cells
   PASS  era label reaches the modern day — 현대
-  PASS  people are summoned at street level — 4500 people drawn
-  PASS  street view still renders — 1,901,204 triangles
+  PASS  an empty crowd explains itself — 0 drawn from orbit
+  PASS  the reason names the fix — "5 km 안으로 확대하세요"
+  PASS  the button puts people on screen — 4,492 people
+  PASS  it moves the camera in among them — 900 m
+  PASS  it slows the clock enough to watch — scale 0
+  PASS  and then has nothing left to explain — ""
+  PASS  the crowd holds steady while it walks — 4492 still drawn
+  PASS  night empties the streets without emptying the city — 317 still out
+  PASS  people are summoned at street level — 4492 people drawn
+  PASS  street view still renders — 1,925,696 triangles
   PASS  people are legible from street height — 5200 people at 200 m
   PASS  replaying to 1500 lands in the Joseon era — 조선 전기
   PASS  the Joseon street is populated too — 4500 people in 조선 전기
   PASS  the crowd panel is live — 4,500명 → 4,500명
   PASS  pause stops the clock — 1501.2464 → 1501.2464
-  PASS  a year per second advances the calendar — +298 days in 4 s at 4.7 fps
-  PASS  the macro layers keep up with the clock — 1950 → 1955.0 in 6 s at 3.9 fps
-  PASS  the population responds while running — 1,419,259
+  PASS  a year per second advances the calendar — +371 days in 4 s at 11.5 fps
+  PASS  the macro layers keep up with the clock — 1950 → 1963.0 in 6 s at 7.2 fps
+  PASS  the population responds while running — 2,970,941
   PASS  시간 막대 is on screen
   PASS  현황판 is on screen
   PASS  날짜판 is on screen
@@ -39,7 +47,7 @@
   PASS  the chronicle has entries — 24 entries
   PASS  clicking a speed button selects it
   PASS  mini mode turns itself on in a small window — true
-  PASS  the view still renders at 460x320 — 1,535,792 triangles
+  PASS  the view still renders at 460x320 — 1,794,240 triangles
   PASS  the compact strip is on screen
   PASS  the full panels step aside in mini mode
   PASS  the compact strip fits the window — 460x41
@@ -47,5 +55,5 @@
   PASS  mini mode steps back down when the window grows
   PASS  no uncaught errors in the browser
 
-46 passed, 0 failed
+54 passed, 0 failed
 screenshots in /home/user/WSH/civsim/web/verification
