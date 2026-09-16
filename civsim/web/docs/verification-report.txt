@@ -28,9 +28,9 @@
   PASS  the Joseon street is populated too — 4500 people in 조선 전기
   PASS  the crowd panel is live — 4,500명 → 4,500명
   PASS  pause stops the clock — 1501.2464 → 1501.2464
-  PASS  a year per second advances the calendar — +384 days in 4 s at 4.8 fps
-  PASS  the macro layers keep up with the clock — 1950 → 1962.5 in 6 s at 3.2 fps
-  PASS  the population responds while running — 2,774,252
+  PASS  a year per second advances the calendar — +280 days in 4 s at 7.9 fps
+  PASS  the macro layers keep up with the clock — 1950 → 1960.0 in 6 s at 5.4 fps
+  PASS  the population responds while running — 2,376,783
   PASS  시간 막대 is on screen
   PASS  현황판 is on screen
   PASS  날짜판 is on screen
@@ -38,7 +38,14 @@
   PASS  all eight speed buttons exist — 8 buttons
   PASS  the chronicle has entries — 24 entries
   PASS  clicking a speed button selects it
+  PASS  mini mode turns itself on in a small window — true
+  PASS  the view still renders at 460x320 — 1,792,320 triangles
+  PASS  the compact strip is on screen
+  PASS  the full panels step aside in mini mode
+  PASS  the compact strip fits the window — 460x41
+  PASS  the compact strip keeps every speed button — 8 buttons
+  PASS  mini mode steps back down when the window grows
   PASS  no uncaught errors in the browser
 
-39 passed, 0 failed
+46 passed, 0 failed
 screenshots in /home/user/WSH/civsim/web/verification

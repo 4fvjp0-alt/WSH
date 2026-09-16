@@ -48,7 +48,11 @@ interface State {
   year: number;
   jd: number;
   scale: number;
-  fps: number; era: number; eraLabel: string; population: number; referencePopulation: number;
+  fps: number;
+  frames: number;
+  mini: boolean;
+  pip: boolean;
+  pipSupported: boolean; era: number; eraLabel: string; population: number; referencePopulation: number;
   builtCells: number; settlements: number; sunAltitude: number; sunAzimuth: number;
   daylight: number; localTime: string; buildingInstances: number; agentsDrawn: number;
   fastForwarding: boolean; cameraDistance: number; drawCalls: number; triangles: number;
@@ -79,6 +83,37 @@ async function waitForYear(page: Page, year: number, timeoutMs = 300000): Promis
     if (Date.now() - t0 > timeoutMs) throw new Error(`timed out waiting for year ${year} (at ${s.year.toFixed(0)})`);
     await settle(page, 250);
   }
+}
+
+/**
+ * Wait until the app reports a state that satisfies `ready`. A frame on this software renderer can
+ * take seconds, and everything derived from the scene - the sun, the layout - is only refreshed
+ * when one completes, so a fixed delay reads stale values.
+ */
+async function waitForState(
+  page: Page, ready: (s: State) => boolean, what: string, timeoutMs = 90000,
+): Promise<State> {
+  const t0 = Date.now();
+  for (;;) {
+    const s = await state(page);
+    if (ready(s)) return s;
+    if (Date.now() - t0 > timeoutMs) throw new Error(`timed out waiting for ${what}`);
+    await settle(page, 250);
+  }
+}
+
+/** Move the clock, then wait for the scene to have been drawn at that instant. */
+async function setJdAndWait(page: Page, jd: number): Promise<State> {
+  const before = await state(page);
+  await page.evaluate((j) => {
+    const w = window as unknown as { civsim: { setJd: (v: number) => void } };
+    w.civsim.setJd(j);
+  }, jd);
+  return waitForState(
+    page,
+    (s) => Math.abs(s.jd - jd) < 1e-6 && s.frames > before.frames + 1,
+    `the scene to be drawn at JD ${jd}`,
+  );
 }
 
 async function shot(page: Page, name: string): Promise<void> {
@@ -118,12 +153,7 @@ async function main(): Promise<void> {
   ];
   for (const [y, mo, d, hour, label] of solarChecks) {
     const jd = localMidnightUt(y, mo, d) + hour / 24;
-    await page.evaluate((j) => {
-      const w = window as unknown as { civsim: { sim: { clock: { jumpTo: (v: number) => void } } } };
-      w.civsim.sim.clock.jumpTo(j);
-    }, jd);
-    await settle(page, 2500);
-    const live = await state(page);
+    const live = await setJdAndWait(page, jd);
     const expected = sunHorizontal(jd, SEOUL_LAT, SEOUL_LON);
     const dAlt = Math.abs(live.sunAltitude - expected.altitudeDeg);
     const dAz = Math.abs(live.sunAzimuth - expected.azimuthDeg);
@@ -142,28 +172,14 @@ async function main(): Promise<void> {
   check('noon altitude swings with the seasons', summerAlt - winterAlt > 44, `${summerAlt.toFixed(1)}° vs ${winterAlt.toFixed(1)}°`);
 
   // --- night really is dark ---
-  await page.evaluate((j) => {
-    const w = window as unknown as { civsim: { sim: { clock: { jumpTo: (v: number) => void } } } };
-    w.civsim.sim.clock.jumpTo(j);
-  }, localMidnightUt(2026, 6, 21) + 1 / 24);
-  await settle(page, 2500);
-  const night = await state(page);
+  const night = await setJdAndWait(page, localMidnightUt(2026, 6, 21) + 1 / 24);
   check('night is dark', night.daylight < 0.02, `daylight ${night.daylight.toFixed(3)} at ${night.localTime}`);
   await shot(page, '02-night');
 
-  await page.evaluate((j) => {
-    const w = window as unknown as { civsim: { sim: { clock: { jumpTo: (v: number) => void } } } };
-    w.civsim.sim.clock.jumpTo(j);
-  }, localMidnightUt(2026, 6, 21) + 12 / 24);
-  await settle(page, 2500);
-  const noon = await state(page);
+  const noon = await setJdAndWait(page, localMidnightUt(2026, 6, 21) + 12 / 24);
   check('noon is bright', noon.daylight > 0.95, `daylight ${noon.daylight.toFixed(3)}`);
 
   // Put the clock back where the run needs it.
-  await page.evaluate(() => {
-    const w = window as unknown as { civsim: { sim: { clock: { jumpTo: (v: number) => void } } } };
-    w.civsim.sim.clock.jumpTo(1757583.75);
-  }, null);
   await page.reload({ waitUntil: 'load' });
   await page.waitForFunction(() => (window as unknown as { civsim?: unknown }).civsim !== undefined, null, { timeout: 90000 });
   await settle(page, 1200);
@@ -326,6 +342,35 @@ async function main(): Promise<void> {
   const afterClick = await page.evaluate(() => document.querySelectorAll('#speeds button.active').length);
   check('clicking a speed button selects it', afterClick === 1);
   await page.evaluate(() => (window as unknown as { civsim: { setScale: (s: number) => void } }).civsim.setScale(0));
+
+  // --- watching it from a corner of the screen ---
+  // Pause first: at a decade per second a single frame can outlast the wait below.
+  await page.evaluate(() => (window as unknown as { civsim: { setScale: (s: number) => void } }).civsim.setScale(0));
+  await settle(page, 1000);
+  // Mini mode has to survive a window small enough to park beside other work.
+  await page.setViewportSize({ width: 460, height: 320 });
+  const smallState = await waitForState(page, (s) => s.mini, 'mini mode to turn on');
+  check('mini mode turns itself on in a small window', smallState.mini, `${smallState.mini}`);
+  check('the view still renders at 460x320', smallState.triangles > 100000, `${smallState.triangles.toLocaleString()} triangles`);
+  const stripVisible = await page.isVisible('.mini-root');
+  check('the compact strip is on screen', stripVisible);
+  const bigPanelsHidden = await page.evaluate(() => {
+    const ids = ['topbar', 'stats', 'tools', 'timebar'];
+    return ids.every((id) => {
+      const el = document.getElementById(id);
+      return !el || getComputedStyle(el).display === 'none';
+    });
+  });
+  check('the full panels step aside in mini mode', bigPanelsHidden);
+  const strip = await page.locator('.mini-root').boundingBox();
+  check('the compact strip fits the window', !!strip && strip.width <= 460 && strip.height < 70,
+    strip ? `${Math.round(strip.width)}x${Math.round(strip.height)}` : 'not laid out');
+  const miniSpeeds = await page.locator('.mini-root button').count();
+  check('the compact strip keeps every speed button', miniSpeeds === 8, `${miniSpeeds} buttons`);
+  await shot(page, '12-mini-mode');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const backState = await waitForState(page, (s) => !s.mini, 'mini mode to turn off');
+  check('mini mode steps back down when the window grows', !backState.mini);
 
   check('no uncaught errors in the browser', errors.length === 0, errors.slice(0, 3).join(' | '));
 

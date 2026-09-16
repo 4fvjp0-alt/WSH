@@ -13,6 +13,10 @@
 
 * { box-sizing: border-box; }
 
+/* An id selector outranks the user agent's rule for the hidden attribute, so #timebar and
+   #handoff stayed laid out while marked hidden and #handoff swallowed every click. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
@@ -180,3 +184,20 @@ kbd {
   #timebar { width: calc(100vw - 16px); }
   .keyhint { display: none; }
 }
+
+/* Mini mode: one strip at the bottom and nothing else, for a window parked in a corner. */
+body.mini #topbar,
+body.mini #stats,
+body.mini #tools,
+body.mini #inspect,
+body.mini #timebar { display: none !important; }
+
+/* Shown in the main window while the view lives in the always-on-top window. */
+#handoff {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  background: #0d1117; color: var(--muted);
+  text-align: center; padding: 24px; z-index: 30;
+}
+#handoff h2 { color: var(--text); font-size: 15px; margin: 0 0 6px; letter-spacing: 0; }
+#handoff p { margin: 0; font-size: 12px; line-height: 1.6; }

@@ -11,11 +11,13 @@
     .\Run-Windows.ps1            # 개발 서버로 실행
     .\Run-Windows.ps1 -Build     # 정적 빌드 후 미리보기 서버로 실행
     .\Run-Windows.ps1 -Test      # 단위 테스트만 실행
+    .\Run-Windows.ps1 -Mini      # 화면 구석에 작은 창으로 띄우기
 #>
 [CmdletBinding()]
 param(
     [switch]$Build,
     [switch]$Test,
+    [switch]$Mini,
     [switch]$NoBrowser
 )
 
@@ -30,10 +32,46 @@ try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
 # 'Stop'. npm writes ordinary warnings to stderr, so exit codes are checked explicitly instead.
 if ($PSVersionTable.PSVersion.Major -ge 7) { $PSNativeCommandUseErrorActionPreference = $false }
 
+# Only needed to place the small window near the right edge of the screen.
+try { Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop } catch { }
+
 function Test-Command($name) { return $null -ne (Get-Command $name -ErrorAction SilentlyContinue) }
 
 # In PowerShell, a bare `npm` resolves to npm.ps1, which a restricted execution policy blocks.
 # npm.cmd is a batch file and runs whatever the policy says, so prefer it.
+# Chrome and Edge can open a page as a bare window with no tabs or address bar, which is what you
+# want parked in a corner. Falls back to the default browser when neither is installed.
+function Find-Browser {
+    $candidates = @(
+        "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
+        "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe",
+        "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe",
+        "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe",
+        "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe"
+    )
+    foreach ($path in $candidates) { if ($path -and (Test-Path $path)) { return $path } }
+    return $null
+}
+
+function Open-Viewer([string]$url, [bool]$small) {
+    if (-not $small) { Start-Process $url; return }
+    $browser = Find-Browser
+    if (-not $browser) {
+        Write-Warning '크롬이나 엣지를 찾지 못했습니다. 기본 브라우저로 엽니다.'
+        Start-Process $url
+        return
+    }
+    $w = 560
+    $h = 400
+    # Park it near the right edge when the screen width is known, otherwise somewhere sensible.
+    $x = 900
+    try {
+        $screenWidth = [int]([System.Windows.Forms.SystemInformation]::VirtualScreen.Width)
+        if ($screenWidth -gt 0) { $x = [Math]::Max(0, $screenWidth - $w - 24) }
+    } catch { }
+    Start-Process $browser -ArgumentList "--app=$url", "--window-size=$w,$h", "--window-position=$x,80"
+}
+
 function Resolve-Npm {
     foreach ($candidate in 'npm.cmd', 'npm.exe', 'npm') {
         $found = Get-Command $candidate -ErrorAction SilentlyContinue
@@ -103,12 +141,16 @@ if ($Build) {
     if ($LASTEXITCODE -ne 0) { throw "빌드가 실패했습니다 (종료 코드 $LASTEXITCODE)." }
     $url = 'http://127.0.0.1:4173/'
     Write-Host "`n미리보기: $url  (Ctrl+C로 종료)" -ForegroundColor Green
-    if (-not $NoBrowser) { Start-Process $url }
+    if (-not $NoBrowser) { Open-Viewer $url $Mini.IsPresent }
     & $npm run preview
 } else {
     $url = 'http://127.0.0.1:5173/'
     Write-Host "`n개발 서버: $url  (Ctrl+C로 종료)" -ForegroundColor Green
     Write-Host '브라우저가 자동으로 열리지 않으면 위 주소를 직접 입력하세요.' -ForegroundColor DarkGray
+    if ($Mini) {
+        Write-Host '앱 창으로 엽니다. 창 안의 "항상 위에" 단추를 누르면 다른 창 위에 고정됩니다.' -ForegroundColor DarkGray
+    }
+    $browserPath = if ($Mini) { Find-Browser } else { $null }
     if (-not $NoBrowser) {
         # The dev server runs in the foreground so Ctrl+C stops it; the browser is opened from a
         # background job once the port is up.
@@ -119,7 +161,15 @@ if ($Build) {
                     $c = New-Object System.Net.Sockets.TcpClient
                     $c.Connect('127.0.0.1', 5173)
                     $c.Close()
-                    Start-Process 'http://127.0.0.1:5173/'
+                    $u = 'http://127.0.0.1:5173/'
+                    if ($using:Mini) {
+                        $b = $using:browserPath
+                        if ($b) {
+                            Start-Process $b -ArgumentList "--app=$u", '--window-size=560,400', '--window-position=900,80'
+                            return
+                        }
+                    }
+                    Start-Process $u
                     return
                 } catch { }
             }

@@ -24,6 +24,7 @@ import { CityView } from './render/city.ts';
 import { CrowdView } from './render/crowd.ts';
 import { GodCamera } from './render/camera.ts';
 import { Hud } from './ui/hud.ts';
+import { MiniHud } from './ui/miniHud.ts';
 
 const canvas = document.getElementById('view') as HTMLCanvasElement;
 
@@ -54,10 +55,17 @@ async function boot(): Promise<void> {
   const sim = new Simulation(world, { mode: 'reproduce', seed: 20260915 });
   const agents = new AgentSystem(new Rng(4242));
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight, false);
-  renderer.setClearColor(0x0d1117);
+  // The view can be drawn into more than one canvas over a session: the page's own, and the one
+  // inside the always-on-top window. A renderer belongs to a canvas, so it is made per canvas.
+  function createRenderer(target: HTMLCanvasElement): THREE.WebGLRenderer {
+    const r = new THREE.WebGLRenderer({ canvas: target, antialias: true, powerPreference: 'high-performance' });
+    r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    r.setClearColor(0x0d1117);
+    return r;
+  }
+  const renderer = createRenderer(canvas);
+  let activeRenderer = renderer;
+  let activeCanvas: HTMLCanvasElement = canvas;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x9fb3c8, 12000, 90000);
@@ -97,10 +105,135 @@ async function boot(): Promise<void> {
   const pointer = new THREE.Vector2();
   let showPeople = true;
   let fpsEstimate = 0;
+  let frameCount = 0;
 
   function setScale(s: TimeScale): void {
     sim.clock.scale = s;
     hud.setScale(s);
+    miniHud.setScale(s);
+    pipHud?.setScale(s);
+  }
+
+  // ----- small-window and always-on-top modes -----
+  const miniHud = new MiniHud(document, (s) => setScale(s));
+  miniHud.root.hidden = true;
+  document.body.appendChild(miniHud.root);
+
+  let miniOn = false;
+  /** Mini mode follows the window size until the user picks a side themselves. */
+  let autoMini = true;
+  let pipWindow: Window | null = null;
+  let pipRenderer: THREE.WebGLRenderer | null = null;
+  let pipHud: MiniHud | null = null;
+
+  function setMini(on: boolean): void {
+    if (miniOn === on) return;
+    miniOn = on;
+    document.body.classList.toggle('mini', on);
+    miniHud.root.hidden = !on || pipWindow !== null;
+    const btn = document.getElementById('btn-mini');
+    if (btn) btn.classList.toggle('active', on);
+  }
+
+  interface DocumentPictureInPicture {
+    requestWindow(options?: { width?: number; height?: number }): Promise<Window>;
+  }
+
+  function pipApi(): DocumentPictureInPicture | null {
+    const api = (window as unknown as { documentPictureInPicture?: DocumentPictureInPicture })
+      .documentPictureInPicture;
+    return api && typeof api.requestWindow === 'function' ? api : null;
+  }
+
+  function pipSupported(): boolean {
+    return pipApi() !== null;
+  }
+
+  /**
+   * Move the view into a Document Picture-in-Picture window, which the browser keeps above other
+   * windows. A renderer belongs to its canvas, so a fresh one is made for the new canvas and the
+   * scene is simply drawn through it instead; nothing about the simulation changes.
+   */
+  async function enterPip(): Promise<void> {
+    const api = pipApi();
+    if (!api || pipWindow) return;
+    const pip = await api.requestWindow({ width: 560, height: 360 });
+    pipWindow = pip;
+
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        const css = Array.from(sheet.cssRules).map((rule) => rule.cssText).join('\n');
+        const style = pip.document.createElement('style');
+        style.textContent = css;
+        pip.document.head.appendChild(style);
+      } catch {
+        // A stylesheet from another origin cannot be read; there are none here, but be safe.
+      }
+    }
+    pip.document.documentElement.lang = 'ko';
+    pip.document.title = '서울 문명 시뮬레이터';
+    pip.document.body.style.margin = '0';
+    pip.document.body.style.background = '#0d1117';
+    pip.document.body.style.overflow = 'hidden';
+
+    const pipCanvas = pip.document.createElement('canvas');
+    pipCanvas.id = 'view';
+    pip.document.body.appendChild(pipCanvas);
+
+    pipHud = new MiniHud(pip.document, (s) => setScale(s));
+    pipHud.setScale(sim.clock.scale);
+    pip.document.body.appendChild(pipHud.root);
+
+    pipRenderer = createRenderer(pipCanvas);
+    activeRenderer = pipRenderer;
+    activeCanvas = pipCanvas;
+    lastWidth = 0;
+    lastHeight = 0;
+    cam.attach(pipCanvas);
+
+    miniHud.root.hidden = true;
+    const handoff = document.getElementById('handoff');
+    if (handoff) handoff.hidden = false;
+    pip.addEventListener('pagehide', () => exitPip());
+  }
+
+  function exitPip(): void {
+    if (!pipWindow) return;
+    pipHud?.dispose();
+    pipHud = null;
+    pipRenderer?.dispose();
+    pipRenderer = null;
+    pipWindow = null;
+    activeRenderer = renderer;
+    activeCanvas = canvas;
+    lastWidth = 0;
+    lastHeight = 0;
+    miniHud.root.hidden = !miniOn;
+    const handoff = document.getElementById('handoff');
+    if (handoff) handoff.hidden = true;
+  }
+
+  document.getElementById('btn-mini')?.addEventListener('click', () => {
+    autoMini = false;
+    setMini(!miniOn);
+  });
+  const pipButton = document.getElementById('btn-pip');
+  const windowHint = document.getElementById('window-hint');
+  if (pipSupported()) {
+    if (pipButton) {
+      pipButton.hidden = false;
+      pipButton.addEventListener('click', () => {
+        if (pipWindow) {
+          pipWindow.close();
+          exitPip();
+        } else {
+          void enterPip().catch((e: unknown) => console.warn('always-on-top window refused', e));
+        }
+      });
+    }
+    if (windowHint) windowHint.textContent = '"항상 위에"는 다른 창 위에 뜨는 작은 창으로 옮깁니다.';
+  } else if (windowHint) {
+    windowHint.textContent = '이 브라우저는 항상 위에 띄우기를 지원하지 않습니다. 크롬이나 엣지에서 열거나, PowerToys의 Win+Ctrl+T를 쓰세요.';
   }
 
   function setView(v: string, on: boolean): void {
@@ -138,15 +271,44 @@ async function boot(): Promise<void> {
       setScale(ALL_SCALES[Math.min(ALL_SCALES.length - 1, sim.clock.scale + 1)]!);
     } else if (key === '[') {
       setScale(ALL_SCALES[Math.max(0, sim.clock.scale - 1)]!);
+    } else if (key === 'm') {
+      autoMini = false;
+      setMini(!miniOn);
     } else if (key === 'f') {
       const capital = sim.land.settlements.find((s) => s.isCapital) ?? sim.land.settlements[0];
       if (capital) cam.flyTo(capital.x, capital.z, 3000);
     }
   });
 
+  // Size is reconciled from whichever canvas is live, which covers both a window resize and the
+  // always-on-top window being dragged bigger.
+  let lastWidth = 0;
+  let lastHeight = 0;
+
+  /** Whether the window is small enough to be worth stripping the interface down. */
+  function applyAutoMini(w: number, h: number): void {
+    if (autoMini && !pipWindow) setMini(w < 620 || h < 460);
+  }
+
+  function syncSize(): void {
+    const w = Math.max(1, activeCanvas.clientWidth);
+    const h = Math.max(1, activeCanvas.clientHeight);
+    if (w === lastWidth && h === lastHeight) return;
+    lastWidth = w;
+    lastHeight = h;
+    activeRenderer.setSize(w, h, false);
+    cam.setAspect(w / h);
+    applyAutoMini(w, h);
+  }
+
+  // The interface must not wait on a render frame: at the fastest speeds one can take seconds,
+  // and a window someone just dragged smaller should tidy itself up at once. The renderer catches
+  // up on the next frame, which is soon enough for a few stretched pixels.
   window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
-    cam.setAspect(window.innerWidth / window.innerHeight);
+    applyAutoMini(window.innerWidth, window.innerHeight);
+    lastWidth = 0;
+    lastHeight = 0;
+    syncSize();
   });
 
   canvas.addEventListener('click', (e) => {
@@ -242,6 +404,7 @@ async function boot(): Promise<void> {
     const raw = (now - lastFrame) / 1000;
     lastFrame = now;
     fpsEstimate = raw > 0 ? fpsEstimate * 0.9 + (1 / raw) * 0.1 : fpsEstimate;
+    frameCount++;
     // Cap the step so one stalled frame cannot skip a decade, but allow enough that the fastest
     // speeds still make progress on a slow machine.
     const dt = Math.min(0.25, raw);
@@ -274,7 +437,7 @@ async function boot(): Promise<void> {
     f.color.copy(sky.state.horizonColor);
     f.near = 3000 + cam.distance * 0.35;
     f.far = 26000 + cam.distance * 2.4;
-    renderer.setClearColor(f.color);
+    activeRenderer.setClearColor(f.color);
     water.setTime(sky.state.sun.altitudeDeg);
     terrain.setSurroundColor(f.color, day);
 
@@ -325,7 +488,8 @@ async function boot(): Promise<void> {
       }
     }
 
-    renderer.render(scene, cam.camera);
+    syncSize();
+    activeRenderer.render(scene, cam.camera);
     updateHud();
     requestAnimationFrame(frame);
   }
@@ -350,6 +514,16 @@ async function boot(): Promise<void> {
     );
     hud.updateStats(sim.stats, crowd.drawnCount, sim.clock.progress(DEFAULT_START_JD));
     hud.updateLog(sim.log, onLogClick);
+
+    if (miniOn || pipHud) {
+      const useLunar = jd < 2299160.5;
+      const dateText = useLunar
+        ? `${local.year}년 ${local.month}월`
+        : `${local.year}.${String(local.month).padStart(2, '0')}.${String(local.day).padStart(2, '0')}`;
+      const clockText = formatLocalTime(jd);
+      if (miniOn) miniHud.update(sim.stats, clockText, dateText);
+      pipHud?.update(sim.stats, clockText, dateText);
+    }
   }
 
   // Expose a small surface for the automated browser checks.
@@ -360,6 +534,8 @@ async function boot(): Promise<void> {
     flyTo: (x: number, z: number, d: number) => void;
     setCamera: (o: { pitch?: number; yaw?: number; distance?: number }) => void;
     setJd: (jd: number) => void;
+    setMini: (on: boolean) => void;
+    pipSupported: () => boolean;
     state: () => Record<string, unknown>;
   }
   (window as unknown as { civsim: CivSimTestApi }).civsim = {
@@ -373,11 +549,14 @@ async function boot(): Promise<void> {
       if (o.distance !== undefined) cam.distance = o.distance;
     },
     setJd: (jd: number) => sim.clock.jumpTo(jd),
+    setMini: (on: boolean) => { autoMini = false; setMini(on); },
+    pipSupported: () => pipSupported(),
     state: () => ({
       year: sim.stats.year,
       jd: sim.clock.jdUt,
       scale: sim.clock.scale,
       fps: fpsEstimate,
+      frames: frameCount,
       era: sim.stats.era,
       eraLabel: sim.stats.eraLabel,
       population: sim.stats.population,
@@ -392,8 +571,11 @@ async function boot(): Promise<void> {
       agentsDrawn: crowd.drawnCount,
       fastForwarding: fastForward !== null,
       cameraDistance: cam.distance,
-      drawCalls: renderer.info.render.calls,
-      triangles: renderer.info.render.triangles,
+      drawCalls: activeRenderer.info.render.calls,
+      triangles: activeRenderer.info.render.triangles,
+      mini: miniOn,
+      pip: pipWindow !== null,
+      pipSupported: pipSupported(),
     }),
   };
 

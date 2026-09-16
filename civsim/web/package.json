@@ -10,7 +10,8 @@
     "preview": "vite preview --port 4173",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "node --experimental-strip-types scripts/verify-browser.ts",
+    "verify": "vite-node scripts/verify-browser.ts",
+    "verify:pip": "vite-node scripts/verify-pip.ts",
     "bake": "node --experimental-strip-types scripts/bake-world.ts"
   },
   "dependencies": {

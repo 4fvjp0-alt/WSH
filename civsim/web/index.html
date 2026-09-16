@@ -72,9 +72,22 @@
         <button data-mode="reproduce" class="toggle active">역사 재현</button>
         <button data-mode="emergent" class="toggle">창발</button>
       </div>
+      <h2>창</h2>
+      <div class="tool-row">
+        <button id="btn-mini" class="tool">미니</button>
+        <button id="btn-pip" class="tool" hidden>항상 위에</button>
+      </div>
+      <p id="window-hint" class="hint"></p>
     </section>
 
     <div id="inspect" class="panel" hidden></div>
+
+    <div id="handoff" hidden>
+      <div>
+        <h2>다른 창에서 보고 있습니다</h2>
+        <p>항상 위에 떠 있는 작은 창으로 옮겼습니다.<br />그 창을 닫으면 여기로 돌아옵니다.</p>
+      </div>
+    </div>
 
     <footer id="timebar" class="panel" hidden>
       <div class="scrub-row">
@@ -84,7 +97,7 @@
       </div>
       <div id="speeds" class="speeds"></div>
       <div class="keyhint">
-        스페이스 일시정지 · <kbd>[</kbd> <kbd>]</kbd> 배속 · <kbd>WASD</kbd> 이동 · 휠 확대 · 우클릭 회전 · <kbd>F</kbd> 도읍으로
+        스페이스 일시정지 · <kbd>[</kbd> <kbd>]</kbd> 배속 · <kbd>WASD</kbd> 이동 · 휠 확대 · 우클릭 회전 · <kbd>F</kbd> 도읍으로 · <kbd>M</kbd> 미니
       </div>
     </footer>
 

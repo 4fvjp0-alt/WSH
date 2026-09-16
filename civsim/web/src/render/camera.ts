@@ -17,6 +17,7 @@ export class GodCamera {
   private lastY = 0;
   private readonly keys = new Set<string>();
   private velocity = new THREE.Vector3();
+  private keyboardAttached = false;
 
   constructor(world: World, aspect: number) {
     this.world = world;
@@ -24,6 +25,11 @@ export class GodCamera {
     this.apply();
   }
 
+  /**
+   * Bind pointer controls to a canvas. May be called again for a different canvas, such as the one
+   * in the always-on-top window; the keyboard is only ever bound once, or WASD would move twice
+   * as fast after coming back.
+   */
   attach(dom: HTMLElement): void {
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
     dom.addEventListener('pointerdown', (e) => {
@@ -63,11 +69,16 @@ export class GodCamera {
       },
       { passive: false },
     );
-    window.addEventListener('keydown', (e) => {
-      if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
-      this.keys.add(e.key.toLowerCase());
-    });
-    window.addEventListener('keyup', (e) => this.keys.delete(e.key.toLowerCase()));
+    if (!this.keyboardAttached) {
+      this.keyboardAttached = true;
+      window.addEventListener('keydown', (e) => {
+        if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
+        this.keys.add(e.key.toLowerCase());
+      });
+      window.addEventListener('keyup', (e) => this.keys.delete(e.key.toLowerCase()));
+      // A window that loses focus must not keep a key held down.
+      window.addEventListener('blur', () => this.keys.clear());
+    }
   }
 
   /** Move the view to a place, keeping the current angle. */
