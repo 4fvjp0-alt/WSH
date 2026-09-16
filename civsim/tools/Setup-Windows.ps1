@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     CivSim 윈도우 개발 환경 부트스트랩.
 
@@ -27,6 +27,12 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot   # civsim\
 Set-Location $root
 
+# This file is UTF-8 with a BOM so Windows PowerShell 5.1 reads its Korean text correctly.
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
+# PowerShell 7 turns a native command's stderr into a terminating error under ErrorActionPreference
+# 'Stop'; pip and dotnet write ordinary notices there, so exit codes are checked explicitly.
+if ($PSVersionTable.PSVersion.Major -ge 7) { $PSNativeCommandUseErrorActionPreference = $false }
+
 function Test-Command($name) { return $null -ne (Get-Command $name -ErrorAction SilentlyContinue) }
 
 function Ensure-Tool($cmd, $wingetId, $label) {
@@ -47,8 +53,9 @@ function Ensure-Tool($cmd, $wingetId, $label) {
 Write-Host "== 1. 도구 확인 =="
 Ensure-Tool 'dotnet' 'Microsoft.DotNet.SDK.8' '.NET 8 SDK'
 Ensure-Tool 'python'  'Python.Python.3.12'   'Python 3'
-$dotnetVer = (dotnet --version)
-if ([version]($dotnetVer.Split('-')[0]) -lt [version]'8.0.0') { throw ".NET SDK 8.0 이상이 필요합니다 (현재 $dotnetVer)" }
+$dotnetVer = (dotnet --version).Trim()
+$dotnetBase = $dotnetVer.Split('-')[0]
+if ([version]$dotnetBase -lt [version]'8.0.0') { throw ".NET SDK 8.0 이상이 필요합니다 (현재 $dotnetVer)" }
 Write-Host "[ok] dotnet $dotnetVer"
 
 Write-Host "`n== 2. Python 패키지 =="

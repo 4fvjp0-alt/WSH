@@ -16,15 +16,26 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 Node.js 20 이상이 필요하다. 없으면 스크립트가 winget 설치를 제안한다.
 브라우저가 자동으로 `http://127.0.0.1:5173/` 를 연다.
 
-다른 방법:
+스크립트를 쓰지 않고 직접 돌려도 된다. 결과는 같다.
 
-```bash
+```powershell
 npm install
-npm run dev      # 개발 서버
+npm run dev      # 개발 서버 → http://127.0.0.1:5173/
 npm run build    # 타입 검사 + 정적 빌드 → dist/
 npm test         # 단위 테스트 68개
 npm run verify   # 실제 브라우저에서 39개 항목 검증 (빌드 먼저)
 ```
+
+## 잘 안 될 때
+
+| 증상 | 원인과 해결 |
+|---|---|
+| `.\Run-Windows.ps1` 실행 거부 | 같은 창에서 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`를 먼저 실행한다. 창을 새로 열면 다시 해야 한다. |
+| 콘솔의 한글이 깨짐 | 스크립트는 BOM이 붙은 UTF-8이라 정상이어야 한다. 그래도 깨지면 Windows Terminal에서 실행하거나 `npm run dev`를 직접 쓴다. |
+| `npm`을 찾을 수 없음 | Node.js 설치 후 PowerShell 창을 새로 열어야 PATH가 잡힌다. |
+| 화면이 검게만 나옴 | 브라우저의 하드웨어 가속이 꺼져 있다. 크롬 설정에서 켜고 새로고침한다. |
+| 5173 포트가 사용 중 | Vite가 다른 포트로 띄우고 터미널에 주소를 출력한다. 그 주소를 쓴다. |
+| 브라우저가 자동으로 안 열림 | 터미널에 찍힌 주소를 직접 입력한다. |
 
 ## 조작
 
