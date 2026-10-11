@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>외부 강제대류 필기 정리</title>
+<style>
+@font-face{font-family:"Pen";src:url("fonts/Gaegu-Regular.ttf")}
+@font-face{font-family:"Pen";src:url("fonts/Gaegu-Bold.ttf");font-weight:700}
+@font-face{font-family:"Memo";src:url("fonts/NanumPenScript-Regular.ttf")}
+@page{size:A4;margin:0}
+:root{
+  --ink:#1d2b5c; --red:#d9363e; --blue:#1971c2; --green:#2b8a3e; --orange:#e8590c; --purple:#7048e8;
+  --hl:rgba(255,224,0,.55); --hlp:rgba(255,150,190,.45); --hlb:rgba(120,200,255,.45); --hlg:rgba(140,230,140,.5);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#ddd}
+body{font-family:"Pen","DejaVu Serif",serif;color:var(--ink);font-size:20px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;margin:0 auto 10px;position:relative;overflow:hidden;
+  padding:20mm 13mm 12mm 25mm;
+  background-color:#fffefa;
+  background-image:
+    linear-gradient(90deg,transparent 19mm,rgba(230,80,90,.55) 19mm,rgba(230,80,90,.55) calc(19mm + 1.2px),transparent calc(19mm + 1.2px)),
+    linear-gradient(rgba(120,160,210,.16) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,160,210,.16) 1px,transparent 1px);
+  background-size:100% 100%,5mm 5mm,5mm 5mm;
+  page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto}
+.hd{position:absolute;top:8mm;right:13mm;left:25mm;display:flex;justify-content:space-between;font-size:16px;color:#8a93ad;border-bottom:1.5px solid #9aa5c4;padding-bottom:2px}
+.ft{position:absolute;bottom:5mm;right:13mm;font-family:"Memo";font-size:18px;color:#9aa5c4}
+
+h1{font-size:40px;margin:0 0 4px;font-weight:700;letter-spacing:1px}
+h2{font-size:28px;margin:14px 0 6px;font-weight:700;display:inline-block}
+h3{font-size:23px;margin:10px 0 4px;font-weight:700}
+p{margin:4px 0}
+.hl{background:linear-gradient(transparent 45%,var(--hl) 45%,var(--hl) 92%,transparent 92%);padding:0 3px}
+.hlp{background:linear-gradient(transparent 45%,var(--hlp) 45%,var(--hlp) 92%,transparent 92%);padding:0 3px}
+.hlb{background:linear-gradient(transparent 45%,var(--hlb) 45%,var(--hlb) 92%,transparent 92%);padding:0 3px}
+.hlg{background:linear-gradient(transparent 45%,var(--hlg) 45%,var(--hlg) 92%,transparent 92%);padding:0 3px}
+.ul{text-decoration:underline wavy var(--red) 1.5px;text-underline-offset:5px}
+.r{color:var(--red)} .b{color:var(--blue)} .g{color:var(--green)} .o{color:var(--orange)} .pu{color:var(--purple)}
+.memo{font-family:"Memo";font-size:25px;line-height:1.25}
+.small{font-size:17px}
+.num{display:inline-flex;width:28px;height:28px;border:2px solid currentColor;border-radius:50%;align-items:center;justify-content:center;font-size:18px;margin-right:4px;vertical-align:middle}
+
+/* math */
+.eq{display:block;margin:6px 0 6px 18px;font-size:22px;line-height:1.6}
+.eq.c{text-align:center;margin-left:0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px}
+.fr>span{padding:0 4px;line-height:1.2}
+.fr>span:last-child{border-top:1.8px solid currentColor;padding-top:4px}
+.sq{display:inline-flex;align-items:stretch;vertical-align:middle}
+.sq::before{content:"";width:.62em;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 30' preserveAspectRatio='none'%3E%3Cpath d='M0.5 18 L3 16 L6 29 L9.8 0.8' fill='none' stroke='%231d2b5c' stroke-width='1.3' vector-effect='non-scaling-stroke' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;background-size:100% 100%}
+.bar{text-decoration:overline;text-decoration-thickness:1.5px}
+.box .sq::before{filter:none}
+.sq>span{border-top:1.6px solid currentColor;padding:1px 3px 0;line-height:1.35}
+sub,sup{font-size:.68em;line-height:0}
+.gk{font-family:"DejaVu Serif",serif;font-style:italic;font-size:.92em}
+.box{border:2.2px solid var(--red);border-radius:10px 14px 9px 13px;padding:4px 14px;display:inline-block;color:var(--red)}
+.boxb{border:2.2px solid var(--blue);border-radius:12px 9px 14px 10px;padding:4px 14px;display:inline-block}
+
+/* notes */
+.sticky{background:#fff3a8;box-shadow:2px 3px 6px rgba(0,0,0,.18);padding:8px 14px 10px;margin:10px 4px;transform:rotate(-.6deg);font-family:"Memo";font-size:24px;line-height:1.3;color:#3b3b3b;border-radius:2px}
+.sticky.pink{background:#ffd9e6;transform:rotate(.5deg)}
+.sticky.blue{background:#d6ecff;transform:rotate(-.3deg)}
+.sticky.green{background:#dcf5d6;transform:rotate(.4deg)}
+.sticky b{font-family:"Pen";font-weight:700;font-size:21px}
+.side{border-left:4px solid var(--blue);padding:2px 10px;margin:8px 0;font-family:"Memo";font-size:24px;line-height:1.3;color:var(--blue)}
+.side.r{border-color:var(--red);color:var(--red)}
+.side.g{border-color:var(--green);color:var(--green)}
+.fix{border:2px dashed var(--orange);border-radius:8px;padding:5px 12px;margin:8px 0;font-family:"Memo";font-size:23px;line-height:1.3;color:var(--orange)}
+.fix b{font-family:"Pen";font-size:19px}
+.row{display:flex;gap:14px;align-items:flex-start}
+.row>*{flex:1}
+.tag{display:inline-block;font-family:"Memo";font-size:22px;color:#fff;background:var(--red);border-radius:4px;padding:0 8px;margin-right:6px;transform:rotate(-2deg)}
+.tag.b{background:var(--blue)} .tag.g{background:var(--green)} .tag.o{background:var(--orange)}
+table.t{border-collapse:collapse;margin:6px 0;font-size:19px;width:100%}
+table.t td,table.t th{border:1.6px solid #7d89ad;padding:3px 8px;vertical-align:middle;text-align:left}
+table.t th{background:rgba(255,224,0,.35);font-weight:700}
+svg text{font-family:"Pen","DejaVu Serif"}
+svg .m{font-family:"Memo"}
+ul.p{margin:4px 0;padding-left:26px}
+ul.p li{margin:2px 0}
+.arrow{font-family:"DejaVu Sans";font-size:.9em}
+hr.d{border:none;border-top:2px dashed #b3bcd6;margin:10px 0}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>열전달 · 정리노트</span><span>No. 1</span></div>
+<h1><span class="hl">External Forced Flow</span> <span style="font-size:26px">(외부 강제대류)</span></h1>
+
+<div class="sticky blue">
+<b>🙋 이 단원 한 줄 요약</b><br>
+평판 위로 유체가 흐르면 → 표면 근처에 <u>경계층(δ)</u>이 생긴다 → δ를 알면 <u>벽의 마찰(τ, C<sub>f</sub>)</u>과 <u>열전달계수(h, Nu)</u>를 구할 수 있다!<br>
+→ 그래서 결국 시험에서 쓰는 건 맨 뒤의 <b>Nu 상관식</b>. 앞부분은 "그 식이 왜 그렇게 생겼는지"의 이야기.
+</div>
+
+<div class="memo pu" style="margin:6px 0 2px">📍 수업 흐름 지도</div>
+<div class="small" style="line-height:1.6">
+<span class="num">1</span> 현상: 층류 → 천이 → 난류 (p.1–2) &nbsp;
+<span class="num">2</span> 대충 계산: order of magnitude (p.3–5) <br>
+<span class="num">3</span> 정확한 해: Blasius 상사해 (p.6–9) &nbsp;
+<span class="num">4</span> 공식 정리: 상관식 (p.10–11) &nbsp;
+<span class="num">5</span> 원통·구 (p.11)
+</div>
+
+<h2>1. 평판 위 흐름 — h(x)와 δ(x)</h2>
+<svg viewBox="0 0 640 250" width="100%" style="display:block;margin-top:2px">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 210 L610 212" stroke="#1d2b5c" stroke-width="2.5"/>
+    <path d="M60 210 L58 30" stroke="#1d2b5c" stroke-width="2.5"/>
+    <!-- h(x) -->
+    <path d="M66 40 C 90 120, 140 175, 220 182 C 260 150, 300 70, 340 48 C 400 90, 480 125, 600 140" stroke="#d9363e" stroke-width="3"/>
+    <!-- delta(x) -->
+    <path d="M60 210 C 120 195, 180 186, 220 182 C 270 172, 320 160, 340 150 C 420 130, 500 118, 600 108" stroke="#1971c2" stroke-width="3"/>
+    <path d="M220 205 L220 218 M340 205 L340 218" stroke="#1d2b5c" stroke-width="2"/>
+    <path d="M220 60 L220 205 M340 40 L340 205" stroke="#9aa5c4" stroke-width="1.5" stroke-dasharray="5 6"/>
+    <!-- free stream arrows -->
+    <path d="M8 70 L40 70 M32 64 L40 70 L32 76 M8 110 L40 110 M32 104 L40 110 L32 116 M8 150 L40 150 M32 144 L40 150 L32 156" stroke="#1d2b5c" stroke-width="2"/>
+  </g>
+  <text x="6" y="58" font-size="20" fill="#1d2b5c">U∞, T∞</text>
+  <text x="36" y="34" font-size="22" fill="#d9363e">h</text>
+  <text x="560" y="164" font-size="22" fill="#d9363e">h(x)</text>
+  <text x="560" y="100" font-size="22" fill="#1971c2">δ(x)</text>
+  <text x="615" y="218" font-size="20" fill="#1d2b5c">x</text>
+  <text x="30" y="232" font-size="20" fill="#1d2b5c">T<tspan font-size="14" dy="4">s</tspan></text>
+  <text x="100" y="240" font-size="20" fill="#2b8a3e">Laminar</text>
+  <text x="235" y="240" font-size="20" fill="#e8590c">Transition</text>
+  <text x="420" y="240" font-size="20" fill="#7048e8">Turbulent</text>
+  <text x="380" y="40" class="m" font-size="22" fill="#7048e8">high fluctuation &amp; mixing!</text>
+  <text x="80" y="140" class="m" font-size="21" fill="#d9363e">δ↑ 이면 h↓</text>
+  <text x="236" y="120" class="m" font-size="21" fill="#e8590c">h 급상승!</text>
+</svg>
+
+<div class="row">
+<div>
+<p><span class="hl">Laminar 에서 δ↑ → h↓</span> &nbsp;<span class="r">why?</span></p>
+<ul class="p">
+<li>표면 근처의 <b>열저항 증가</b></li>
+<li>벽면 <b>온도 구배(∂T/∂y) 완화</b></li>
+</ul>
+</div>
+<div class="side">
+열은 벽 바로 위 얇은 층에서 <u>전도</u>로만 빠져나감.<br>
+층이 두꺼워지면 = 담요가 두꺼워진 것 → 열이 덜 나감.<br>
+<span class="r">h ≈ k / δ<sub>t</sub></span> (p.5에서 증명!)
+</div>
+</div>
+
+<div class="side g">
+<b>Turbulent</b>: 소용돌이가 뜨거운 유체 ↔ 차가운 유체를 막 섞어줌(mixing) → 벽 근처 온도 구배가 다시 가팔라짐 → <u>천이 구간에서 h가 갑자기 커짐</u>.<br>
+그 뒤 난류 안에서도 경계층이 두꺼워지니 h는 다시 천천히 감소.
+</div>
+
+<p class="memo r" style="margin-top:6px">✎ 원래는 수식적으로 &nbsp;PDE → ODE → "Blasius(블라시우스)"로 풀이 (p.6~에서 자세히)</p>
+<div class="ft">p.1</div>
+</section>
+
+<!-- ============ PAGE 2 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>External Forced Flow</span><span>No. 2</span></div>
+<h2>2. 속도 경계층 &amp; 온도 경계층</h2>
+
+<svg viewBox="0 0 640 260" width="100%" style="display:block">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 230 L620 230" stroke="#1d2b5c" stroke-width="3"/>
+    <path d="M30 230 l10 12 M70 230 l10 12 M110 230 l10 12 M150 230 l10 12 M190 230 l10 12 M230 230 l10 12 M270 230 l10 12 M310 230 l10 12 M350 230 l10 12 M390 230 l10 12 M430 230 l10 12 M470 230 l10 12 M510 230 l10 12 M550 230 l10 12 M590 230 l10 12" stroke="#7d89ad" stroke-width="1.5"/>
+    <!-- delta edge -->
+    <path d="M60 230 C 160 175, 300 130, 610 85" stroke="#1971c2" stroke-width="2.5" stroke-dasharray="7 6"/>
+    <!-- delta_t edge -->
+    <path d="M60 230 C 170 195, 320 165, 610 135" stroke="#d9363e" stroke-width="2.5" stroke-dasharray="3 6"/>
+    <!-- velocity profile -->
+    <path d="M400 230 L400 110" stroke="#1d2b5c" stroke-width="1.8"/>
+    <path d="M400 230 C 440 200, 470 150, 480 125 L 480 100" stroke="#1971c2" stroke-width="3"/>
+    <path d="M400 210 L428 210 M400 185 L452 185 M400 160 L468 160 M400 135 L478 135 M400 110 L480 110" stroke="#1971c2" stroke-width="1.8"/>
+    <path d="M422 205 l6 5 l-6 5 M446 180 l6 5 l-6 5 M462 155 l6 5 l-6 5 M472 130 l6 5 l-6 5 M474 105 l6 5 l-6 5" stroke="#1971c2" stroke-width="1.8"/>
+    <!-- inflow -->
+    <path d="M0 80 L40 80 M32 74 L40 80 L32 86 M0 120 L40 120 M32 114 L40 120 L32 126 M0 160 L40 160 M32 154 L40 160 L32 166" stroke="#1d2b5c" stroke-width="2"/>
+    <!-- temp profile -->
+    <path d="M230 230 C 250 205, 270 190, 300 178 L 330 170" stroke="#d9363e" stroke-width="3"/>
+  </g>
+  <text x="2" y="66" font-size="20" fill="#1d2b5c">U∞, T∞</text>
+  <text x="520" y="80" font-size="21" fill="#1971c2">δ (속도 B.L.)</text>
+  <text x="520" y="160" font-size="21" fill="#d9363e">δ<tspan font-size="14" dy="4">t</tspan><tspan dy="-4"> (온도 B.L.)</tspan></text>
+  <text x="300" y="256" font-size="20" fill="#1d2b5c">벽 (T<tspan font-size="14" dy="4">s</tspan><tspan dy="-4">)</tspan></text>
+  <text x="488" y="210" class="m" font-size="21" fill="#1971c2">벽에서 u=0 (no slip)</text>
+  <text x="200" y="160" class="m" font-size="21" fill="#d9363e">T: T<tspan font-size="14" dy="4">s</tspan><tspan dy="-4"> → T∞</tspan></text>
+</svg>
+
+<div class="row" style="margin-top:4px">
+<div>
+<p><span class="hlb">벽 전단응력</span></p>
+<span class="eq">τ<sub>s</sub> = μ <span class="fr"><span>∂u</span><span>∂y</span></span>|<sub>y=0</sub></span>
+<p class="memo b">속도 기울기(벽에서) × 점성 = 마찰</p>
+</div>
+<div>
+<p><span class="hlp">벽 열유속</span></p>
+<span class="eq">q″ = −k<sub>f</sub> <span class="fr"><span>∂T</span><span>∂y</span></span>|<sub>y=0</sub></span>
+<p class="memo r">벽에선 유체가 정지 → <u>전도</u>로만 열 전달</p>
+</div>
+</div>
+<div class="side r">⭐ 핵심 구조: 마찰은 <b>속도 기울기</b>, 열전달은 <b>온도 기울기</b>로 결정 → 둘 다 "벽에서의 기울기"만 알면 끝! 그래서 경계층 모양(프로파일)을 구하려고 애쓰는 것.</div>
+
+<h2>3. 가정 (Assumptions)</h2>
+<table class="t">
+<tr><th style="width:36%">가정</th><th>의미 / 왜?</th></tr>
+<tr><td><span class="num">1</span>Viscous flow<br><span class="small">viscous dissipation → negligible</span></td><td>점성은 고려하지만, <b>Shear(마찰)로 인한 열 발생(소산)은 무시</b>.<br><span class="memo b">속도가 엄청 빠르지 않으면 마찰열은 아주 작음</span></td></tr>
+<tr><td><span class="num">2</span>Incompressible flow</td><td><b>밀도 불변</b> (ρ = const) → 연속방정식이 간단해짐</td></tr>
+<tr><td><span class="num">3</span>No thermal E gen.</td><td>유체 내부 열 발생 없음 (화학반응, 전기 발열 X)</td></tr>
+<tr><td><span class="num">4</span>u(y), T(y) &nbsp;∵ u ≫ v</td><td>경계층 안에선 <b>x방향 속도 u가 압도적</b>, 변화는 주로 <b>y방향</b>으로 일어남<br><span class="memo b">= "경계층 근사" — 얇고 길쭉한 층이라 y로 미분한 값이 훨씬 큼</span></td></tr>
+</table>
+<div class="ft">p.2</div>
+</section>
+
+<!-- ============ PAGE 3 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Order of magnitude</span><span>No. 3</span></div>
+<h2>4. Order of Magnitude (차수 해석)</h2>
+<p><span class="hl">정확한 계산 대신 러프한 계산</span> → "대충 몇 배 정도?"만 본다.</p>
+<p class="memo pu">예) 소금쟁이가 물에 뜨는 이유 — 무게 vs 표면장력의 <u>크기(차수)</u>만 비교해도 답이 나옴</p>
+<div class="side">왜 하냐면? 정확한 해(Blasius)는 계산이 길고 복잡. 근데 차수 해석만 해도 <b>Re<sup>−1/2</sup> 같은 "지수"는 정확히</b> 맞힌다! 틀리는 건 앞의 숫자(계수)뿐.</div>
+
+<h3><span class="tag b">속도</span> Hydrodynamic B.L.</h3>
+<p>• <b>Viscous diffusion length</b> (점성 확산 거리)</p>
+<span class="eq">δ ∝ <span class="sq"><span>ν t</span></span></span>
+<div class="sticky green" style="margin-left:18px">
+<b>"확산 거리 ~ √(확산계수 × 시간)"</b> — 이건 외우기!<br>
+물에 잉크 한 방울: 처음엔 빨리 퍼지다가 점점 느려짐 (√t 처럼).<br>
+여기선 벽의 "멈춤 효과"가 점성(ν)을 타고 위로 퍼져나가는 것.
+</div>
+<p>• 시간 t는? → 유체가 앞전에서 x까지 오는 데 걸린 시간</p>
+<span class="eq">t ≈ <span class="fr"><span>x</span><span>U<sub>∞</sub></span></span> &nbsp;<span class="arrow">⟹</span>&nbsp; δ ≈ <span class="sq"><span>ν · <span class="fr"><span>x</span><span>U<sub>∞</sub></span></span></span></span></span>
+<p>• 레이놀즈수 <span class="eq" style="display:inline;margin:0">Re<sub>x</sub> = <span class="fr"><span>U<sub>∞</sub> x</span><span>ν</span></span></span> &nbsp; <span class="memo b">(관성력 / 점성력)</span> 를 써서 정리하면</p>
+<span class="eq">δ ≈ <span class="sq"><span><span class="fr"><span>ν x</span><span>U<sub>∞</sub></span></span></span></span> = x · <span class="sq"><span><span class="fr"><span>ν</span><span>U<sub>∞</sub>x</span></span></span></span> = <span class="fr"><span>x</span><span><span class="sq"><span>Re<sub>x</sub></span></span></span></span> &nbsp;&nbsp;∴&nbsp; <span class="hl"><span class="fr"><span>δ</span><span>x</span></span> ∝ <span class="fr"><span>1</span><span><span class="sq"><span>Re<sub>x</sub></span></span></span></span></span></span>
+<p style="margin-top:6px">⇒ 정확한 해와 비교: &nbsp;<span class="box">exact sol: &nbsp;<span class="fr"><span>δ</span><span>x</span></span> = <span class="fr"><span>5</span><span><span class="sq"><span>Re<sub>x</sub></span></span></span></span></span> &nbsp;<span class="memo r">← 계수만 1→5!</span></p>
+
+<div class="sticky pink">
+<b>🔢 감 잡기 예시</b> &nbsp;공기 ν ≈ 1.5×10<sup>−5</sup> m²/s, U<sub>∞</sub> = 5 m/s, x = 0.5 m<br>
+Re<sub>x</sub> = 5×0.5 / 1.5×10<sup>−5</sup> ≈ 1.7×10<sup>5</sup> (아직 층류, 5×10<sup>5</sup> 미만)<br>
+δ = 5x/√Re ≈ 5×0.5/408 ≈ <b>6 mm</b> → 경계층은 정말 얇다!
+</div>
+<div class="side g">δ ∝ √x → 뒤로 갈수록 두꺼워지지만 점점 천천히 두꺼워짐 (p.1 그래프의 δ(x) 모양)</div>
+<div class="ft">p.3</div>
+</section>
+
+<!-- ============ PAGE 4 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Order of magnitude</span><span>No. 4</span></div>
+<h3><span class="tag b">마찰</span> Wall shear stress</h3>
+<div class="row">
+<div style="flex:1.6">
+<span class="eq">τ<sub>x,s</sub> = μ <span class="fr"><span>du</span><span>dy</span></span>|<sub>y=0</sub></span>
+<p class="memo b">속도 프로파일을 <u>직선(Linear profile)</u>으로 가정!</p>
+<span class="eq">⇒ <span class="fr"><span>du</span><span>dy</span></span> ≈ <span class="fr"><span>U<sub>∞</sub> − 0</span><span>δ</span></span></span>
+</div>
+<svg viewBox="0 0 200 150" width="190" style="flex:none">
+  <g fill="none" stroke-linecap="round">
+   <path d="M20 130 L190 130" stroke="#1d2b5c" stroke-width="2.5"/>
+   <path d="M40 130 L40 20" stroke="#1d2b5c" stroke-width="1.5"/>
+   <path d="M40 130 Q 90 60, 120 40 L120 20" stroke="#9aa5c4" stroke-width="2" stroke-dasharray="4 5"/>
+   <path d="M40 130 L120 40 L120 20" stroke="#1971c2" stroke-width="3"/>
+   <path d="M150 40 L150 130 M144 46 L150 40 L156 46 M144 124 L150 130 L156 124" stroke="#d9363e" stroke-width="1.8"/>
+  </g>
+  <text x="156" y="90" font-size="18" fill="#d9363e">δ</text>
+  <text x="70" y="18" font-size="16" fill="#1971c2">U∞</text>
+  <text x="44" y="148" class="m" font-size="16" fill="#9aa5c4">실제(곡선)</text>
+  <text x="118" y="148" class="m" font-size="16" fill="#1971c2">가정(직선)</text>
+</svg>
+</div>
+<span class="eq">τ<sub>x,s</sub> ≈ μ <span class="fr"><span>U<sub>∞</sub></span><span>δ</span></span> ≈ μ <span class="fr"><span>U<sub>∞</sub></span><span>x</span></span> <span class="sq"><span>Re<sub>x</sub></span></span> = μ <span class="fr"><span>U<sub>∞</sub></span><span>x</span></span> <span class="sq"><span><span class="fr"><span>ρ U<sub>∞</sub> x</span><span>μ</span></span></span></span></span>
+<span class="eq">∴ <span class="hl">τ<sub>x,s</sub> ≈ U<sub>∞</sub> <span class="sq"><span><span class="fr"><span>ρ μ U<sub>∞</sub></span><span>x</span></span></span></span></span> &nbsp;&nbsp; <span class="box">exact: τ<sub>s,x</sub> = 0.332 · U<sub>∞</sub><span class="sq"><span><span class="fr"><span>ρμU<sub>∞</sub></span><span>x</span></span></span></span></span></span>
+<p class="memo b">(δ = x/√Re<sub>x</sub> 대입하고, ν = μ/ρ 로 바꿔서 정리한 것)</p>
+
+<h3><span class="tag b">마찰계수</span> Local friction coefficient</h3>
+<span class="eq">C<sub>f,x</sub> ≡ <span class="fr"><span>τ<sub>s,x</sub></span><span>ρU<sub>∞</sub><sup>2</sup>/2</span></span> <span class="memo r">(정의)</span> = <span class="fr"><span>U<sub>∞</sub><span class="sq"><span>ρμU<sub>∞</sub>/x</span></span></span><span>ρU<sub>∞</sub><sup>2</sup>/2</span></span> = <span class="fr"><span>2<span class="sq"><span>μ</span></span></span><span><span class="sq"><span>ρ U<sub>∞</sub> x</span></span></span></span> = <span class="hl">2 · Re<sub>x</sub><sup>−1/2</sup></span></span>
+<p style="margin-left:18px"><span class="box">exact sol: C<sub>f,x</sub> = 0.664 · Re<sub>x</sub><sup>−1/2</sup></span></p>
+<div class="side">ρU<sub>∞</sub>²/2 = <b>동압</b>(흐름이 가진 운동에너지 압력). 마찰을 이걸로 나눠서 무차원화한 게 C<sub>f</sub>.</div>
+
+<table class="t" style="margin-top:10px">
+<tr><th>물리량</th><th>차수 해석 (러프)</th><th>정확한 해 (Blasius)</th></tr>
+<tr><td>δ / x</td><td>1 · Re<sub>x</sub><sup>−1/2</sup></td><td class="r">5.0 · Re<sub>x</sub><sup>−1/2</sup></td></tr>
+<tr><td>τ<sub>s</sub></td><td>1 · U<sub>∞</sub>√(ρμU<sub>∞</sub>/x)</td><td class="r">0.332 · U<sub>∞</sub>√(ρμU<sub>∞</sub>/x)</td></tr>
+<tr><td>C<sub>f,x</sub></td><td>2 · Re<sub>x</sub><sup>−1/2</sup></td><td class="r">0.664 · Re<sub>x</sub><sup>−1/2</sup></td></tr>
+</table>
+<div class="sticky">👀 표를 보면 <b>Re<sup>−1/2</sup> (지수)는 항상 똑같고</b> 계수만 다름 → 차수 해석은 "식의 모양"을 알려주고, 정확한 해는 "숫자"를 알려준다!<br>
+※ 0.664 = 2 × 0.332 (C<sub>f</sub> 정의에 1/2이 있어서)</div>
+<div class="ft">p.4</div>
+</section>
+
+<!-- ============ PAGE 5 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Order of magnitude</span><span>No. 5</span></div>
+<h3><span class="tag">온도</span> Thermal boundary layer</h3>
+<p>• <b>Thermal diffusion length</b> &nbsp;<span class="memo r">— 속도 때랑 똑같은 논리, ν 대신 α(열확산계수)</span></p>
+<span class="eq">δ<sub>t</sub> ≈ <span class="sq"><span>α t</span></span> = <span class="sq"><span>α <span class="fr"><span>x</span><span>U<sub>∞</sub></span></span></span></span> = <span class="sq"><span><span class="fr"><span>α</span><span>ν</span></span> · <span class="fr"><span>ν</span><span>U<sub>∞</sub>x</span></span></span></span> · x = <span class="fr"><span>x</span><span><span class="sq"><span>Pr · Re<sub>x</sub></span></span></span></span></span>
+<span class="eq">∴ <span class="hl"><span class="fr"><span>δ<sub>t</sub></span><span>x</span></span> ≈ <span class="fr"><span>1</span><span>Pr<sup>1/2</sup> · Re<sub>x</sub><sup>1/2</sup></span></span></span> &nbsp;&nbsp; <span class="box">exact: <span class="fr"><span>δ<sub>t</sub></span><span>x</span></span> = <span class="fr"><span>5</span><span>Re<sub>x</sub><sup>1/2</sup> · Pr<sup>1/3</sup></span></span></span></span>
+<div class="sticky green">
+<b>Pr = ν / α</b> = 운동량 확산 / 열 확산 &nbsp;→&nbsp; 공기(0.7): δ ≈ δ<sub>t</sub>, &nbsp;물(7): δ<sub>t</sub> &lt; δ, &nbsp;액체금속(≪1): δ<sub>t</sub> ≫ δ
+</div>
+<span class="eq">두 경계층 비교: <span class="box"><span class="fr"><span>δ</span><span>δ<sub>t</sub></span></span> ≈ Pr<sup>1/3</sup></span> &nbsp;<span class="small">(= δ<sub>t</sub>/δ ≈ Pr<sup>−1/3</sup>)</span></span>
+<div class="fix">⚠ <b>필기 수정</b> — 노트엔 "δ<sub>t</sub>/δ ≈ Pr<sup>1/3</sup>"로 적혀 있는데 <u>뒤집혔어요</u>. 정답은 δ/δ<sub>t</sub> ≈ Pr<sup>1/3</sup> (p.4 필기엔 맞게 적혀 있음). 물(Pr=7)이면 δ<sub>t</sub>가 더 얇아야 하니까!</div>
+<div class="side">❓ 러프 계산은 Pr<sup>1/2</sup>, 정답은 Pr<sup>1/3</sup>? → Pr이 크면 δ<sub>t</sub>가 δ 안쪽 깊숙이 있어 그 안의 유속이 U<sub>∞</sub>보다 훨씬 느림 → 반영하면 지수 1/3.</div>
+
+<h3><span class="tag">h 구하기</span> Assume linear profile</h3>
+<div class="row">
+<svg viewBox="0 0 220 160" width="200" style="flex:none">
+  <g fill="none" stroke-linecap="round">
+   <path d="M30 140 L210 140" stroke="#1d2b5c" stroke-width="2.5"/>
+   <path d="M60 140 L60 20" stroke="#1d2b5c" stroke-width="1.5"/>
+   <path d="M60 140 L180 60 L180 20" stroke="#d9363e" stroke-width="3"/>
+   <path d="M60 140 Q 140 70, 180 62" stroke="#9aa5c4" stroke-width="2" stroke-dasharray="4 5"/>
+   <path d="M200 60 L200 140 M194 66 L200 60 L206 66 M194 134 L200 140 L206 134" stroke="#1971c2" stroke-width="1.8"/>
+   <path d="M2 40 L26 40 M20 35 L26 40 L20 45 M2 80 L26 80 M20 75 L26 80 L20 85" stroke="#1d2b5c" stroke-width="1.8"/>
+  </g>
+  <text x="2" y="30" font-size="16" fill="#1d2b5c">T∞</text>
+  <text x="168" y="16" font-size="16" fill="#d9363e">T∞</text>
+  <text x="44" y="158" font-size="16" fill="#1d2b5c">T<tspan font-size="12" dy="3">s</tspan></text>
+  <text x="204" y="104" font-size="16" fill="#1971c2">δ<tspan font-size="11" dy="3">t</tspan></text>
+  <text x="88" y="126" class="m" font-size="15" fill="#d9363e">직선 가정</text>
+</svg>
+<div>
+<span class="eq" style="margin-left:0">q″ = −k <span class="fr"><span>dT</span><span>dy</span></span>|<sub>y=0</sub> ≡ h<sub>x</sub>(T<sub>s</sub> − T<sub>∞</sub>)</span>
+<span class="eq" style="margin-left:0">−k<sub>f</sub> <span class="fr"><span>dT</span><span>dy</span></span>|<sub>y=0</sub> ≈ −k<sub>f</sub> <span class="fr"><span>T<sub>∞</sub> − T<sub>s</sub></span><span>δ<sub>t</sub></span></span> = h<sub>x</sub>(T<sub>s</sub> − T<sub>∞</sub>)</span>
+</div>
+</div>
+<span class="eq">⇒ <span class="hl">h<sub>x</sub> ≈ <span class="fr"><span>k<sub>f</sub></span><span>δ<sub>t</sub></span></span> = <span class="fr"><span>k<sub>f</sub></span><span>x</span></span> <span class="sq"><span>Pr · Re<sub>x</sub></span></span></span> &nbsp;<span class="memo r">← 이동거리 x 와 Pr, Re 로 환산!</span></span>
+<p class="memo b" style="margin-left:18px">h ≈ k/δ<sub>t</sub> = "두께 δ<sub>t</sub>짜리 층을 전도로 통과" → p.1의 "δ↑ → h↓" 증명 끝 ✔</p>
+<span class="eq">Nu<sub>x</sub> ≡ <span class="fr"><span>h<sub>x</sub> x</span><span>k<sub>f</sub></span></span> ≈ Pr<sup>1/2</sup> · Re<sub>x</sub><sup>1/2</sup> &nbsp;&nbsp; <span class="box">exact: Nu<sub>x</sub> = 0.332 Re<sub>x</sub><sup>1/2</sup> Pr<sup>1/3</sup></span></span>
+<div class="fix">⚠ <b>필기 수정</b> — 노트엔 "exact: h<sub>x</sub> = Pr<sup>1/3</sup>·Re<sub>x</sub><sup>1/2</sup>"인데 이건 h가 아니라 <u>Nu</u>이고, 계수 0.332가 빠졌어요. → h<sub>x</sub> = 0.332 (k/x) Re<sub>x</sub><sup>1/2</sup> Pr<sup>1/3</sup></div>
+<div class="ft">p.5</div>
+</section>
+
+<!-- ============ PAGE 6 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Self-similar solution</span><span>No. 6</span></div>
+<h2>5. Self-Similar Solution <span style="font-size:22px">(Blasius 상사해)</span></h2>
+<div class="sticky blue"><b>이제부터는 "정확한 해" 파트.</b> 목표: 앞에서 나온 숫자 <b>5, 0.332, 0.664</b>가 어디서 나오는지!<br>전략 = 어려운 PDE(편미분방정식)를 → 변수 하나짜리 ODE(상미분방정식)로 바꿔서 푼다.</div>
+<p><b>조건</b>: <span class="hl">Laminar flow</span>, constant free stream velocity U<sub>∞</sub> on a plate (L: length)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; ρ, μ : const. , &nbsp;2-D steady-state</p>
+
+<h3>① 지배방정식 (Navier–Stokes + 연속)</h3>
+<span class="eq">x: &nbsp;u<span class="fr"><span>∂u</span><span>∂x</span></span> + v<span class="fr"><span>∂u</span><span>∂y</span></span> = −<span class="fr"><span>1</span><span>ρ</span></span><span class="fr"><span>∂p</span><span>∂x</span></span> + ν<span style="font-size:1.3em">(</span><span class="fr"><span>∂²u</span><span>∂x²</span></span> + <span class="fr"><span>∂²u</span><span>∂y²</span></span><span style="font-size:1.3em">)</span></span>
+<span class="eq">y: &nbsp;u<span class="fr"><span>∂v</span><span>∂x</span></span> + v<span class="fr"><span>∂v</span><span>∂y</span></span> = −<span class="fr"><span>1</span><span>ρ</span></span><span class="fr"><span>∂p</span><span>∂y</span></span> + ν<span style="font-size:1.3em">(</span><span class="fr"><span>∂²v</span><span>∂x²</span></span> + <span class="fr"><span>∂²v</span><span>∂y²</span></span><span style="font-size:1.3em">)</span></span>
+<span class="eq">연속: &nbsp;<span class="fr"><span>∂u</span><span>∂x</span></span> + <span class="fr"><span>∂v</span><span>∂y</span></span> = 0 &nbsp; <span class="memo b">; mass conservation (∵ ρ = const)</span></span>
+<p class="memo pu" style="margin-left:18px">좌변 = 관성(흐름이 실어 나르는 것), 우변 = 압력 + 점성(마찰로 퍼지는 것)</p>
+
+<h3>② 무차원화</h3>
+<span class="eq">ū = <span class="fr"><span>u</span><span>U<sub>∞</sub></span></span>, &nbsp; <span class="bar">v</span> = <span class="fr"><span>v</span><span>U<sub>∞</sub></span></span>, &nbsp; <span class="bar">x</span> = <span class="fr"><span>x</span><span>L</span></span>, &nbsp; ȳ = <span class="fr"><span>y</span><span>L</span></span>, &nbsp; <span class="bar">p</span> = <span class="fr"><span>p</span><span>ρU<sub>∞</sub><sup>2</sup></span></span></span>
+<span class="eq">ū<span class="fr"><span>∂ū</span><span>∂<span class="bar">x</span></span></span> + <span class="bar">v</span><span class="fr"><span>∂ū</span><span>∂ȳ</span></span> = −<span class="fr"><span>∂<span class="bar">p</span></span><span>∂<span class="bar">x</span></span></span> + <span class="hlp"><span class="fr"><span>ν</span><span>U<sub>∞</sub>L</span></span></span><span style="font-size:1.3em">(</span><span class="fr"><span>∂²ū</span><span>∂<span class="bar">x</span>²</span></span> + <span class="fr"><span>∂²ū</span><span>∂ȳ²</span></span><span style="font-size:1.3em">)</span> &nbsp; <span class="memo r">ν/(U<sub>∞</sub>L) = 1/Re<sub>L</sub></span></span>
+<span class="eq">(y식도 같은 방식)</span>
+<div class="side">
+<b>무차원화를 왜 해?</b> 각 항의 크기를 비교하려고!<br>
+경계층은 얇아서 ȳ ~ δ/L ~ Re<sub>L</sub><sup>−1/2</sup> (아주 작음), <span class="bar">v</span> ~ δ/L 도 작음 →<br>
+• ∂²ū/∂<span class="bar">x</span>² ≪ ∂²ū/∂ȳ² → <b>x방향 점성항 버림</b><br>
+• y-운동량식 → ∂p/∂y ≈ 0 → 압력은 y로 일정 = 바깥 흐름 압력<br>
+• 평판 + U<sub>∞</sub> 일정 → <b>dp/dx = 0</b>
+</div>
+<span class="eq c"><span class="boxb">∴ 경계층 방정식: &nbsp; u<span class="fr"><span>∂u</span><span>∂x</span></span> + v<span class="fr"><span>∂u</span><span>∂y</span></span> = ν<span class="fr"><span>∂²u</span><span>∂y²</span></span></span></span>
+<div class="ft">p.6</div>
+</section>
+
+<!-- ============ PAGE 7 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Self-similar solution</span><span>No. 7</span></div>
+<h3>③ 상사변수 η 도입 (PDE → ODE의 핵심!)</h3>
+<span class="eq">δ ~ <span class="sq"><span><span class="fr"><span>νx</span><span>U<sub>∞</sub></span></span></span></span> &nbsp;(p.3 결과) &nbsp;&nbsp;⇒&nbsp;&nbsp; <span class="hl">η = <span class="fr"><span>y</span><span>δ(x)</span></span> = <span class="fr"><span>y</span><span><span class="sq"><span>νx / U<sub>∞</sub></span></span></span></span></span></span>
+<div class="row">
+<div class="sticky green" style="flex:1.2">
+<b>"Self-similar(상사)"의 뜻</b><br>
+x마다 경계층 두께는 다르지만, y를 그 위치의 δ로 나눠서(=η) 그리면 <u>모든 속도 분포가 똑같은 곡선 하나로 겹친다!</u><br>
+→ 그래서 u/U<sub>∞</sub>는 x, y 따로가 아니라 <b>η 하나만의 함수</b>.
+</div>
+<svg viewBox="0 0 230 170" width="215" style="flex:none">
+  <g fill="none" stroke-linecap="round">
+   <path d="M20 150 L220 150 M20 150 L20 10" stroke="#1d2b5c" stroke-width="2"/>
+   <path d="M20 150 C 60 120, 80 60, 100 40 L100 15" stroke="#1971c2" stroke-width="2.5"/>
+   <path d="M20 150 C 70 125, 100 90, 130 70 L130 15" stroke="#2b8a3e" stroke-width="2.5"/>
+   <path d="M20 150 C 80 132, 130 115, 170 100 L170 15" stroke="#d9363e" stroke-width="2.5"/>
+  </g>
+  <text x="60" y="168" font-size="15" fill="#1d2b5c">u →</text>
+  <text x="2" y="20" font-size="15" fill="#1d2b5c">y</text>
+  <text x="104" y="38" class="m" font-size="15" fill="#1971c2">x₁</text>
+  <text x="134" y="68" class="m" font-size="15" fill="#2b8a3e">x₂</text>
+  <text x="174" y="98" class="m" font-size="15" fill="#d9363e">x₃</text>
+  <text x="120" y="135" class="m" font-size="16" fill="#7048e8">η로 그리면 하나로!</text>
+</svg>
+</div>
+<span class="eq">ū = <span class="fr"><span>u</span><span>U<sub>∞</sub></span></span> = φ(η) = f′(η), &nbsp;&nbsp; f′ = <span class="fr"><span>∂f</span><span>∂η</span></span> = φ</span>
+<p class="memo b" style="margin-left:18px">f(η) = 무차원 유선함수: ψ = √(νxU<sub>∞</sub>)·f(η), u = ∂ψ/∂y = U<sub>∞</sub>f′ → 연속방정식 자동 만족!</p>
+
+<p><b>체인룰로 미분 바꾸기</b></p>
+<span class="eq"><span class="fr"><span>∂ū</span><span>∂x</span></span> = <span class="fr"><span>∂φ</span><span>∂η</span></span>·<span class="fr"><span>∂η</span><span>∂x</span></span> = −<span class="fr"><span>1</span><span>2x</span></span> η φ′ = −<span class="fr"><span>η</span><span>2x</span></span> f″ &nbsp;&nbsp; <span class="memo r">(∵ η ∝ x<sup>−1/2</sup>)</span></span>
+<span class="eq"><span class="fr"><span>∂ū</span><span>∂y</span></span> = f″ · <span class="fr"><span>1</span><span>δ</span></span>, &nbsp;&nbsp; <span class="fr"><span>∂²ū</span><span>∂y²</span></span> = f‴ · <span class="fr"><span>1</span><span>δ²</span></span> , &nbsp; ⋯ (경계층 방정식에 대입)</span>
+<span class="eq c"><span class="box" style="font-size:26px">f‴ + <span class="fr"><span>1</span><span>2</span></span> f f″ = 0</span> &nbsp; <span class="memo r">← Blasius 방정식 (ODE!)</span></span>
+<p class="small" style="text-align:center">(교재에 따라 2f‴ + f f″ = 0 으로 쓰기도 함 — 같은 식)</p>
+
+<h3>④ 경계조건 (BCs)</h3>
+<table class="t">
+<tr><th>물리적 조건</th><th>η로 바꾸면</th><th>f로 쓰면</th></tr>
+<tr><td>y = 0 : u = 0 (no slip)</td><td>η = 0</td><td>f′(0) = 0</td></tr>
+<tr><td>y = 0 : v = 0 (벽 뚫고 못 나감)</td><td>η = 0</td><td>f(0) = 0</td></tr>
+<tr><td>y = ∞ : u = U<sub>∞</sub></td><td>η = ∞</td><td>f′(∞) = 1</td></tr>
+</table>
+<div class="fix">⚠ <b>필기 수정</b> — 노트에 "y = ∞ → u = ∞"라고 적혀 있는데 <u>u = U<sub>∞</sub></u> (자유흐름 속도) 입니다. 속도가 무한대가 되는 게 아니에요!</div>
+<div class="ft">p.7</div>
+</section>
+
+<!-- ============ PAGE 8 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>Blasius 결과</span><span>No. 8</span></div>
+<h3>⑤ 급수해 (Series solution)</h3>
+<span class="eq">f(η) = <span class="fr"><span>a<sub>1</sub></span><span>2!</span></span>η² − <span class="fr"><span>1</span><span>2</span></span>·<span class="fr"><span>a<sub>1</sub><sup>2</sup></span><span>5!</span></span>η<sup>5</sup> + ⋯</span>
+<span class="eq"><span class="hl">a<sub>1</sub> = f″(0) = 0.332</span> &nbsp; <span class="memo b">← 이 숫자 하나가 모든 계수의 출발점!</span></span>
+<div class="side">교수님: "수식 고급 전개는 생략" → 급수 계수까지 외울 필요 ✗. 중요한 건 <b>f″(0) = 0.332</b> 와, 이것이 앞의 order of magnitude 결과의 계수를 정해준다는 연결고리.</div>
+<div class="sticky">
+<b>δ의 "5"는 어디서?</b> 수치해를 보면 f′(η) = u/U<sub>∞</sub> = 0.99 가 되는 지점이 η ≈ 5.0<br>
+→ 경계층 끝(99% 속도) = y/√(νx/U<sub>∞</sub>) = 5 → <b>δ = 5x/√Re<sub>x</sub></b> ✔
+</div>
+
+<h3>⑥ 벽 전단응력 &amp; 마찰계수</h3>
+<span class="eq">τ<sub>s,x</sub> = μ<span style="font-size:1.3em">(</span><span class="fr"><span>∂u</span><span>∂y</span></span><span style="font-size:1.3em">)</span><sub>y=0</sub> = μU<sub>∞</sub> f″(0) <span class="sq"><span><span class="fr"><span>U<sub>∞</sub></span><span>νx</span></span></span></span> = ρνU<sub>∞</sub>(0.332)·<span class="fr"><span>1</span><span><span class="sq"><span>xν/U<sub>∞</sub></span></span></span></span></span>
+<span class="eq">C<sub>f,x</sub> = <span class="fr"><span>τ<sub>s,x</sub></span><span>½ρU<sub>∞</sub><sup>2</sup></span></span> = <span class="hl"><span class="fr"><span>0.664</span><span>Re<sub>x</sub><sup>1/2</sup></span></span></span></span>
+
+<p><b>평균 마찰계수</b> (판 전체 길이 L)</p>
+<span class="eq"><span class="bar">C</span><sub>f</sub> = <span class="fr"><span>1</span><span>L</span></span>∫<sub>0</sub><sup>L</sup> C<sub>f,x</sub> dx = <span class="hl"><span class="fr"><span>1.328</span><span>Re<sub>L</sub><sup>1/2</sup></span></span></span></span>
+<div class="fix">⚠ <b>필기 수정</b> — 노트엔 적분 안이 τ<sub>s,x</sub>로 적혀 있는데, 평균 C<sub>f</sub>를 구하려면 <u>C<sub>f,x</sub></u>를 적분해야 해요.</div>
+<div class="sticky pink">
+<b>왜 평균은 정확히 2배?</b><br>
+C<sub>f,x</sub> ∝ x<sup>−1/2</sup> 이므로 &nbsp;(1/L)∫<sub>0</sub><sup>L</sup> x<sup>−1/2</sup>dx = (1/L)·2L<sup>1/2</sup> = 2·L<sup>−1/2</sup><br>
+→ <b>x<sup>−1/2</sup> 꼴은 평균 내면 끝값(x=L)의 2배!</b> 0.664 → 1.328, &nbsp;Nu도 0.332 → 0.664 (똑같은 원리)
+</div>
+<div class="ft">p.8</div>
+</section>
+
+<!-- ============ PAGE 9 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>온도장 (Energy eq.)</span><span>No. 9</span></div>
+<h2>6. 온도 경계층의 상사해</h2>
+<div class="row">
+<svg viewBox="0 0 260 160" width="240" style="flex:none">
+  <g fill="none" stroke-linecap="round">
+   <path d="M30 140 L250 140 M30 140 L30 10" stroke="#1d2b5c" stroke-width="2"/>
+   <path d="M30 140 C 80 60, 150 40, 240 30" stroke="#1971c2" stroke-width="3"/>
+   <path d="M30 140 C 90 100, 160 80, 240 70" stroke="#d9363e" stroke-width="3" stroke-dasharray="7 6"/>
+   <path d="M2 40 L24 40 M18 35 L24 40 L18 45 M2 75 L24 75 M18 70 L24 75 L18 80" stroke="#1d2b5c" stroke-width="1.8"/>
+  </g>
+  <text x="2" y="28" font-size="15" fill="#1d2b5c">U∞, T∞</text>
+  <text x="200" y="24" font-size="18" fill="#1971c2">δ</text>
+  <text x="200" y="92" font-size="18" fill="#d9363e">δ<tspan font-size="12" dy="3">t</tspan></text>
+  <text x="120" y="158" font-size="15" fill="#1d2b5c">벽 T<tspan font-size="11" dy="3">w</tspan><tspan dy="-3"> (wall)</tspan></text>
+  <text x="80" y="128" class="m" font-size="15" fill="#7048e8">Pr &gt; 1 일 때 그림</text>
+</svg>
+<div>
+<p><b>2-D steady-state 에너지 방정식</b></p>
+<span class="eq" style="margin-left:0">u<span class="fr"><span>∂T</span><span>∂x</span></span> + v<span class="fr"><span>∂T</span><span>∂y</span></span> = α<span style="font-size:1.3em">(</span><span class="fr"><span>∂²T</span><span>∂x²</span></span> + <span class="fr"><span>∂²T</span><span>∂y²</span></span><span style="font-size:1.3em">)</span></span>
+<p class="memo b">운동량식이랑 모양이 똑같다! (ν ↔ α, u ↔ T)</p>
+</div>
+</div>
+<span class="eq"><span class="hl">θ = <span class="fr"><span>T − T<sub>w</sub></span><span>T<sub>∞</sub> − T<sub>w</sub></span></span></span> &nbsp; <span class="memo r">→ 무차원화해서 속도랑 똑같이 풀 수 있게 만들기</span></span>
+<p class="memo b" style="margin-left:18px">θ는 벽에서 0, 바깥에서 1 → ū(=u/U<sub>∞</sub>)도 벽에서 0, 바깥에서 1. 완전히 같은 꼴!</p>
+<span class="eq">ū<span class="fr"><span>∂θ</span><span>∂<span class="bar">x</span></span></span> + <span class="bar">v</span><span class="fr"><span>∂θ</span><span>∂ȳ</span></span> = <span class="fr"><span>α</span><span>U<sub>∞</sub>L</span></span><span style="font-size:1.3em">(</span><s style="color:#9aa5c4"><span class="fr"><span>∂²θ</span><span>∂<span class="bar">x</span>²</span></span></s> + <span class="fr"><span>∂²θ</span><span>∂ȳ²</span></span><span style="font-size:1.3em">)</span> <span class="memo r">← 경계층 근사로 x항 삭제</span></span>
+<div class="row">
+<span class="eq">ū<span class="fr"><span>∂θ</span><span>∂<span class="bar">x</span></span></span> + <span class="bar">v</span><span class="fr"><span>∂θ</span><span>∂ȳ</span></span> = <span class="fr"><span>α</span><span>U<sub>∞</sub>L</span></span><span class="fr"><span>∂²θ</span><span>∂ȳ²</span></span></span>
+<div class="boxb small" style="flex:none;margin-top:6px"><b>B.Cs</b><br>y = 0 → θ = 0 &nbsp;(∵ T = T<sub>w</sub>)<br>y = ∞ → θ = 1 &nbsp;(∵ T = T<sub>∞</sub>)</div>
+</div>
+<p>η = η(x, y) 로 바꾸면 → <b>ODE</b></p>
+<span class="eq"><span class="fr"><span>∂θ</span><span>∂x</span></span> = <span class="fr"><span>∂θ</span><span>∂η</span></span>·<span class="fr"><span>∂η</span><span>∂x</span></span>, &nbsp; <span class="fr"><span>∂θ</span><span>∂y</span></span> = <span class="fr"><span>∂θ</span><span>∂η</span></span>·<span class="fr"><span>∂η</span><span>∂y</span></span> &nbsp;⇒&nbsp; θ″ + <span class="fr"><span>Pr</span><span>2</span></span> f θ′ = 0</span>
+<div class="sticky green">
+<b>Pr = 1 (α = ν) 이면?</b> → θ식과 속도식(f′에 대한 식)이 완전히 같아짐 → <b>θ = f′(η), δ = δ<sub>t</sub></b><br>
+<b>α ≠ ν 이면?</b> → 두 경계층 두께가 달라짐: &nbsp;δ<sub>t</sub>/δ = Pr<sup>−1/3</sup>, &nbsp;δ/δ<sub>t</sub> = Pr<sup>1/3</sup>
+</div>
+<p>그래서 필기처럼 <b>η<sub>T</sub> = η · Pr<sup>1/3</sup></b> 로 "늘려서" 보면 (근사적으로)</p>
+<span class="eq"><span class="fr"><span>∂²θ</span><span>∂η<sub>T</sub><sup>2</sup></span></span> + <span class="fr"><span>1</span><span>2</span></span> f(η<sub>T</sub>) <span class="fr"><span>∂θ</span><span>∂η<sub>T</sub></span></span> = 0, &nbsp;&nbsp; <span class="small">(η<sub>T</sub>=0: θ=0, &nbsp;η<sub>T</sub>=∞: θ=1)</span></span>
+<p class="memo b" style="margin-left:18px">→ Pr=1일 때와 같은 꼴의 식 = 이미 풀어놓은 답을 재활용! (η<sub>T</sub>는 "온도용 η"라고 생각)</p>
+<div class="ft">p.9</div>
+</section>
+
+<!-- ============ PAGE 10 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>h, Nu 결과</span><span>No. 10</span></div>
+<h3>⑦ h 와 Nu 구하기</h3>
+<span class="eq">q″ = −k<span class="fr"><span>dT</span><span>dy</span></span>|<sub>y=0</sub>, &nbsp;&nbsp; ΔT = T<sub>w</sub> − T<sub>∞</sub></span>
+<span class="eq">h = <span class="fr"><span>q″</span><span>ΔT</span></span> = k<span style="font-size:1.3em">(</span><span class="fr"><span>∂θ</span><span>∂y</span></span><span style="font-size:1.3em">)</span><sub>y=0</sub> = k<span style="font-size:1.3em">(</span><span class="fr"><span>∂θ</span><span>∂η<sub>T</sub></span></span><span style="font-size:1.3em">)</span>·<span style="font-size:1.3em">(</span><span class="fr"><span>∂η<sub>T</sub></span><span>∂y</span></span><span style="font-size:1.3em">)</span></span>
+<p class="memo b" style="margin-left:18px">∂θ/∂η<sub>T</sub>|<sub>0</sub> → 숫자(0.332) &nbsp;/&nbsp; ∂η<sub>T</sub>/∂y = Pr<sup>1/3</sup>·√(U<sub>∞</sub>/νx) → Pr, Re, x 가 튀어나옴</p>
+<p style="margin-left:18px">⋮ &nbsp;<span class="memo r">series solution 생략</span></p>
+<span class="eq c"><span class="box" style="font-size:26px">Nu<sub>x</sub> = <span class="fr"><span>h<sub>x</sub> · x</span><span>k</span></span> = 0.332 Re<sub>x</sub><sup>1/2</sup> · Pr<sup>1/3</sup></span></span>
+<p class="memo r" style="text-align:center">↑ 여기서 x(앞전으로부터 거리)가 boundary layer thickness를 결정 → 그래서 Nu의 길이 기준이 x</p>
+<div class="sticky blue">
+<b>이 식을 읽는 법</b> (실제 h를 보면)<br>
+h<sub>x</sub> = 0.332 · <span style="font-family:Pen">k/x</span> · Re<sub>x</sub><sup>1/2</sup> Pr<sup>1/3</sup> ∝ x<sup>−1/2</sup><br>
+→ <b>앞전(x→0)에서 h가 제일 크고 뒤로 갈수록 감소</b> = p.1 그래프 층류 구간 ✔<br>
+→ 유속 U<sub>∞</sub>↑ → Re↑ → h↑ (선풍기 세게 틀면 더 시원한 이유!)
+</div>
+
+<h3>📌 지금까지 정리 — 차수해석 vs 정확한 해</h3>
+<table class="t">
+<tr><th>물리량</th><th>Order of magnitude</th><th>Exact (Blasius)</th></tr>
+<tr><td>δ / x</td><td>Re<sub>x</sub><sup>−1/2</sup></td><td class="r">5.0 Re<sub>x</sub><sup>−1/2</sup></td></tr>
+<tr><td>δ<sub>t</sub> / x</td><td>Pr<sup>−1/2</sup> Re<sub>x</sub><sup>−1/2</sup></td><td class="r">5.0 Pr<sup>−1/3</sup> Re<sub>x</sub><sup>−1/2</sup></td></tr>
+<tr><td>C<sub>f,x</sub></td><td>2 Re<sub>x</sub><sup>−1/2</sup></td><td class="r">0.664 Re<sub>x</sub><sup>−1/2</sup></td></tr>
+<tr><td>Nu<sub>x</sub></td><td>Pr<sup>1/2</sup> Re<sub>x</sub><sup>1/2</sup></td><td class="r">0.332 Pr<sup>1/3</sup> Re<sub>x</sub><sup>1/2</sup></td></tr>
+<tr><td>평균 <span class="bar">C</span><sub>f</sub>, <span class="bar">Nu</span><sub>L</sub></td><td colspan="2">국부값(x=L)의 <b>2배</b> → 1.328 Re<sub>L</sub><sup>−1/2</sup>, &nbsp;0.664 Re<sub>L</sub><sup>1/2</sup>Pr<sup>1/3</sup></td></tr>
+</table>
+<div class="side g">💡 Re<sup>1/2</sup>의 지수는 둘 다 같음 → 차수해석이 "모양"을 맞춘다. Pr 지수만 1/2 → 1/3으로 바뀜 (p.5 설명 참고)</div>
+<div class="ft">p.10</div>
+</section>
+
+<!-- ============ PAGE 11 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>상관식 정리 ★</span><span>No. 11</span></div>
+<h2>7. 평판 상관식 정리 <span class="r" style="font-size:22px">★ 시험용</span></h2>
+<div class="row">
+<svg viewBox="0 0 330 110" width="300" style="flex:none">
+  <g fill="none" stroke-linecap="round">
+   <path d="M20 90 L320 90" stroke="#1d2b5c" stroke-width="3"/>
+   <path d="M20 90 C 60 70, 110 60, 140 56 C 170 45, 200 32, 320 22" stroke="#1971c2" stroke-width="2.5"/>
+   <path d="M140 56 L140 90" stroke="#d9363e" stroke-width="1.8" stroke-dasharray="4 4"/>
+   <path d="M20 100 L50 100 M44 95 L50 100 L44 105" stroke="#1d2b5c" stroke-width="1.6"/>
+  </g>
+  <text x="70" y="45" font-size="16" fill="#1971c2">B.L.</text>
+  <text x="54" y="108" font-size="15" fill="#1d2b5c">x</text>
+  <text x="128" y="108" font-size="16" fill="#d9363e">x<tspan font-size="11" dy="3">cr</tspan></text>
+  <text x="40" y="82" class="m" font-size="16" fill="#2b8a3e">층류</text>
+  <text x="230" y="70" class="m" font-size="16" fill="#7048e8">난류</text>
+</svg>
+<div class="side r" style="margin-top:0">천이 기준: <b>Re<sub>x,cr</sub> ≈ 5×10<sup>5</sup></b><br>x<sub>cr</sub> = Re<sub>cr</sub>·ν / U<sub>∞</sub><br>그 앞은 층류, 뒤는 난류</div>
+</div>
+
+<h3><span class="tag g">Laminar</span> flow</h3>
+<table class="t">
+<tr><th style="width:30%">무엇</th><th>식</th><th style="width:27%">조건</th></tr>
+<tr><td>Local C<sub>f,x</sub></td><td>C<sub>f,x</sub> = 0.664 Re<sub>x</sub><sup>−1/2</sup></td><td>Re<sub>x</sub> &lt; 5×10<sup>5</sup></td></tr>
+<tr><td>Avg <span class="bar">C</span><sub>f</sub></td><td><span class="bar">C</span><sub>f</sub> = <span class="small">(1/L)∫</span>C<sub>f,x</sub>dx = 1.328 Re<sub>L</sub><sup>−1/2</sup></td><td>10<sup>3</sup> ≤ Re<sub>L</sub> ≤ 5×10<sup>5</sup></td></tr>
+<tr><td>Local Nu<sub>x</sub></td><td>Nu<sub>x</sub> = 0.332 Re<sub>x</sub><sup>1/2</sup> Pr<sup>1/3</sup></td><td>Pr &gt; 0.5</td></tr>
+<tr><td>Avg <span class="bar">Nu</span><sub>L</sub></td><td><span class="bar">Nu</span><sub>L</sub> = <span class="bar">h</span>L/k = 0.664 Re<sub>L</sub><sup>1/2</sup> Pr<sup>1/3</sup></td><td>Pr &gt; 0.5</td></tr>
+<tr><td>Low Pr (액체금속)</td><td><span class="bar">Nu</span> = 1.128 Re<sub>L</sub><sup>1/2</sup> Pr<sup><b class="o">1/2</b></sup></td><td>Pr ≪ 1</td></tr>
+</table>
+<div class="fix">⚠ <b>필기 확인</b> — ① 노트의 "C<sub>f,x</sub> = 0.664 Re<sup>1/2</sup>"는 <u>Re<sup>−1/2</sup></u> (마이너스 빠짐). ② Low Pr 식의 Pr 지수는 교재 기준 <u>1/2</u> (노트엔 1/3). Pr ≪ 1이면 δ<sub>t</sub> ≫ δ라서 온도층 안 속도 ≈ U<sub>∞</sub> → p.5의 러프 계산(Pr<sup>1/2</sup>)이 오히려 정확해짐!</div>
+
+<h3><span class="tag">Turbulent</span> flow</h3>
+<span class="eq">C<sub>f,x</sub> = 0.0592 Re<sub>x</sub><sup>−1/5</sup>, &nbsp;&nbsp; <span class="small">5×10<sup>5</sup> &lt; Re<sub>x</sub> &lt; 10<sup>7</sup></span></span>
+<span class="eq">C<sub>f,x</sub> = 0.026 Re<sub>x</sub><sup>−1/7</sup>, &nbsp;&nbsp; <span class="small">10<sup>6</sup> &lt; Re<sub>x</sub> &lt; 10<sup>9</sup></span></span>
+<p class="memo b" style="margin-left:18px">난류는 지수가 −1/5, −1/7 → 층류(−1/2)보다 x 따라 훨씬 천천히 줄어듦 (섞임 때문에 마찰 큼)</p>
+<p class="small o" style="margin-left:18px">(노트엔 첫 식 범위가 10<sup>5</sup>로 보이는데, 난류 시작이 5×10<sup>5</sup>이므로 위처럼 쓰는 게 자연스러움 — 교재 확인!)</p>
+<p><b>층류+난류 섞인 판의 평균</b> (구간 나눠서 적분!)</p>
+<span class="eq"><span class="bar">τ</span><sub>s</sub> = <span class="fr"><span>1</span><span>L</span></span><span style="font-size:1.2em">[</span>∫<sub>0</sub><sup>x<sub>cr</sub></sup> τ<sub>s,lam</sub> dx + ∫<sub>x<sub>cr</sub></sub><sup>L</sup> τ<sub>s,turb</sub> dx<span style="font-size:1.2em">]</span>, &nbsp; <span class="bar">C</span><sub>f</sub> = <span class="fr"><span>1</span><span>L</span></span><span style="font-size:1.2em">[</span>∫<sub>0</sub><sup>x<sub>cr</sub></sup> C<sub>f,lam</sub> dx + ∫<sub>x<sub>cr</sub></sub><sup>L</sup> C<sub>f,turb</sub> dx<span style="font-size:1.2em">]</span></span>
+<p class="small o" style="margin-left:18px">(노트엔 적분 한계가 하나로 묶여 있는데, 층류는 0→x<sub>cr</sub>, 난류는 x<sub>cr</sub>→L 로 나눠야 함)</p>
+<div class="ft">p.11</div>
+</section>
+
+<!-- ============ PAGE 12 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>상관식 정리 ★</span><span>No. 12</span></div>
+<h3><span class="tag">Heat transfer</span> (turbulent flow)</h3>
+<span class="eq">Nu<sub>x</sub> = <span class="fr"><span>(C<sub>f,x</sub>/2) Re<sub>x</sub> Pr</span><span>1 + 12.7 (C<sub>f,x</sub>/2)<sup>1/2</sup> (Pr<sup>2/3</sup> − 1)</span></span> &nbsp;&nbsp; </span>
+<p class="small" style="margin:-4px 0 0 18px">조건: 0.5 &lt; Pr &lt; 2000,&nbsp; 5×10<sup>5</sup> &lt; Re<sub>x</sub> &lt; 10<sup>7</sup></p>
+<div class="side">이 식의 의미: Pr = 1이면 분모 = 1 → <b>Nu = (C<sub>f</sub>/2)·Re·Pr</b><br>= "마찰을 알면 열전달도 안다" (<b>레이놀즈 상사, Reynolds analogy</b>). 분모는 Pr ≠ 1 보정.</div>
+<span class="eq">or &nbsp;<span class="hl">Nu<sub>x</sub> = 0.029 Re<sub>x</sub><sup>0.8</sup> Pr<sup>0.43</sup></span> &nbsp;&nbsp; <span class="small">0.7&lt;Pr&lt;400, 5×10<sup>5</sup>&lt;Re<sub>x</sub>&lt;3×10<sup>7</sup></span></span>
+
+<h3><span class="tag o">Average</span> 층류 + 난류 혼합</h3>
+<span class="eq"><span class="bar">h</span> = <span class="fr"><span>1</span><span>L</span></span><span style="font-size:1.2em">[</span>∫<sub>0</sub><sup>x<sub>cr</sub></sup> h<sub>x</sub>(lam) dx + ∫<sub>x<sub>cr</sub></sub><sup>L</sup> h<sub>x</sub>(turb) dx<span style="font-size:1.2em">]</span></span>
+<span class="eq c"><span class="box"><span class="bar">Nu</span><sub>L</sub> = 0.664 Re<sub>cr</sub><sup>1/2</sup> Pr<sup>1/3</sup> + 0.036 Re<sub>L</sub><sup>0.8</sup> Pr<sup>0.43</sup> <span style="font-size:1.2em">[</span>1 − <span style="font-size:1.1em">(</span><span class="fr"><span>Re<sub>cr</sub></span><span>Re<sub>L</sub></span></span><span style="font-size:1.1em">)</span><sup>0.8</sup><span style="font-size:1.2em">]</span></span></span>
+<div class="sticky pink">
+<b>숫자 0.664, 0.036은 어디서? (직접 적분해보면 나옴!)</b><br>
+• 층류 부분: ∫<sub>0</sub><sup>x<sub>cr</sub></sup> 0.332 Re<sub>x</sub><sup>1/2</sup>·(dx/x) → x<sup>−1/2</sup> 적분 → ×2 → <b>0.664 Re<sub>cr</sub><sup>1/2</sup></b><br>
+• 난류 부분: ∫ 0.029 Re<sub>x</sub><sup>0.8</sup>·(dx/x) → ÷0.8 → <b>0.036</b>(Re<sub>L</sub><sup>0.8</sup> − Re<sub>cr</sub><sup>0.8</sup>) &nbsp;→ "구간별 적분" 원리만 기억!
+</div>
+
+<h2 style="margin-top:6px">8. 원통 &amp; 구 (Cylinder / Sphere)</h2>
+<div class="row">
+<div>
+<h3>Flow across a cylinder</h3>
+<span class="eq" style="margin-left:4px">C<sub>D</sub> ≈ 1 + <span class="fr"><span>10</span><span>Re<sup>2/3</sup></span></span> &nbsp;<span class="small">1 &lt; Re &lt; 10<sup>4</sup></span></span>
+<span class="eq" style="margin-left:4px">(Local) Nu<sub>D</sub> = 1.15 Re<sub>D</sub><sup>1/2</sup> Pr<sup>1/3</sup></span>
+<p class="memo b">(노트상 Pr &gt; 0.3?) 원통 맨 앞 <u>정체점</u>의 국부값. 길이 기준 = <b>지름 D</b>!</p>
+</div>
+<div>
+<h3>Flow over a sphere</h3>
+<span class="eq" style="margin-left:4px">C<sub>D</sub> = <span class="fr"><span>24</span><span>Re<sub>D</sub></span></span> &nbsp;<span class="small">(Re ≪ 1, Stokes 흐름)</span></span>
+<p>Local: Nu<sub>D</sub> … <span class="memo r">(필기 여기서 끊김)</span></p>
+<p>Uniformly … <span class="memo r">(다음 시간 이어서?)</span></p>
+</div>
+</div>
+<div class="fix" style="color:#5f6b8a;border-color:#9aa5c4"><b>📎 참고 (필기에 없음, 교재 단골 식)</b> — 구의 평균 열전달 (Whitaker):<br>
+<span class="bar">Nu</span><sub>D</sub> = 2 + (0.4 Re<sub>D</sub><sup>1/2</sup> + 0.06 Re<sub>D</sub><sup>2/3</sup>) Pr<sup>0.4</sup> (μ/μ<sub>s</sub>)<sup>1/4</sup> &nbsp;("2" = 흐름 없을 때 순수 전도 값)</div>
+<div class="ft">p.12</div>
+</section>
+
+<!-- ============ PAGE 13 ============ -->
+<section class="page">
+<div class="hd"><span>Date. ____ . ____ . ____</span><span>한 장 요약</span><span>No. 13</span></div>
+<h2>🧠 한 장 요약 &amp; 시험 체크리스트</h2>
+
+<div class="sticky blue" style="font-size:25px">
+<b>스토리로 외우기</b><br>
+① 벽 근처 얇은 층(δ)에서 속도·온도가 변한다<br>
+② 확산거리 ~ √(확산계수×시간), 시간 = x/U<sub>∞</sub> → <b>δ ~ x/√Re<sub>x</sub></b><br>
+③ 마찰 ~ μU/δ, 열전달 h ~ k/δ<sub>t</sub> → <b>C<sub>f</sub> ~ Re<sup>−1/2</sup>, Nu ~ Re<sup>1/2</sup></b><br>
+④ 정확히 풀면(Blasius, f″(0)=0.332) 계수가 정해짐 → 5, 0.664, 0.332<br>
+⑤ 평균 = 국부(x=L)의 2배 (층류) &nbsp; ⑥ 난류는 섞임 → 지수 0.8, 계수 보정
+</div>
+
+<h3>✔ 꼭 외울 것 (층류 평판)</h3>
+<table class="t">
+<tr><td>δ/x = 5.0 Re<sub>x</sub><sup>−1/2</sup></td><td>δ/δ<sub>t</sub> ≈ Pr<sup>1/3</sup></td></tr>
+<tr><td>C<sub>f,x</sub> = 0.664 Re<sub>x</sub><sup>−1/2</sup></td><td><span class="bar">C</span><sub>f</sub> = 1.328 Re<sub>L</sub><sup>−1/2</sup></td></tr>
+<tr><td>Nu<sub>x</sub> = 0.332 Re<sub>x</sub><sup>1/2</sup>Pr<sup>1/3</sup></td><td><span class="bar">Nu</span><sub>L</sub> = 0.664 Re<sub>L</sub><sup>1/2</sup>Pr<sup>1/3</sup></td></tr>
+<tr><td colspan="2">Blasius: f‴ + ½ff″ = 0, &nbsp;f(0)=f′(0)=0, f′(∞)=1, &nbsp;f″(0)=0.332</td></tr>
+</table>
+
+<h3>✘ 자주 하는 실수</h3>
+<ul class="p">
+<li><span class="r">Re<sup>−1/2</sup></span>의 <b>마이너스</b> 빼먹기 (C<sub>f</sub>는 Re 커지면 작아짐, Nu는 커짐)</li>
+<li>δ/δ<sub>t</sub> 와 δ<sub>t</sub>/δ <b>뒤집기</b> → "물(Pr 큼)은 온도층이 얇다"로 체크</li>
+<li>Nu = hx/<b>k<sub>f</sub></b> — k는 <u>유체</u>의 열전도도 (벽 아님!)</li>
+<li>평균 식에 국부 x 대신 <b>L</b>을 써야 함 (Re<sub>L</sub>, <span class="bar">Nu</span><sub>L</sub>)</li>
+<li>문제 풀 때 <b>Re<sub>L</sub> 먼저 계산 → 5×10<sup>5</sup>과 비교</b> → 층류/혼합 식 선택</li>
+<li>원통·구는 길이 기준이 <b>D</b> (Re<sub>D</sub>, Nu<sub>D</sub>)</li>
+</ul>
+
+<div class="sticky green">
+<b>문제 풀이 순서 (템플릿)</b><br>
+1) 막온도 T<sub>f</sub> = (T<sub>s</sub>+T<sub>∞</sub>)/2 에서 물성치(ν, k, Pr) 찾기<br>
+2) Re<sub>L</sub> = U<sub>∞</sub>L/ν 계산 → 층류? 혼합?<br>
+3) 맞는 <span class="bar">Nu</span> 상관식 선택 → <span class="bar">h</span> = <span class="bar">Nu</span>·k/L<br>
+4) q = <span class="bar">h</span> A (T<sub>s</sub> − T<sub>∞</sub>)
+</div>
+<div class="ft">p.13 — 끝 ✿</div>
+</section>
+
+</body>
+</html>
