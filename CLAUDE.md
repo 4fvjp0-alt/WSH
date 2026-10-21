@@ -27,3 +27,5 @@
 - `cover_designs.html` 한 페이지 = 표지 디자인 1종 (A4). 과목명·이름·학번·날짜 칸은 빈칸으로 둔다.
 - 폰트 목록은 HTML 맨 위 주석 참고 (같은 폴더 `fonts/`, 커밋하지 않음).
 - `node notes/_cover/render_cover.js notes/_cover` → `표지_디자인모음.pdf`, `표지_N_이름.pdf`, `표지_미리보기.png`.
+- 클래식 모음은 `notes/_cover/classic/` (`<body data-set="클래식">`):
+  `node notes/_cover/render_cover.js notes/_cover/classic` → `표지_클래식모음.pdf`, `표지_클래식_N_이름.pdf`.
