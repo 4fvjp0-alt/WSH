@@ -22,3 +22,8 @@
 ## 파일명
 - `YYMMDD_주제_정리노트.pdf` — 날짜가 맨 앞 (원본 스캔 파일명의 날짜 사용, 예: 261007).
 - `notes/` 폴더에 저장하고 커밋·푸시한다.
+
+## 제출물 표지 (notes/_cover/)
+- `cover_designs.html` 한 페이지 = 표지 디자인 1종 (A4). 과목명·이름·학번·날짜 칸은 빈칸으로 둔다.
+- 폰트 목록은 HTML 맨 위 주석 참고 (같은 폴더 `fonts/`, 커밋하지 않음).
+- `node notes/_cover/render_cover.js notes/_cover` → `표지_디자인모음.pdf`, `표지_N_이름.pdf`, `표지_미리보기.png`.

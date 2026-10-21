@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>제출물 표지 디자인 모음</title>
+<!--
+  제출물 표지 디자인 8종 (A4, 한 페이지 = 한 디자인).
+  과목명 · 이름 · 학번 · 날짜 칸은 모두 빈칸.
+  폰트는 github.com/google/fonts 의 ofl/* TTF를 이 파일 옆 fonts/ 에 둔다 (커밋하지 않음):
+    gaegu, nanumpenscript, nanummyeongjo, gothica1, ibmplexsanskr, ibmplexmono,
+    blackhansans, jua, cormorantgaramond(VF), spacegrotesk(VF)
+  렌더: node render_cover.js <이 폴더>
+-->
+<style>
+@font-face{font-family:"Pen";src:url("fonts/Gaegu-Regular.ttf")}
+@font-face{font-family:"Pen";src:url("fonts/Gaegu-Bold.ttf");font-weight:700}
+@font-face{font-family:"Memo";src:url("fonts/NanumPenScript-Regular.ttf")}
+@font-face{font-family:"Myeongjo";src:url("fonts/NanumMyeongjo-Regular.ttf")}
+@font-face{font-family:"Myeongjo";src:url("fonts/NanumMyeongjo-Bold.ttf");font-weight:700}
+@font-face{font-family:"Myeongjo";src:url("fonts/NanumMyeongjo-ExtraBold.ttf");font-weight:800}
+@font-face{font-family:"GothicA1";src:url("fonts/GothicA1-Light.ttf");font-weight:300}
+@font-face{font-family:"GothicA1";src:url("fonts/GothicA1-Regular.ttf");font-weight:400}
+@font-face{font-family:"GothicA1";src:url("fonts/GothicA1-Medium.ttf");font-weight:500}
+@font-face{font-family:"GothicA1";src:url("fonts/GothicA1-Bold.ttf");font-weight:700}
+@font-face{font-family:"GothicA1";src:url("fonts/GothicA1-Black.ttf");font-weight:900}
+@font-face{font-family:"PlexKR";src:url("fonts/IBMPlexSansKR-Light.ttf");font-weight:300}
+@font-face{font-family:"PlexKR";src:url("fonts/IBMPlexSansKR-Regular.ttf");font-weight:400}
+@font-face{font-family:"PlexKR";src:url("fonts/IBMPlexSansKR-Medium.ttf");font-weight:500}
+@font-face{font-family:"PlexKR";src:url("fonts/IBMPlexSansKR-Bold.ttf");font-weight:700}
+@font-face{font-family:"PlexMono";src:url("fonts/IBMPlexMono-Regular.ttf");font-weight:400}
+@font-face{font-family:"PlexMono";src:url("fonts/IBMPlexMono-Medium.ttf");font-weight:500}
+@font-face{font-family:"PlexMono";src:url("fonts/IBMPlexMono-Bold.ttf");font-weight:700}
+@font-face{font-family:"BlackHan";src:url("fonts/BlackHanSans-Regular.ttf")}
+@font-face{font-family:"Jua";src:url("fonts/Jua-Regular.ttf")}
+@font-face{font-family:"Cormorant";src:url("fonts/CormorantGaramond-VF.ttf");font-weight:300 700}
+@font-face{font-family:"Grotesk";src:url("fonts/SpaceGrotesk-VF.ttf");font-weight:300 700}
+@page{size:A4;margin:0}
+:root{--ink:#1d2b5c;--red:#d9363e;--blue:#1971c2;--orange:#e8590c;--purple:#7048e8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#ddd}
+body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;margin:0 auto 10px;position:relative;overflow:hidden;background:#fff;break-after:page}
+.page:last-child{break-after:auto}
+.page>*{position:absolute}
+svg{display:block}
+
+/* ============ 1. 모눈 노트 ============ */
+.c1{color:var(--ink);font-family:"Pen";background-color:#fffefa;
+  background-image:
+    linear-gradient(90deg,transparent 19mm,rgba(230,80,90,.55) 19mm,rgba(230,80,90,.55) calc(19mm + 1.2px),transparent calc(19mm + 1.2px)),
+    linear-gradient(rgba(120,160,210,.16) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,160,210,.16) 1px,transparent 1px);
+  background-size:100% 100%,5mm 5mm,5mm 5mm}
+.c1 .hole{left:6.5mm;width:6.5mm;height:6.5mm;border-radius:50%;background:radial-gradient(circle at 45% 40%,#c4c4c4 0,#dedede 60%,#ececec 100%);box-shadow:inset .8px 1.2px 2px rgba(0,0,0,.35)}
+.c1 .hd{left:25mm;right:13mm;top:8mm;display:flex;justify-content:space-between;font-size:16px;color:#8a93ad;border-bottom:1.5px solid #9aa5c4;padding-bottom:2px}
+.c1 .lab{left:29mm;top:46mm;font-weight:700;font-size:36px;line-height:1}
+.c1 .lab em{font-family:"Memo";font-style:normal;font-weight:400;font-size:30px;color:var(--purple);margin-left:10px}
+.c1 .area{left:27mm;top:60mm;width:166mm;height:52mm}
+.c1 .doodle{left:134mm;top:114mm;width:44mm}
+.c1 .spark{left:34mm;top:126mm;width:70mm}
+.c1 .card{left:33mm;top:172mm;width:146mm;height:90mm;background:#fff;border:2.2px solid var(--ink);border-radius:14px 10px 16px 9px;transform:rotate(-.8deg);box-shadow:2px 3px 7px rgba(0,0,0,.12);padding:13mm 10mm 0 10mm}
+.c1 .tape{left:50%;top:-5.5mm;width:48mm;height:11mm;margin-left:-24mm;transform:rotate(-3deg);position:absolute;
+  background:repeating-linear-gradient(45deg,rgba(255,160,185,.75) 0 3mm,rgba(255,190,205,.75) 3mm 6mm);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.c1 .row{display:flex;align-items:flex-end;height:22mm}
+.c1 .row b{width:42mm;font-size:30px;line-height:1;padding-bottom:2mm}
+.c1 .row b em{display:block;font-family:"Memo";font-style:normal;font-weight:400;font-size:22px;color:#8a93ad;margin-top:2px}
+.c1 .row i{flex:1;border-bottom:2.2px dashed #9aa5c4;height:100%}
+.c1 .row .dot{flex:none;font-size:30px;padding:0 3mm 1.5mm;color:#9aa5c4;font-style:normal;border:0;height:auto}
+
+/* ============ 2. 클래식 ============ */
+.c2{font-family:"Myeongjo";color:#1f2a44;background:#fff}
+.c2 .f1{inset:13mm;border:1.6px solid #1f2a44}
+.c2 .f2{inset:15mm;border:.6px solid #1f2a44}
+.c2 .corner{width:5mm;height:5mm;border:.6px solid #1f2a44;background:#fff}
+.c2 .report{left:0;right:0;top:50mm;text-align:center;font-family:"Cormorant";font-weight:600;font-size:60px;letter-spacing:.42em;text-indent:.42em;line-height:1}
+.c2 .orn{left:0;right:0;top:76mm;display:flex;justify-content:center}
+.c2 .slab{left:0;right:0;top:106mm;text-align:center;font-size:17px;letter-spacing:.6em;text-indent:.6em;color:#555}
+.c2 .sbox{left:30mm;right:30mm;top:116mm;height:38mm;border-top:.6px solid #1f2a44;border-bottom:4px double #1f2a44}
+.c2 table{right:28mm;top:202mm;width:108mm;border-collapse:collapse;font-size:17px}
+.c2 td{border-bottom:.6px solid #1f2a44;height:15mm;padding:0 4mm}
+.c2 tr:first-child td{border-top:1.6px solid #1f2a44}
+.c2 tr:last-child td{border-bottom:1.6px solid #1f2a44}
+.c2 td.k{width:30mm;background:#f2efe7;font-weight:700;letter-spacing:.5em;text-align:center;border-right:.6px solid #1f2a44;text-indent:.5em}
+.c2 td.v{text-align:right;color:#b9b4a6;font-size:15px;letter-spacing:.1em}
+
+/* ============ 3. 미니멀 ============ */
+.c3{font-family:"GothicA1";color:#111;background:#fff}
+.c3 .eb{left:22mm;top:21mm;display:flex;align-items:center;gap:3mm;font-family:"Grotesk";font-weight:500;font-size:12px;letter-spacing:.32em}
+.c3 .eb i{width:4mm;height:4mm;background:#ff4a1c}
+.c3 .eb2{right:22mm;top:21mm;font-size:12px;color:#888;font-weight:500;letter-spacing:.2em}
+.c3 .hr{left:22mm;right:22mm;top:28mm;border-top:.5px solid #111}
+.c3 .ln{left:22mm;right:22mm;border-top:.6px solid #c8c8c8}
+.c3 .ln.k{border-top:1.4px solid #111}
+.c3 .acc{right:22mm;width:4mm;height:4mm;border-radius:50%;background:#ff4a1c}
+.c3 .bar{left:22mm;top:124mm;width:36mm;height:2.6mm;background:#111}
+.c3 .flds{left:22mm;right:22mm;top:228mm;border-top:.5px solid #111;display:grid;grid-template-columns:62fr 56fr 48fr;column-gap:8mm}
+.c3 .flds div{height:36mm;position:relative;padding-top:4mm}
+.c3 .flds b{font-weight:700;font-size:15px}
+.c3 .flds em{font-style:normal;font-family:"Grotesk";font-size:10px;letter-spacing:.24em;color:#888;margin-left:2mm;text-transform:uppercase}
+.c3 .flds i{position:absolute;left:0;right:0;bottom:4mm;border-top:1px solid #111}
+.c3 .foot{left:22mm;right:22mm;bottom:12mm;display:flex;justify-content:space-between;font-family:"Grotesk";font-size:9px;letter-spacing:.3em;color:#aaa}
+
+/* ============ 4. 공학 도면 ============ */
+.c4{background:#fff}
+.c4 svg text{font-family:"PlexMono"}
+.c4 svg .kr{font-family:"PlexKR";font-weight:700}
+
+/* ============ 5. 등온선 ============ */
+.c5{font-family:"PlexKR";color:#13204a;background:#fff}
+.c5 .heat{left:0;top:0;width:210mm;height:168mm;background:#0d1b3d}
+.c5 .heat canvas,.c5 .heat svg{position:absolute;left:0;top:0;width:210mm;height:168mm}
+.c5 .tag{left:18mm;top:16mm;color:rgba(255,255,255,.8);font-family:"PlexMono";font-size:12px;letter-spacing:.12em}
+.c5 .tag i{display:block;width:22mm;border-top:1px solid rgba(255,255,255,.55);margin-top:2mm}
+.c5 .cbar{right:18mm;top:152mm;display:flex;align-items:center;gap:2.5mm;color:rgba(255,255,255,.85);font-family:"PlexMono";font-size:11px}
+.c5 .cbar i{width:46mm;height:2.6mm;background:linear-gradient(90deg,#0d1b3d,#3a1f66,#8a2373,#d1495b,#f0703a,#fbb43c,#fff1b8);outline:.5px solid rgba(255,255,255,.5)}
+.c5 .slab{left:18mm;top:182mm;display:flex;align-items:baseline;gap:3mm}
+.c5 .slab b{font-size:17px;font-weight:700}
+.c5 .slab em{font-style:normal;font-family:"PlexMono";font-size:11px;letter-spacing:.2em;color:#8b93ad}
+.c5 .ln{left:18mm;right:18mm;border-top:.6px solid #cfd4e2}
+.c5 .ln.k{border-top:2px solid #13204a}
+.c5 .flds{left:18mm;right:18mm;top:244mm;display:grid;grid-template-columns:1fr 1fr 1fr;column-gap:8mm}
+.c5 .flds div{height:32mm;position:relative;border-top:3px solid var(--c)}
+.c5 .flds b{display:block;margin-top:2.5mm;font-size:15px;font-weight:700}
+.c5 .flds em{font-style:normal;font-family:"PlexMono";font-size:10px;letter-spacing:.16em;color:#8b93ad}
+.c5 .flds i{position:absolute;left:0;right:0;bottom:5mm;border-top:1px solid #13204a}
+
+/* ============ 6. 스크랩북 ============ */
+.c6{font-family:"Jua";color:#4a3f35;background-color:#f7f1e5;background-image:radial-gradient(circle,#d9ccb4 .45mm,transparent .55mm);background-size:6mm 6mm;background-position:3mm 3mm}
+.c6 .card{left:24mm;top:40mm;width:162mm;height:92mm;background:#fff;transform:rotate(-1.6deg);box-shadow:2px 4px 10px rgba(80,60,30,.18);padding:12mm 12mm 0}
+.c6 .card .k{font-size:30px;display:flex;align-items:center;gap:3mm}
+.c6 .card .k i{width:5mm;height:5mm;border-radius:50%;background:#ff8a65}
+.c6 .card .k em{font-family:"Memo";font-style:normal;font-size:26px;color:#a99a86}
+.c6 .card .w{border-bottom:2px dashed #cbbfa9;height:22mm}
+.c6 .tp{width:36mm;height:10mm;background:repeating-linear-gradient(90deg,rgba(150,205,185,.8) 0 2.5mm,rgba(175,220,200,.8) 2.5mm 5mm);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.c6 .st{width:78mm;height:68mm;padding:12mm 8mm 0;box-shadow:2px 4px 8px rgba(80,60,30,.2)}
+.c6 .st .k{font-size:26px;line-height:1}
+.c6 .st .k em{font-family:"Memo";font-style:normal;font-size:24px;color:rgba(74,63,53,.55);margin-left:2mm}
+.c6 .st .w{border-bottom:2px solid rgba(74,63,53,.35);height:15mm}
+.c6 .pin{width:7mm;height:7mm;border-radius:50%;left:50%;top:-2.5mm;margin-left:-3.5mm;box-shadow:1px 2px 3px rgba(0,0,0,.3)}
+.c6 .doo{left:0;top:0;width:210mm;height:297mm}
+
+/* ============ 7. 바우하우스 ============ */
+.c7{background:#f2ece0;color:#141414;font-family:"GothicA1"}
+.c7 .slab{left:22mm;top:178mm;display:flex;align-items:baseline;gap:4mm}
+.c7 .slab b{font-family:"BlackHan";font-weight:400;font-size:34px;line-height:1}
+.c7 .slab em{font-style:normal;font-family:"Grotesk";font-weight:600;font-size:12px;letter-spacing:.3em}
+.c7 .ln{left:22mm;right:22mm;border-top:.6px solid #a39d90}
+.c7 .ln.k{border-top:3px solid #141414}
+.c7 .flds{left:22mm;right:22mm;top:246mm;display:grid;grid-template-columns:1fr 1fr 1fr;column-gap:7mm}
+.c7 .flds div{height:30mm;position:relative}
+.c7 .flds b{display:inline-flex;align-items:center;gap:2mm;font-weight:900;font-size:16px}
+.c7 .flds b s{width:4mm;height:4mm;background:var(--c);text-decoration:none}
+.c7 .flds b.o s{border-radius:50%}
+.c7 .flds b.t s{width:0;height:0;background:none;border-left:2.3mm solid transparent;border-right:2.3mm solid transparent;border-bottom:4mm solid var(--c)}
+.c7 .flds em{font-style:normal;font-family:"Grotesk";font-weight:600;font-size:10px;letter-spacing:.24em;margin-left:2mm;color:#6d685e}
+.c7 .flds i{position:absolute;left:0;right:0;bottom:3mm;border-top:1.6px solid #141414}
+
+/* ============ 8. 서류 파일 ============ */
+.c8{font-family:"PlexKR";color:#4a3417;background-color:#e7cf98;
+  background-image:
+    radial-gradient(ellipse at 25% 15%,rgba(255,250,235,.35),transparent 55%),
+    radial-gradient(ellipse at 85% 95%,rgba(120,80,20,.16),transparent 60%),
+    repeating-linear-gradient(0deg,rgba(120,80,20,.03) 0 1px,transparent 1px 2.5px)}
+.c8 .crease{left:0;right:0;top:17mm;height:1.2mm;background:linear-gradient(rgba(110,75,25,.22),rgba(255,248,225,.45))}
+.c8 .lbl{left:26mm;top:44mm;width:158mm;height:80mm;background:#fffdf6;transform:rotate(-.5deg);box-shadow:1px 2px 6px rgba(80,55,15,.25);
+  background-image:linear-gradient(transparent 17mm,#e4605a 17mm,#e4605a calc(17mm + 1.2px),transparent calc(17mm + 1.2px)),
+    linear-gradient(transparent 40mm,rgba(90,140,200,.5) 40mm,rgba(90,140,200,.5) calc(40mm + 1px),transparent calc(40mm + 1px)),
+    linear-gradient(transparent 63mm,rgba(90,140,200,.5) 63mm,rgba(90,140,200,.5) calc(63mm + 1px),transparent calc(63mm + 1px));
+  padding:6mm 9mm 0}
+.c8 .lbl .k{display:flex;align-items:baseline;gap:3mm;font-family:"PlexMono";font-size:13px;letter-spacing:.24em;color:#7a6a52}
+.c8 .lbl .k b{font-family:"PlexKR";font-weight:700;font-size:19px;letter-spacing:.2em;color:#3d2c12}
+.c8 .cap{left:24mm;top:146mm;font-family:"PlexMono";font-size:12px;letter-spacing:.3em;color:#6a4a22}
+.c8 table{left:24mm;top:153mm;width:162mm;border-collapse:collapse;color:#5a3d18}
+.c8 td{border:.5mm solid #6a4a22;padding:0 3mm}
+.c8 tr.h td{height:11mm;font-weight:700;font-size:15px;letter-spacing:.1em}
+.c8 tr.h td em{font-style:normal;font-family:"PlexMono";font-weight:400;font-size:10px;letter-spacing:.14em;margin-left:2mm;opacity:.8}
+.c8 tr.b td{height:24mm}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. 모눈 노트 — 정리노트와 같은 손글씨 노트 스타일 ============ -->
+<section class="page c1" data-name="모눈노트">
+  <i class="hole" style="top:60mm"></i><i class="hole" style="top:145.25mm"></i><i class="hole" style="top:230.5mm"></i>
+  <div class="hd"><span>&nbsp;</span><span style="font-family:'Memo';font-size:19px">cover</span></div>
+  <div class="lab">과목명<em>Subject</em></div>
+  <svg class="area" viewBox="0 0 166 52">
+    <path d="M3 10 L162 8.6 L163.5 23.2 L2.2 24.4 Z" fill="rgba(255,224,0,.42)"/>
+    <g fill="none" stroke="#1d2b5c" stroke-width=".65" stroke-linecap="round">
+      <path d="M2 24.8 C 40 24.1, 85 25.5, 125 24.4 S 156 24.9, 164 24.5"/>
+      <path d="M2 48.5 C 45 47.9, 88 49.1, 128 48.2 S 157 48.7, 164 48.3"/>
+    </g>
+  </svg>
+  <!-- 손그림: 김 나는 컵 -->
+  <svg class="doodle" viewBox="-4 -14 70 82">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 18 C 13 12, 23 8, 18 1 S 21 -8, 18 -12" stroke="#e8590c" stroke-width="1.6"/>
+      <path d="M28 18 C 23 11, 33 7, 28 -1 S 31 -9, 28 -13" stroke="#d9363e" stroke-width="1.6"/>
+      <path d="M38 18 C 33 12, 43 8, 38 1 S 41 -7, 38 -11" stroke="#e8590c" stroke-width="1.6"/>
+      <path d="M8 24 L11.5 52 Q12.5 57 18 57 L38 57 Q43.5 57 44.5 52 L48 24 Z" fill="#fff" stroke="#1d2b5c" stroke-width="2"/>
+      <path d="M8.3 26.5 Q28 30, 47.7 26.5" stroke="#1d2b5c" stroke-width="1.3"/>
+      <path d="M47 31 Q58 30 57 40 Q56 49 45 47.5" stroke="#1d2b5c" stroke-width="2"/>
+      <path d="M1 60.5 Q28 66, 57 60.5" stroke="#1d2b5c" stroke-width="2"/>
+      <path d="M17 38 l3 3 l6 -7" stroke="#2b8a3e" stroke-width="1.8"/>
+    </g>
+  </svg>
+  <svg class="spark" viewBox="0 0 70 40">
+    <g fill="#ffe066" stroke="#e8a10c" stroke-width=".8" stroke-linejoin="round">
+      <path transform="translate(12 14)" d="M0 -8 Q1.3 -1.3 8 0 Q1.3 1.3 0 8 Q-1.3 1.3 -8 0 Q-1.3 -1.3 0 -8Z"/>
+      <path transform="translate(30 30) scale(.6)" d="M0 -8 Q1.3 -1.3 8 0 Q1.3 1.3 0 8 Q-1.3 1.3 -8 0 Q-1.3 -1.3 0 -8Z"/>
+      <path transform="translate(50 12) scale(.45)" d="M0 -8 Q1.3 -1.3 8 0 Q1.3 1.3 0 8 Q-1.3 1.3 -8 0 Q-1.3 -1.3 0 -8Z"/>
+    </g>
+    <path d="M6 36 C 16 31, 22 39, 32 35 S 48 30, 58 35" fill="none" stroke="#7048e8" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="1.5 3"/>
+  </svg>
+  <div class="card">
+    <i class="tape"></i>
+    <div class="row"><b>이름<em>Name</em></b><i></i></div>
+    <div class="row"><b>학번<em>Student No.</em></b><i></i></div>
+    <div class="row"><b>날짜<em>Date</em></b><i></i><i class="dot">.</i><i></i><i class="dot">.</i><i></i></div>
+  </div>
+</section>
+
+<!-- ============ 2. 클래식 — 이중 테두리 + 정보 표 ============ -->
+<section class="page c2" data-name="클래식">
+  <div class="f1"></div><div class="f2"></div>
+  <i class="corner" style="left:11.5mm;top:11.5mm"></i><i class="corner" style="right:11.5mm;top:11.5mm"></i>
+  <i class="corner" style="left:11.5mm;bottom:11.5mm"></i><i class="corner" style="right:11.5mm;bottom:11.5mm"></i>
+  <div class="report">REPORT</div>
+  <div class="orn"><svg width="64mm" height="6mm" viewBox="0 0 64 6"><g stroke="#1f2a44" stroke-width=".3"><path d="M0 3 H27 M37 3 H64"/></g><path d="M32 .6 L34.4 3 L32 5.4 L29.6 3Z" fill="#1f2a44"/><circle cx="26" cy="3" r=".7" fill="#1f2a44"/><circle cx="38" cy="3" r=".7" fill="#1f2a44"/></svg></div>
+  <div class="slab">과목명</div>
+  <div class="sbox"></div>
+  <table>
+    <tr><td class="k">이름</td><td class="v"></td></tr>
+    <tr><td class="k">학번</td><td class="v"></td></tr>
+    <tr><td class="k">날짜</td><td class="v">년&emsp;&emsp;월&emsp;&emsp;일</td></tr>
+  </table>
+</section>
+
+<!-- ============ 3. 미니멀 — 여백 + 가는 선 ============ -->
+<section class="page c3" data-name="미니멀">
+  <div class="eb"><i></i>SUBJECT</div>
+  <div class="eb2">과목명</div>
+  <div class="hr"></div>
+  <div class="ln" style="top:84mm"></div>
+  <div class="ln k" style="top:110mm"></div>
+  <div class="acc" style="top:108.3mm"></div>
+  <div class="bar"></div>
+  <div class="flds">
+    <div><b>이름</b><em>Name</em><i></i></div>
+    <div><b>학번</b><em>Student ID</em><i></i></div>
+    <div><b>날짜</b><em>Date</em><i></i></div>
+  </div>
+  <div class="foot"><span>—</span><span>A4</span></div>
+</section>
+
+<!-- ============ 4. 공학 도면 — 윤곽선·구역 표시 + 표제란 ============ -->
+<section class="page c4" data-name="공학도면">
+  <svg id="dwg" style="left:0;top:0;width:210mm;height:297mm" viewBox="0 0 210 297"></svg>
+</section>
+
+<!-- ============ 5. 등온선 — 온도장 그라데이션 ============ -->
+<section class="page c5" data-name="등온선">
+  <div class="heat"><canvas id="heat"></canvas><svg id="iso" viewBox="0 0 210 168" preserveAspectRatio="none"></svg></div>
+  <div class="tag">T ( x , y )<i></i></div>
+  <div class="cbar">T<sub>∞</sub><i></i>T<sub>s</sub></div>
+  <div class="slab"><b>과목명</b><em>SUBJECT</em></div>
+  <div class="ln" style="top:208mm"></div>
+  <div class="ln k" style="top:228mm"></div>
+  <div class="flds">
+    <div style="--c:#d1495b"><b>이름</b><em>NAME</em><i></i></div>
+    <div style="--c:#f0703a"><b>학번</b><em>STUDENT ID</em><i></i></div>
+    <div style="--c:#fbb43c"><b>날짜</b><em>DATE</em><i></i></div>
+  </div>
+</section>
+
+<!-- ============ 6. 스크랩북 — 마스킹테이프 + 포스트잇 ============ -->
+<section class="page c6" data-name="스크랩북">
+  <div class="card">
+    <div class="k"><i></i>과목명<em>subject</em></div>
+    <div class="w"></div><div class="w"></div>
+  </div>
+  <i class="tp" style="left:16mm;top:42mm;transform:rotate(-38deg)"></i>
+  <i class="tp" style="left:160mm;top:34mm;transform:rotate(32deg)"></i>
+  <div class="st" style="left:20mm;top:152mm;background:linear-gradient(#f9df6e,#ffe98a 14%);transform:rotate(-3deg)">
+    <i class="pin" style="position:absolute;background:radial-gradient(circle at 35% 35%,#ff9a9a,#e03131 60%,#a51d1d)"></i>
+    <div class="k">이름<em>name</em></div><div class="w"></div><div class="w"></div>
+  </div>
+  <div class="st" style="left:112mm;top:146mm;background:linear-gradient(#ffb6cb,#ffcad9 14%);transform:rotate(2.5deg)">
+    <i class="tp" style="position:absolute;left:21mm;top:-5mm;transform:rotate(-4deg);background:repeating-linear-gradient(90deg,rgba(255,236,150,.85) 0 2.5mm,rgba(255,244,190,.85) 2.5mm 5mm)"></i>
+    <div class="k">학번<em>student no.</em></div><div class="w"></div><div class="w"></div>
+  </div>
+  <div class="st" style="left:62mm;top:224mm;width:86mm;height:56mm;background:linear-gradient(#b7dafc,#cfe6ff 16%);transform:rotate(-1.2deg)">
+    <i class="pin" style="position:absolute;background:radial-gradient(circle at 35% 35%,#9cc8ff,#1971c2 60%,#0d4a8a)"></i>
+    <div class="k">날짜<em>date</em></div><div class="w"></div>
+  </div>
+  <svg class="doo" viewBox="0 0 210 297">
+    <g fill="#ffd43b" stroke="#f08c00" stroke-width=".6" stroke-linejoin="round">
+      <path transform="translate(186 145) rotate(12)" d="M0 -5 L1.5 -1.6 L5 -1.5 L2.3 .9 L3.1 4.6 L0 2.6 L-3.1 4.6 L-2.3 .9 L-5 -1.5 L-1.5 -1.6Z"/>
+      <path transform="translate(196 156) scale(.6)" d="M0 -5 L1.5 -1.6 L5 -1.5 L2.3 .9 L3.1 4.6 L0 2.6 L-3.1 4.6 L-2.3 .9 L-5 -1.5 L-1.5 -1.6Z"/>
+      <path transform="translate(30 242) rotate(-10) scale(.8)" d="M0 -5 L1.5 -1.6 L5 -1.5 L2.3 .9 L3.1 4.6 L0 2.6 L-3.1 4.6 L-2.3 .9 L-5 -1.5 L-1.5 -1.6Z"/>
+    </g>
+    <path d="M28 24 C 36 18, 44 30, 52 24 S 68 18, 76 24" fill="none" stroke="#ff8a65" stroke-width="1.1" stroke-linecap="round"/>
+    <path d="M168 260 C 178 254, 172 246, 182 242" fill="none" stroke="#4a3f35" stroke-width=".7" stroke-linecap="round" stroke-dasharray="1.6 2.2"/>
+    <path d="M179.5 240.5 L182.6 241.8 L180.5 244.4" fill="none" stroke="#4a3f35" stroke-width=".7" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</section>
+
+<!-- ============ 7. 바우하우스 — 원·사각·삼각 구성 ============ -->
+<section class="page c7" data-name="바우하우스">
+  <svg style="left:0;top:0;width:210mm;height:170mm" viewBox="0 0 210 170">
+    <path d="M210 0 H130 A80 80 0 0 0 210 80 Z" fill="#1f4e9c"/>
+    <rect x="112" y="94" width="76" height="52" fill="#f4c430"/>
+    <circle cx="72" cy="94" r="50" fill="#e2412f" style="mix-blend-mode:multiply"/>
+    <circle cx="152" cy="56" r="8" fill="#141414"/>
+    <path d="M188 146 V112 L154 146 Z" fill="#141414"/>
+    <path d="M22 22 L118 150" stroke="#141414" stroke-width="1.2"/>
+    <path d="M22 158 H188" stroke="#141414" stroke-width="2.4"/>
+    <path d="M100 30 A16 16 0 0 1 132 30" fill="none" stroke="#141414" stroke-width="1.2"/>
+  </svg>
+  <div class="slab"><b>과목명</b><em>SUBJECT</em></div>
+  <div class="ln" style="top:210mm"></div>
+  <div class="ln k" style="top:232mm"></div>
+  <div class="flds">
+    <div><b class="o" style="--c:#e2412f"><s></s>이름</b><em>NAME</em><i></i></div>
+    <div><b style="--c:#1f4e9c"><s></s>학번</b><em>STUDENT ID</em><i></i></div>
+    <div><b class="t" style="--c:#e0a800"><s></s>날짜</b><em>DATE</em><i></i></div>
+  </div>
+</section>
+
+<!-- ============ 8. 서류 파일 — 마닐라 폴더 + 인덱스 라벨 + 도장 ============ -->
+<section class="page c8" data-name="서류파일">
+  <div class="crease"></div>
+  <svg style="left:85mm;top:3mm;width:40mm;height:34mm" viewBox="0 0 40 34">
+    <g fill="none" stroke-linecap="round" transform="translate(.35 .45)" stroke="rgba(90,55,15,.35)" stroke-width="1.1">
+      <path d="M20 8 C 30 12, 30 22, 20 26 C 10 30, 10 20, 20 18 C 30 16, 30 4, 20 8 Z"/><path d="M20 26 C 26 29, 31 30, 36 33"/>
+    </g>
+    <g fill="none" stroke="#fbf5e6" stroke-width=".85" stroke-linecap="round">
+      <path d="M20 8 C 30 12, 30 22, 20 26 C 10 30, 10 20, 20 18 C 30 16, 30 4, 20 8 Z"/><path d="M20 26 C 26 29, 31 30, 36 33"/>
+    </g>
+    <g fill="#9a5a2c" stroke="#6e3d1a" stroke-width=".5">
+      <circle cx="20" cy="8" r="4.6"/><circle cx="20" cy="26" r="4.6"/>
+    </g>
+    <circle cx="20" cy="8" r="1" fill="#6e3d1a"/><circle cx="20" cy="26" r="1" fill="#6e3d1a"/>
+  </svg>
+  <div class="lbl">
+    <div class="k">SUBJECT<b>과목명</b></div>
+  </div>
+  <div class="cap">SUBMITTED BY</div>
+  <table>
+    <tr class="h"><td style="width:58mm">이름<em>NAME</em></td><td style="width:56mm">학번<em>STUDENT No.</em></td><td>날짜<em>DATE</em></td></tr>
+    <tr class="b"><td></td><td></td><td></td></tr>
+  </table>
+  <svg style="left:128mm;top:222mm;width:54mm;height:54mm;opacity:.82;transform:rotate(-14deg)" viewBox="-27 -27 54 54">
+    <defs><path id="arcT" d="M-17.5 0 A17.5 17.5 0 0 1 17.5 0"/><path id="arcB" d="M-17.5 0 A17.5 17.5 0 0 0 17.5 0"/></defs>
+    <g fill="none" stroke="#c8312b"><circle r="25" stroke-width="1.6"/><circle r="22.4" stroke-width=".6"/><circle r="12.4" stroke-width=".6"/></g>
+    <text font-family="PlexMono" font-weight="700" font-size="5.2" letter-spacing="1.4" fill="#c8312b" text-anchor="middle"><textPath href="#arcT" startOffset="50%" dy="1.8">SUBMITTED</textPath></text>
+    <text font-family="PlexMono" font-weight="700" font-size="5.2" letter-spacing="2" fill="#c8312b" text-anchor="middle"><textPath href="#arcB" startOffset="50%">★ ★ ★</textPath></text>
+    <text font-family="PlexKR" font-weight="700" font-size="9" fill="#c8312b" text-anchor="middle" y="3.3" letter-spacing="1">제출</text>
+  </svg>
+</section>
+
+<script>
+// ---------- 공통: 원기둥 주위 퍼텐셜 유동 유선 ψ = y(1 − R²/r²) ----------
+function streamline(cx, cy, R, c, x0, x1, dx, sgn) {
+  const pts = [];
+  for (let x = x0; x <= x1 + 1e-6; x += dx) {
+    const X = x - cx;
+    let lo = Math.sqrt(Math.max(R * R - X * X, 0)), hi = c + 2 * R;
+    for (let k = 0; k < 50; k++) { const m = (lo + hi) / 2; (m * (1 - R * R / (X * X + m * m)) < c) ? lo = m : hi = m; }
+    pts.push([x, cy - sgn * (lo + hi) / 2]);
+  }
+  return 'M' + pts.map(p => p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join('L');
+}
+const NS = 'http://www.w3.org/2000/svg';
+function el(parent, tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  parent.appendChild(e); return e;
+}
+
+// ---------- 4. 공학 도면 ----------
+(function () {
+  const s = document.getElementById('dwg');
+  const L = 20, T = 10, Rr = 200, B = 287, ink = '#1a1a1a';
+  const g = el(s, 'g', { fill: 'none', stroke: ink });
+  el(g, 'rect', { x: L, y: T, width: Rr - L, height: B - T, 'stroke-width': .7 });
+  // 구역 표시 (가로 1–4, 세로 A–F)
+  const zx = 4, zy = 6, wz = (Rr - L) / zx, hz = (B - T) / zy;
+  const lab = el(s, 'g', { fill: ink, 'font-size': 3.2, 'text-anchor': 'middle' });
+  for (let i = 0; i <= zx; i++) {
+    const x = L + i * wz;
+    if (i > 0 && i < zx) { el(g, 'path', { d: `M${x} ${T} V${T - 5} M${x} ${B} V${B + 5}`, 'stroke-width': .35 }); }
+    if (i < zx) { el(lab, 'text', { x: x + wz / 2, y: T - 3 }, i + 1); el(lab, 'text', { x: x + wz / 2, y: B + 6 }, i + 1); }
+  }
+  for (let j = 0; j <= zy; j++) {
+    const y = T + j * hz;
+    if (j > 0 && j < zy) { el(g, 'path', { d: `M${L} ${y} H${L - 5} M${Rr} ${y} H${Rr + 5}`, 'stroke-width': .35 }); }
+    if (j < zy) { const ch = 'ABCDEF'[j]; el(lab, 'text', { x: L - 3.6, y: y + hz / 2 + 1.1 }, ch); el(lab, 'text', { x: Rr + 4.6, y: y + hz / 2 + 1.1 }, ch); }
+  }
+  // 중심 마크
+  const mx = (L + Rr) / 2, my = (T + B) / 2;
+  el(g, 'path', { d: `M${mx} ${T - 5} V${T + 5} M${mx} ${B - 5} V${B + 5} M${L - 5} ${my} H${L + 5} M${Rr - 5} ${my} H${Rr + 5}`, 'stroke-width': .7 });
+
+  // 그림: 원기둥 주위 유선
+  const cx = 110, cy = 126, R = 14, x0 = 34, x1 = 186;
+  const fl = el(s, 'g', { fill: 'none', stroke: '#2a4a8a', 'stroke-width': .3 });
+  [0.12, 0.35, 0.7, 1.15, 1.7, 2.35, 3.1, 3.95].forEach(k => {
+    el(fl, 'path', { d: streamline(cx, cy, R, k * R, x0, x1, .5, 1) });
+    el(fl, 'path', { d: streamline(cx, cy, R, k * R, x0, x1, .5, -1) });
+  });
+  el(fl, 'path', { d: `M${x0} ${cy} H${cx - R} M${cx + R} ${cy} H${x1}` });
+  // 유선 화살표
+  const ah = el(s, 'g', { fill: '#2a4a8a' });
+  [0.35, 1.15, 2.35].forEach(k => [1, -1].forEach(sg => {
+    const yy = parseFloat(streamline(cx, cy, R, k * R, 46, 46, 1, sg).split(' ')[1]);
+    el(ah, 'path', { d: `M46 ${yy - 1.1} L48.6 ${yy} L46 ${yy + 1.1} Z` });
+  }));
+  // 원기둥 단면 (해칭)
+  const defs = el(s, 'defs', {});
+  const pat = el(defs, 'pattern', { id: 'hatch', width: 2.2, height: 2.2, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
+  el(pat, 'path', { d: 'M0 0 V2.2', stroke: ink, 'stroke-width': .25 });
+  el(s, 'circle', { cx, cy, r: R, fill: '#fff' });
+  el(s, 'circle', { cx, cy, r: R, fill: 'url(#hatch)', stroke: ink, 'stroke-width': .7 });
+  // 중심선 (일점쇄선)
+  el(s, 'path', { d: `M${cx} ${cy - R - 5} V${cy + R + 5} M${cx - R - 5} ${cy} H${cx + R + 5}`, stroke: ink, 'stroke-width': .25, 'stroke-dasharray': '6 1.2 1 1.2', fill: 'none' });
+  // 지름 치수 (지시선)
+  const a = -Math.PI / 4, px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+  el(s, 'path', { d: `M${px} ${py} L${px + 15} ${py - 15} H${px + 30}`, stroke: ink, 'stroke-width': .3, fill: 'none' });
+  el(s, 'path', { d: `M${px} ${py} l3.4 -0.6 l-2.8 -2.8 Z`, fill: ink });
+  el(s, 'text', { x: px + 17, y: py - 16.4, 'font-size': 4, fill: ink }, 'ØD');
+  // 자유류
+  el(s, 'text', { x: 30, y: cy - 60, 'font-size': 4.2, fill: '#2a4a8a' }, 'U∞');
+  el(s, 'path', { d: `M30 ${cy - 55} H44`, stroke: '#2a4a8a', 'stroke-width': .5, fill: 'none' });
+  el(s, 'path', { d: `M44 ${cy - 56.3} L47 ${cy - 55} L44 ${cy - 53.7} Z`, fill: '#2a4a8a' });
+
+  // 표제란
+  const X0 = 30, X1 = 200, Y0 = 239, Y1 = 263, Y2 = 287;
+  const tb = el(s, 'g', { fill: 'none', stroke: ink });
+  el(tb, 'rect', { x: X0, y: Y0, width: X1 - X0, height: Y2 - Y0, 'stroke-width': .7, fill: '#fff' });
+  el(tb, 'path', { d: `M${X0} ${Y1} H${X1} M170 ${Y0} V${Y1} M84 ${Y1} V${Y2} M142 ${Y1} V${Y2}`, 'stroke-width': .35 });
+  const t = el(s, 'g', { fill: '#555', 'font-size': 2.6 });
+  [[X0, Y0, '과목명', 'TITLE'], [X0, Y1, '이름', 'NAME'], [84, Y1, '학번', 'STUDENT No.'], [142, Y1, '날짜', 'DATE']].forEach(([x, y, k, e]) => {
+    const tx = el(t, 'text', { x: x + 2, y: y + 4.4 });
+    el(tx, 'tspan', { class: 'kr', 'font-size': 3, fill: '#1a1a1a' }, k);
+    el(tx, 'tspan', { dx: 1.6, 'letter-spacing': .3 }, e);
+  });
+  // 3각법 기호
+  const sx = 177.5, sy = 252.5;
+  const sym = el(s, 'g', { fill: 'none', stroke: ink, 'stroke-width': .35 });
+  el(sym, 'path', { d: `M${sx - 4} ${sy - 3.6} L${sx + 1} ${sy - 2.2} V${sy + 2.2} L${sx - 4} ${sy + 3.6} Z` });
+  el(sym, 'circle', { cx: sx + 9.5, cy: sy, r: 3.6 }); el(sym, 'circle', { cx: sx + 9.5, cy: sy, r: 2.2 });
+  el(sym, 'path', { d: `M${sx - 6} ${sy} H${sx + 15} M${sx + 9.5} ${sy - 5} V${sy + 5}`, 'stroke-width': .2, 'stroke-dasharray': '3 .8 .6 .8' });
+  el(s, 'text', { x: 185, y: Y0 + 21.6, 'font-size': 2.4, fill: '#555', 'text-anchor': 'middle', 'letter-spacing': .2 }, 'SCALE  NTS');
+})();
+
+// ---------- 5. 등온선: 가열된 원기둥 뒤 열 플룸 ----------
+(function () {
+  const W = 210, H = 168, cx = 46, cy = 86, R = 10;
+  function theta(x, y) {
+    const dx = x - cx, dy = y - cy, r = Math.hypot(dx, dy);
+    if (r <= R) return 1;
+    const s = Math.max(dx, 0), xi = s + R;
+    const sig0 = R * 0.95, sig = Math.sqrt(sig0 * sig0 + 1.7 * s);
+    const amp = 6.5 * (1 - Math.exp(-s / 38));
+    const yc = cy + amp * Math.sin(2 * Math.PI * s / 58);
+    let tp = (sig0 / sig) * Math.exp(-Math.pow(y - yc, 2) / (2 * sig * sig));
+    if (dx < 0) tp *= Math.exp(-Math.pow(dx / (0.7 * R), 2));
+    const tc = Math.exp(-(r - R) / (0.42 * R)) * (0.6 + 0.4 / (1 + Math.exp(dx / (0.25 * R))));
+    return 1 - (1 - tp) * (1 - tc);
+  }
+  const stops = [[0, [13, 27, 61]], [.12, [43, 29, 92]], [.28, [106, 31, 110]], [.46, [193, 58, 82]], [.64, [240, 112, 58]], [.82, [251, 180, 60]], [1, [255, 241, 184]]];
+  function cmap(v) {
+    for (let i = 1; i < stops.length; i++) if (v <= stops[i][0]) {
+      const [a, ca] = stops[i - 1], [b, cb] = stops[i], t = (v - a) / (b - a);
+      return ca.map((c, k) => Math.round(c + (cb[k] - c) * t));
+    }
+    return stops[stops.length - 1][1];
+  }
+  const pxmm = 5, cv = document.getElementById('heat');
+  cv.width = W * pxmm; cv.height = H * pxmm;
+  const ctx = cv.getContext('2d'), img = ctx.createImageData(cv.width, cv.height);
+  for (let j = 0; j < cv.height; j++) for (let i = 0; i < cv.width; i++) {
+    const v = theta((i + .5) / pxmm, (j + .5) / pxmm), c = cmap(Math.min(1, Math.max(0, v))), o = 4 * (j * cv.width + i);
+    img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+
+  const svg = document.getElementById('iso');
+  // 옅은 유선
+  const sl = el(svg, 'g', { fill: 'none', stroke: 'rgba(255,255,255,.13)', 'stroke-width': .3 });
+  [0.15, 0.45, 0.9, 1.5, 2.3, 3.3, 4.5, 5.9, 7.4].forEach(k => {
+    el(sl, 'path', { d: streamline(cx, cy, R, k * R, 0, W, .7, 1) });
+    el(sl, 'path', { d: streamline(cx, cy, R, k * R, 0, W, .7, -1) });
+  });
+  // 등온선 (marching squares)
+  const h = .7, nx = Math.ceil(W / h) + 1, ny = Math.ceil(H / h) + 1, f = new Float32Array(nx * ny);
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) f[j * nx + i] = theta(i * h, j * h);
+  const tab = { 1: [[2, 3]], 2: [[1, 2]], 3: [[1, 3]], 4: [[0, 1]], 5: [[0, 1], [2, 3]], 6: [[0, 2]], 7: [[0, 3]], 8: [[0, 3]], 9: [[0, 2]], 10: [[0, 3], [1, 2]], 11: [[0, 1]], 12: [[1, 3]], 13: [[1, 2]], 14: [[2, 3]] };
+  function iso(lv) {
+    const v = (i, j) => f[j * nx + i], pt = {}, segs = [];
+    const P = (k, i0, j0, i1, j1) => { if (!(k in pt)) { const a = v(i0, j0), b = v(i1, j1), t = (lv - a) / (b - a); pt[k] = [(i0 + (i1 - i0) * t) * h, (j0 + (j1 - j0) * t) * h]; } return k; };
+    for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
+      const idx = (v(i, j) > lv ? 8 : 0) | (v(i + 1, j) > lv ? 4 : 0) | (v(i + 1, j + 1) > lv ? 2 : 0) | (v(i, j + 1) > lv ? 1 : 0);
+      if (!tab[idx]) continue;
+      const E = [() => P('h' + i + '_' + j, i, j, i + 1, j), () => P('v' + (i + 1) + '_' + j, i + 1, j, i + 1, j + 1), () => P('h' + i + '_' + (j + 1), i, j + 1, i + 1, j + 1), () => P('v' + i + '_' + j, i, j, i, j + 1)];
+      for (const [p, q] of tab[idx]) segs.push([E[p](), E[q]()]);
+    }
+    const adj = {}; segs.forEach((sg, n) => sg.forEach(k => (adj[k] = adj[k] || []).push(n)));
+    const used = new Uint8Array(segs.length), out = [];
+    for (let n = 0; n < segs.length; n++) {
+      if (used[n]) continue; used[n] = 1;
+      const ch = segs[n].slice();
+      for (const fwd of [true, false]) for (;;) {
+        const end = fwd ? ch[ch.length - 1] : ch[0], nb = (adj[end] || []).find(m => !used[m]);
+        if (nb === undefined) break; used[nb] = 1;
+        const nk = segs[nb][0] === end ? segs[nb][1] : segs[nb][0];
+        fwd ? ch.push(nk) : ch.unshift(nk);
+      }
+      out.push(ch.map(k => pt[k]));
+    }
+    return out;
+  }
+  function smooth(p) {
+    if (p.length < 3) return '';
+    const n = p.length, closed = Math.hypot(p[0][0] - p[n - 1][0], p[0][1] - p[n - 1][1]) < 1e-6, F = x => x.toFixed(2);
+    let d = 'M' + F(p[0][0]) + ' ' + F(p[0][1]);
+    for (let i = 0; i < n - 1; i++) {
+      const p0 = p[i ? i - 1 : (closed ? n - 2 : 0)], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2 < n ? i + 2 : (closed ? 1 : n - 1)];
+      d += `C${F(p1[0] + (p2[0] - p0[0]) / 6)} ${F(p1[1] + (p2[1] - p0[1]) / 6)} ${F(p2[0] - (p3[0] - p1[0]) / 6)} ${F(p2[1] - (p3[1] - p1[1]) / 6)} ${F(p2[0])} ${F(p2[1])}`;
+    }
+    return d;
+  }
+  const il = el(svg, 'g', { fill: 'none', 'stroke-linejoin': 'round' });
+  [0.05, 0.1, 0.17, 0.26, 0.37, 0.5, 0.65, 0.82].forEach((lv, k) => {
+    iso(lv).forEach(line => el(il, 'path', { d: smooth(line), stroke: `rgba(255,255,255,${0.32 + 0.06 * k})`, 'stroke-width': k % 2 ? .3 : .45 }));
+  });
+  el(svg, 'circle', { cx, cy, r: R, fill: 'none', stroke: 'rgba(255,255,255,.95)', 'stroke-width': .6 });
+})();
+</script>
+</body>
+</html>
