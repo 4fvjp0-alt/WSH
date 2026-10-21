@@ -447,6 +447,76 @@ function diamondRule(g, cx, y, half, gap, color, w) {
   for (let k = 0; k < 8; k++) el(pet, 'ellipse', { cx: 0, cy: 0, rx: 4.6, ry: 1.7, transform: `translate(${cx} ${cy}) rotate(${k * 22.5 * 2}) translate(4.4 0)` });
   el(s, 'circle', { cx, cy, r: 1.8, fill: 'rgba(255,175,165,.55)' });
 })();
+
+// ---------- 채워 넣기 (선택) ----------
+// render_cover.js 에 data.json을 주면 window.COVER 로 들어온다:
+//   { subject, subject_en, kind, kind_en, name, id, date, date_ko }
+(function () {
+  const C = window.COVER; if (!C) return;
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const D = {}; for (const k of ['subject', 'subject_en', 'kind', 'kind_en', 'name', 'id', 'date']) D[k] = esc(C[k]);
+  D.date_ko = esc(C.date_ko || C.date);
+  const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
+  const put = (parent, css, html, tag = 'div') => { const d = document.createElement(tag); d.style.cssText = css; d.innerHTML = html; parent.appendChild(d); return d; };
+  const MJ = (px, w = 800) => `font-family:Myeongjo;font-weight:${w};font-size:${px}px;line-height:1.15;`;
+  const CI = px => `font-family:Cormorant;font-style:italic;font-weight:500;font-size:${px}px;line-height:1.2;`;
+  const row = 'left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;';
+  const box = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;';
+  // 빈 줄 칸(i)에 값 쓰기
+  const fillLine = (els, vals, css) => els.forEach((e, i) => { e.innerHTML = vals[i]; e.style.cssText += 'display:flex;align-items:flex-end;justify-content:flex-start;font-style:normal;padding-left:2mm;' + css; });
+  const kindKo = D.kind ? `<span style="font-size:13px;letter-spacing:.4em;opacity:.75;margin-top:1.2mm">${D.kind}</span>` : '';
+
+  // 1. 정통리포트
+  const r1 = q('.k1 .report');
+  r1.textContent = (C.kind_en || 'REPORT').toUpperCase();
+  Object.assign(r1.style, { fontSize: '40px', letterSpacing: '.3em', textIndent: '.3em', top: '55mm' });
+  put(q('.k1'), 'left:30mm;right:30mm;top:116mm;height:38mm;' + box, `<div style="${MJ(40)}">${D.subject}</div><div style="${CI(22)}color:#555;margin-top:1.5mm">${D.subject_en}</div>`);
+  qa('.k1 td.v').forEach((td, i) => { td.innerHTML = [D.name, D.id, D.date_ko][i]; Object.assign(td.style, { textAlign: 'left', color: '#1f2a44', fontSize: '17px', letterSpacing: '.06em' }); });
+
+  // 2. 학위논문
+  qa('.k2 .ln').forEach(e => e.style.display = 'none');
+  put(q('.k2'), 'left:0;right:0;top:44mm;height:62mm;' + box, `<div style="${MJ(44)}">${D.subject}</div><div style="${CI(23)}color:#444;margin-top:2mm">${D.subject_en}</div>`);
+  put(q('.k2'), 'top:124mm;' + row, `<div style="${MJ(19, 700)}letter-spacing:.6em;text-indent:.6em">${D.kind}</div><div style="${CI(17)}color:#555;margin-top:1mm">${D.kind_en}</div>`);
+  fillLine(qa('.k2 .info i'), [D.id, D.name, D.date_ko], 'color:#111;font-size:17px;letter-spacing:.06em');
+
+  // 3. 월계관
+  put(q('.k3'), 'top:134mm;height:14.5mm;' + row, `<div style="${MJ(32)}color:#1c2a4a">${D.subject}</div>`);
+  put(q('.k3'), 'top:158mm;height:12.5mm;' + row, `<div style="${CI(21)}color:#3d4a68">${D.subject_en}</div>`);
+  put(q('.k3'), 'top:182mm;' + row, `<div style="font-family:Cinzel;font-weight:600;font-size:13px;letter-spacing:.45em;text-indent:.45em;color:#a8843a">${esc((C.kind_en || '').toUpperCase())}</div>`);
+  qa('.k3 .flds div').forEach((d, i) => put(d, 'position:absolute;left:0;right:0;bottom:3.4mm;text-align:center;font-size:16px;letter-spacing:.06em;color:#1c2a4a', [D.name, D.id, D.date][i], 'span'));
+
+  // 4. 아르데코
+  put(q('.k4'), 'top:111mm;height:15mm;' + row, `<div style="${MJ(32)}">${D.subject}</div>`);
+  put(q('.k4'), 'top:136mm;height:12mm;' + row, `<div style="font-family:Poiret;font-size:19px;letter-spacing:.24em;text-indent:.24em">${D.subject_en}</div>`);
+  put(q('.k4'), 'top:189.4mm;' + row, `<div style="font-family:Poiret;font-size:13px;letter-spacing:.5em;text-indent:.5em;color:#8a6d2f">${esc((C.kind_en || '').toUpperCase())}</div>`);
+  fillLine(qa('.k4 .flds i'), [D.name, D.id, D.date], 'font-size:16px;letter-spacing:.06em;padding-bottom:1.4mm');
+
+  // 5. 증서
+  put(q('.k5'), 'top:119mm;height:13.5mm;' + row, `<div style="${MJ(32)}">${D.subject}</div>`);
+  put(q('.k5'), 'top:143mm;height:11.5mm;' + row, `<div style="${CI(21)}color:#3d6a64">${D.subject_en}</div>`);
+  put(q('.k5'), 'top:170mm;' + row, `<div style="font-family:Cormorant;font-weight:600;font-size:17px;letter-spacing:.4em;text-indent:.4em">${esc((C.kind_en || '').toUpperCase())}</div>${kindKo}`);
+  qa('.k5 .flds div').forEach((d, i) => { d.style.position = 'relative'; put(d, 'position:absolute;left:0;right:0;bottom:calc(100% + 1.6mm);text-align:center;font-size:16px;letter-spacing:.06em', [D.name, D.id, D.date][i], 'span'); });
+
+  // 6. 고서판식
+  put(q('.k6 .ttl'), 'position:absolute;inset:0;' + box, `<div style="${MJ(38)}">${D.subject}</div><div style="${CI(19)}color:#5a4a36;margin-top:1.5mm">${D.subject_en}</div>`);
+  put(q('.k6'), 'top:116mm;' + row, `<div style="${MJ(15, 700)}letter-spacing:.5em;text-indent:.5em">${D.kind}</div>`);
+  qa('.k6 td.v').forEach((td, i) => {
+    td.innerHTML = i === 0 ? `<span style="float:left;color:#2a211a;font-size:17px;letter-spacing:.06em">${D.name}</span>(인)` : [, D.id, D.date_ko][i];
+    if (i) Object.assign(td.style, { textAlign: 'left', color: '#2a211a', fontSize: '17px', letterSpacing: '.06em' });
+  });
+
+  // 7. 양장본
+  const pl = qa('.k7 .plate');
+  put(pl[0], 'position:absolute;left:0;right:0;top:19mm;bottom:5mm;' + box, `<div style="${MJ(34)}color:#4a1219">${D.subject}</div><div style="${CI(19)}color:#7a4a3a;margin-top:1.5mm">${D.subject_en}</div>`);
+  put(q('.k7'), 'top:148mm;' + row, `<div style="font-family:Cinzel;font-weight:600;font-size:13px;letter-spacing:.45em;text-indent:.45em;color:#d9b764">${esc((C.kind_en || '').toUpperCase())}</div>`);
+  fillLine(qa('.k7 .rows i'), [D.name, D.id, D.date], 'font-size:16px;letter-spacing:.06em;padding-bottom:1.3mm;color:#4a1219');
+
+  // 8. 봉랍편지
+  put(q('.k8'), 'top:89mm;height:13.5mm;' + row, `<div style="${MJ(30)}">${D.subject}</div>`);
+  put(q('.k8'), 'top:113mm;height:11.5mm;' + row, `<div style="${CI(21)}color:#5a4632">${D.subject_en}</div>`);
+  put(q('.k8'), 'top:140mm;' + row, `<div style="${CI(21)}">${D.kind_en}</div>${kindKo}`);
+  fillLine(qa('.k8 .flds i'), [D.name, D.id, D.date], 'font-size:16px;letter-spacing:.06em;padding-bottom:1.4mm');
+})();
 </script>
 </body>
 </html>

@@ -29,3 +29,7 @@
 - `node notes/_cover/render_cover.js notes/_cover` → `표지_디자인모음.pdf`, `표지_N_이름.pdf`, `표지_미리보기.png`.
 - 클래식 모음은 `notes/_cover/classic/` (`<body data-set="클래식">`):
   `node notes/_cover/render_cover.js notes/_cover/classic` → `표지_클래식모음.pdf`, `표지_클래식_N_이름.pdf`.
+- 빈칸 채우기(클래식): `{subject, subject_en, kind, kind_en, name, id, date, date_ko}` 를 담은 data.json을 만들고
+  `node notes/_cover/render_cover.js notes/_cover/classic <data.json>` → data.json 폴더에 채운 표지가 나온다.
+  제출 PDF 맨 앞에 붙일 때는 pypdf로 합친다.
+- 저장소가 공개이므로 이름·학번이 들어간 표지, data.json, 제출물(시험 답안 등)은 커밋하지 않는다.
