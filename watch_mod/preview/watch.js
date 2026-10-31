@@ -260,7 +260,9 @@ function bezel(c, id, Rc) {
       const [x1, y1] = P(Rc - 0.2 * MM, a), [x2, y2] = P(ro + 0.25 * MM, a);
       s += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/>`;
     }
-    s += ring(ro, ri, `fill="${b.color}"`);
+    if (b.color2) {
+      for (const [a1, a2, col] of [[-90, 0, b.color], [0, 90, b.color], [90, 180, b.color2], [180, 270, b.color2]]) s += `<path d="${wedge(ro, ri, a1, a2)}" fill="${col}"/>`;
+    } else s += ring(ro, ri, `fill="${b.color}"`);
     if (b.ceramic) s += ring(ro, ri, `fill="url(#${id}-ceramic)"`);
     s += ring(ro, ri, `fill="url(#${id}-insertshade)"`);
     const mid = (ro + ri) / 2, ink = b.ink;
@@ -323,6 +325,10 @@ function watchSVG(c) {
   <linearGradient id="${id}-strapshade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".12" stop-color="#fff" stop-opacity=".10"/><stop offset=".5" stop-color="#fff" stop-opacity=".04"/><stop offset=".88" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
   <pattern id="${id}-weave" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="none"/><path d="M0,7 L7,0 L14,7 L7,14Z" fill="rgba(255,255,255,.07)"/><circle cx="7" cy="7" r="2.2" fill="rgba(0,0,0,.55)"/></pattern>
   <filter id="${id}-mop" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="3" seed="${c.seed || 4}"/><feColorMatrix type="matrix" values="1.4 0 0 0 0.05  0 1.2 0.3 0 0.05  0.2 0 1.5 0 0.1  0 0 0 0 1"/></filter>
+  <filter id="${id}-brushV" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85 0.006" numOctaves="2" seed="3"/><feColorMatrix type="saturate" values="0"/></filter>
+  <filter id="${id}-brushH" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.85" numOctaves="2" seed="5"/><feColorMatrix type="saturate" values="0"/></filter>
+  <radialGradient id="${id}-ar" cx=".72" cy=".78" r=".6"><stop offset="0" stop-color="#7aa7ff" stop-opacity=".10"/><stop offset="1" stop-color="#7aa7ff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="${id}-ground" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
   <filter id="${id}-grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter>
   <filter id="${id}-hshadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
   <filter id="${id}-drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="6" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".35"/></filter>
@@ -337,13 +343,15 @@ function watchSVG(c) {
   <clipPath id="${id}-botclip"><rect x="0" y="${CY}" width="${W}" height="${H - CY}"/></clipPath>`;
 
   // lugs
-  let lugs = '';
+  let lugs = '', lugD = '';
   for (const sy of [-1, 1]) for (const sx of [-1, 1]) {
     const xi = CX + sx * lugW / 2, xt = CX + sx * (lugW / 2 + 2.5 * MM);
     const yTip = CY + sy * l2l / 2, yBase = CY + sy * Rc * 0.45;
     const xb = CX + sx * Rc * 0.89;
     const ym = CY + sy * (Rc * 0.45 + (l2l / 2 - Rc * 0.45) * 0.55);
     const xm = CX + sx * (lugW / 2 + 2.5 * MM + (Rc * 0.89 - lugW / 2 - 2.5 * MM) * 0.25);
+    const ld = `M${f(xi)},${f(yBase)} L${f(xi)},${f(yTip - sy * 0.6 * MM)} Q${f(xi)},${f(yTip)} ${f(xi + sx * 0.8 * MM)},${f(yTip)} L${f(xt - sx * 0.6 * MM)},${f(yTip)} Q${f(xt)},${f(yTip)} ${f(xt)},${f(yTip - sy * 0.8 * MM)} Q${f(xm)},${f(ym)} ${f(xb)},${f(yBase)} Z`;
+    lugD += `<path d="${ld}"/>`;
     lugs += `<path d="M${f(xi)},${f(yBase)} L${f(xi)},${f(yTip - sy * 0.6 * MM)} Q${f(xi)},${f(yTip)} ${f(xi + sx * 0.8 * MM)},${f(yTip)} L${f(xt - sx * 0.6 * MM)},${f(yTip)} Q${f(xt)},${f(yTip)} ${f(xt)},${f(yTip - sy * 0.8 * MM)} Q${f(xm)},${f(ym)} ${f(xb)},${f(yBase)} Z" fill="url(#${id}-h)" stroke="rgba(0,0,0,.28)" stroke-width="1"/>`;
     lugs += `<path d="M${f(xt - sx * 0.35 * MM)},${f(yTip - sy * 0.9 * MM)} Q${f(xm - sx * 0.4 * MM)},${f(ym)} ${f(xb - sx * 0.5 * MM)},${f(yBase)}" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2.2"/>`;
   }
@@ -371,11 +379,14 @@ function watchSVG(c) {
   <g>${strap(c, id, true)}${strap(c, id, false)}</g>
   <rect x="0" y="0" width="${W}" height="70" fill="url(#${id}-fadeT)"/>
   <rect x="0" y="${H - 70}" width="${W}" height="70" fill="url(#${id}-fadeB)"/>
+  <ellipse cx="${CX + 10}" cy="${CY + 22}" rx="${Rc * 1.25}" ry="${l2l * 0.62}" fill="url(#${id}-ground)"/>
   <g filter="url(#${id}-drop)">
     ${lugs}
     ${crown}
     <circle cx="${CX}" cy="${CY}" r="${Rc}" fill="url(#${id}-lin)"/>
   </g>
+  <clipPath id="${id}-caseclip">${lugD}<circle cx="${CX}" cy="${CY}" r="${Rc}"/></clipPath>
+  <g clip-path="url(#${id}-caseclip)" style="mix-blend-mode:multiply" opacity=".22"><rect width="${W}" height="${H}" filter="url(#${id}-brushV)"/></g>
   ${ring(Rc, Rc - 0.6 * MM, `fill="url(#${id}-ring)"`)}
   ${bezel(c, id, Rc)}
   ${ring(crystalR + 1.5, crystalR - 0.5, 'fill="rgba(0,0,0,.45)"')}
@@ -387,6 +398,8 @@ function watchSVG(c) {
   ${hands(c, id, dialR)}
   <g clip-path="url(#${id}-crysclip)">
     <path d="M${CX - crystalR},${CY - crystalR * 0.15} Q${CX - crystalR * 0.2},${CY - crystalR * 0.55} ${CX + crystalR * 0.35},${CY - crystalR} L${CX - crystalR},${CY - crystalR}Z" fill="url(#${id}-crys)"/>
+    <circle cx="${CX}" cy="${CY}" r="${crystalR}" fill="url(#${id}-ar)"/>
+    <path d="M${f(P(crystalR - 2, 290)[0])},${f(P(crystalR - 2, 290)[1])} A${crystalR - 2},${crystalR - 2} 0 0,1 ${f(P(crystalR - 2, 345)[0])},${f(P(crystalR - 2, 345)[1])}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>
     ${c.domed ? `<ellipse cx="${CX + crystalR * 0.45}" cy="${CY + crystalR * 0.55}" rx="${crystalR * 0.35}" ry="${crystalR * 0.08}" transform="rotate(-40 ${CX + crystalR * 0.45} ${CY + crystalR * 0.55})" fill="#fff" opacity=".12"/>` : ''}
   </g>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs>${defs}</defs>${body}</svg>`;
