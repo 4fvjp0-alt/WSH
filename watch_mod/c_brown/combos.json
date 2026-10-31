@@ -1,0 +1,1183 @@
+{
+ "movement": {
+  "clone": {
+   "price": 26.84,
+   "orig": 47.68,
+   "rating": 4.9,
+   "sold": 2000,
+   "sold_s": "2K+",
+   "title": "China NH35 NH36 Black 3/6 o’clock Date Day Calendar Automatic Mechanical Movement Replace Japanese NH35 NH36 Automatic Self-Wind Watch Movement",
+   "id": "3256811827697822",
+   "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sedd50f67d8f54b79b908d6be2576ddb7c.jpg_480x480q75.jpg_.avif"
+  },
+  "genuine": {
+   "price": 89.38,
+   "orig": 108.02,
+   "rating": 4.9,
+   "sold": 30000,
+   "sold_s": "30K+",
+   "title": "Japan Genuine NH35 Automatic Mechanical Movement High Accuracy 24 Jewels Mod Watch Replacement NH35A Date at 3:00",
+   "id": "3256805411410101",
+   "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sa5014ef63ece4a939867f1f0da8d61d3j.jpg_480x480q75.jpg_.avif"
+  }
+ },
+ "usd_krw": 1400,
+ "combos": [
+  {
+   "code": "B01",
+   "style": "FLUTE36",
+   "style_kor": "플루티드 36mm",
+   "name": "플루티드 36mm · 자개",
+   "spec": "36mm · 자개 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 44,
+    "metal": "rose",
+    "crown": [
+     3.0,
+     5.2
+    ],
+    "bezel": {
+     "type": "fluted",
+     "outer": 17.6,
+     "inner": 15.2
+    },
+    "chapterW": 0.8,
+    "chapterColor": "#efe8df",
+    "dialFinish": "mop",
+    "minuteTrack": true,
+    "lume": "#fff",
+    "markEdge": "#c9cdd2",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "baton2",
+     "quarter": "baton",
+     "other": "baton",
+     "style": "roman"
+    },
+    "markSize": 1.15,
+    "markInset": 2.9,
+    "date": false,
+    "hands": {
+     "hour": "baton",
+     "hl": 0.55,
+     "hw": 1.3,
+     "minute": "baton",
+     "ml": 0.9,
+     "mw": 1.0,
+     "lume": false,
+     "sec": "plain",
+     "secColor": "#b9805f",
+     "edge": "rgba(80,40,20,.45)"
+    },
+    "dialColor": "#f3efe9",
+    "print": "#2a2224",
+    "id": "b01",
+    "code": "B01",
+    "strap": "leather",
+    "strapColor": "#5a3720",
+    "stitch": "#d9c3a0",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ],
+    "handMetal": "rose",
+    "markMetal": "rose"
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256808915969609",
+     "title": "39mm 36mm Fluted Curved Watch Case Sapphire Crystal For Seiko NH35 NH36 NH38 NH34 Miyota8215 Movement 28.5 Dial Jubilee Bracelet",
+     "price": 26.55,
+     "orig": 57.43,
+     "rating": 4.8,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S86a182018d634b21aa8e086c79f1e08bM.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256809226845708",
+     "title": "28.5mm Diamond Roman MOP Texture Watch Dial Case Mod Date Window No Logo Fit Seiko NH35/36 Movement Watch Parts Accessories",
+     "price": 12.19,
+     "orig": null,
+     "rating": 5.0,
+     "sold_s": "12",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S23c39d6a394e4d98b82c06bef05f5e82n.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256812914536821",
+     "title": "NH35 Pointers Black Gray Gold Silve Rose Gold Gun Watch Hands For NH34 NH35 NH36 4R35 Movement Watches Pointers Green Luminous Stainless Steel Other Accessories",
+     "price": 5.65,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "750",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sfbea0e8133374beca22455f4062b195de.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 49.58,
+   "total_clone": 76.42,
+   "total_genuine": 138.96,
+   "why": "로즈골드 + 자개 + 초콜릿 브라운 — 가장 우아한 조합"
+  },
+  {
+   "code": "B02",
+   "style": "GOLD36",
+   "style_kor": "골드 PVD 36mm",
+   "name": "골드 PVD 36mm · 그린",
+   "spec": "36mm · 그린 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 44,
+    "metal": "gold",
+    "crown": [
+     3.0,
+     5.2
+    ],
+    "bezel": {
+     "type": "fluted",
+     "outer": 17.6,
+     "inner": 15.2
+    },
+    "chapterW": 0.8,
+    "chapterColor": "#e9dcae",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#fff",
+    "markEdge": "#e0bf62",
+    "markMetal": "gold",
+    "vign": 0.3,
+    "marks": {
+     "twelve": "baton2",
+     "quarter": "baton",
+     "other": "baton"
+    },
+    "markSize": 1.15,
+    "markInset": 2.9,
+    "date": true,
+    "dateBg": "#fffdf5",
+    "handMetal": "gold",
+    "hands": {
+     "hour": "baton",
+     "hl": 0.55,
+     "hw": 1.3,
+     "minute": "baton",
+     "ml": 0.9,
+     "mw": 1.0,
+     "lume": false,
+     "sec": "plain",
+     "secColor": "#e0bf62",
+     "edge": "rgba(90,60,10,.55)"
+    },
+    "dialColor": "#1f5a3c",
+    "print": "#eef3ee",
+    "id": "b02",
+    "code": "B02",
+    "strap": "leather",
+    "strapColor": "#5a3720",
+    "stitch": "#d9c3a0",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256807193964381",
+     "title": "Gold Fluted Curved 36MM/40MM Watch Case Stainless Presidential Bracelet Sapphire Glass For NH34 NH35 NH36 NH38 ETA2824 Movement",
+     "price": 22.85,
+     "orig": 31.52,
+     "rating": 4.7,
+     "sold_s": "107",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S1496977b68f24cfab09ed097fc4698b34.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256805837311673",
+     "title": "28.5mm Green/Red/Black/Blue Sunburst Sterile Watch Dial Face Hands Set Fit NH35 NH35A NH36A Automatic Movement Date Watch Parts",
+     "price": 10.77,
+     "orig": null,
+     "rating": 4.6,
+     "sold_s": "62",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S6ae8e44c0688488ab4ee4ae971dbfafbC.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 38.81,
+   "total_clone": 65.65,
+   "total_genuine": 128.19,
+   "why": "골드와 그린은 브라운 가죽과 클래식하게 어울려요"
+  },
+  {
+   "code": "B03",
+   "style": "GOLD36",
+   "style_kor": "골드 PVD 36mm",
+   "name": "골드 PVD 36mm · 샴페인",
+   "spec": "36mm · 샴페인 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 44,
+    "metal": "gold",
+    "crown": [
+     3.0,
+     5.2
+    ],
+    "bezel": {
+     "type": "fluted",
+     "outer": 17.6,
+     "inner": 15.2
+    },
+    "chapterW": 0.8,
+    "chapterColor": "#e9dcae",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#fff",
+    "markEdge": "#e0bf62",
+    "markMetal": "gold",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "baton2",
+     "quarter": "baton",
+     "other": "baton"
+    },
+    "markSize": 1.15,
+    "markInset": 2.9,
+    "date": true,
+    "dateBg": "#fffdf5",
+    "handMetal": "gold",
+    "hands": {
+     "hour": "baton",
+     "hl": 0.55,
+     "hw": 1.3,
+     "minute": "baton",
+     "ml": 0.9,
+     "mw": 1.0,
+     "lume": false,
+     "sec": "plain",
+     "secColor": "#e0bf62",
+     "edge": "rgba(90,60,10,.55)"
+    },
+    "dialColor": "#e3cf98",
+    "print": "#3a2f14",
+    "id": "b03",
+    "code": "B03",
+    "strap": "leather",
+    "strapColor": "#9a6a3f",
+    "stitch": "#efe0c8",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256807193964381",
+     "title": "Gold Fluted Curved 36MM/40MM Watch Case Stainless Presidential Bracelet Sapphire Glass For NH34 NH35 NH36 NH38 ETA2824 Movement",
+     "price": 22.85,
+     "orig": 31.52,
+     "rating": 4.7,
+     "sold_s": "107",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S1496977b68f24cfab09ed097fc4698b34.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256805316578736",
+     "title": "Modified 28.5mm SKX007 Black Gold Salmon Matte Sunburst Watch Dial Suitable For NH35 NH36 7S26 4R Men's Mechanical Diving Watch",
+     "price": 5.99,
+     "orig": 10.0,
+     "rating": null,
+     "sold_s": "42",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Scf5b9e341479407e8f51c3093fce70a8N.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256812914536821",
+     "title": "NH35 Pointers Black Gray Gold Silve Rose Gold Gun Watch Hands For NH34 NH35 NH36 4R35 Movement Watches Pointers Green Luminous Stainless Steel Other Accessories",
+     "price": 5.65,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "750",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sfbea0e8133374beca22455f4062b195de.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 39.68,
+   "total_clone": 66.52,
+   "total_genuine": 129.06,
+   "why": "샴페인 다이얼 + 탄 브라운 — 따뜻한 톤 통일"
+  },
+  {
+   "code": "B04",
+   "style": "EXP36",
+   "style_kor": "스무스 36mm",
+   "name": "스무스 36mm · 크림",
+   "spec": "36mm · 크림 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 43.5,
+    "metal": "steel",
+    "crown": [
+     3.0,
+     5.2
+    ],
+    "bezel": {
+     "type": "smooth",
+     "outer": 17.6,
+     "inner": 15.6
+    },
+    "chapterW": 0.9,
+    "chapterColor": "#dfe3e6",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#f2f7ea",
+    "markEdge": "#d9dde1",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "rect2",
+     "quarter": "rect",
+     "other": "rect"
+    },
+    "markSize": 1.0,
+    "markInset": 2.6,
+    "date": false,
+    "hands": {
+     "hour": "lumebaton",
+     "hl": 0.56,
+     "hw": 1.6,
+     "minute": "lumebaton",
+     "ml": 0.9,
+     "mw": 1.3,
+     "sec": "plain",
+     "secColor": "#eef1f3",
+     "edge": "rgba(0,0,0,.35)"
+    },
+    "dialColor": "#efe6cf",
+    "print": "#2b2620",
+    "id": "b04",
+    "code": "B04",
+    "strap": "leather",
+    "strapColor": "#9a6a3f",
+    "stitch": "#efe0c8",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256807066497943",
+     "title": "36mm 40mm Watch Case Bracelets Sapphire Glass Parts For Seiko nh35 nh36 Miyota 8215 Movement 28.5mm Dial Stainless Steel oyster",
+     "price": 37.17,
+     "orig": null,
+     "rating": 4.8,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S68a792a1c3474365ac4de64d18bd0c9b8.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256809314008885",
+     "title": "28.5mm No logo Blue Lume Pure Beige Pistachio Lavender Watch Dial Suitable for Seiko NH35/36 Automatic Movement Case Mod Parts",
+     "price": 12.29,
+     "orig": 22.35,
+     "rating": 5.0,
+     "sold_s": "39",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S23414246b4194a9ca941c1cd574033b4T.png_480x480.png_.avif",
+     "bait": false,
+     "note": "색상 옵션 확인"
+    },
+    {
+     "label": "핸즈",
+     "id": "3256808430497394",
+     "title": "NH35 Hands NH35 Needles SUB Vintage Fit For Mercedes Pointer Watch Hands Eta2836/2824 Miyota 8215/8205 Hands Needle Watch",
+     "price": 9.85,
+     "orig": null,
+     "rating": 4.8,
+     "sold_s": "3,000+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S8c1d3b1d36cf4bc6810890f8dd7c552cg.png_480x480.png_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 64.5,
+   "total_clone": 91.34,
+   "total_genuine": 153.88,
+   "why": "크림 다이얼은 브라운 가죽과 가장 무난한 짝"
+  },
+  {
+   "code": "B05",
+   "style": "EXP36",
+   "style_kor": "스무스 36mm",
+   "name": "스무스 36mm · 아이스블루",
+   "spec": "36mm · 아이스블루 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 43.5,
+    "metal": "steel",
+    "crown": [
+     3.0,
+     5.2
+    ],
+    "bezel": {
+     "type": "smooth",
+     "outer": 17.6,
+     "inner": 15.6
+    },
+    "chapterW": 0.9,
+    "chapterColor": "#dfe3e6",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#f2f7ea",
+    "markEdge": "#d9dde1",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "rect2",
+     "quarter": "rect",
+     "other": "rect"
+    },
+    "markSize": 1.0,
+    "markInset": 2.6,
+    "date": false,
+    "hands": {
+     "hour": "lumebaton",
+     "hl": 0.56,
+     "hw": 1.6,
+     "minute": "lumebaton",
+     "ml": 0.9,
+     "mw": 1.3,
+     "sec": "plain",
+     "secColor": "#eef1f3",
+     "edge": "rgba(0,0,0,.35)"
+    },
+    "dialColor": "#a7d3e6",
+    "print": "#203440",
+    "id": "b05",
+    "code": "B05",
+    "strap": "leather",
+    "strapColor": "#5a3720",
+    "stitch": "#d9c3a0",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256807066497943",
+     "title": "36mm 40mm Watch Case Bracelets Sapphire Glass Parts For Seiko nh35 nh36 Miyota 8215 Movement 28.5mm Dial Stainless Steel oyster",
+     "price": 37.17,
+     "orig": null,
+     "rating": 4.8,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S68a792a1c3474365ac4de64d18bd0c9b8.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256812909059450",
+     "title": "28.5mm Starry Sky/Sakura Pink/Ice Blue/Light Green Texture Watch Dial With Green Luminous Hands Suitable NH35 Movement Watch",
+     "price": 7.45,
+     "orig": 16.2,
+     "rating": 5.0,
+     "sold_s": "2",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Saf4cb46c78b8494a82cc2449268dfc6c9.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 49.81,
+   "total_clone": 76.65,
+   "total_genuine": 139.19,
+   "why": "아이스블루 + 진한 브라운 — 색 대비로 산뜻하게"
+  },
+  {
+   "code": "B06",
+   "style": "DRESS36",
+   "style_kor": "드레스 36mm",
+   "name": "드레스 36mm · 핑크",
+   "spec": "36mm · 핑크 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 43,
+    "metal": "steel",
+    "crown": [
+     3.0,
+     5.6
+    ],
+    "domed": true,
+    "bezel": {
+     "type": "smooth",
+     "outer": 17.6,
+     "inner": 16.2
+    },
+    "chapterW": 0.8,
+    "chapterColor": "#d8dde2",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#fff",
+    "markEdge": "#fff",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "baton2",
+     "quarter": "baton",
+     "other": "baton"
+    },
+    "markSize": 1.2,
+    "markInset": 2.8,
+    "date": false,
+    "hands": {
+     "hour": "dauphine",
+     "hl": 0.58,
+     "hw": 1.9,
+     "minute": "dauphine",
+     "ml": 0.92,
+     "mw": 1.5,
+     "lume": false,
+     "sec": "plain",
+     "secColor": "#eef1f3",
+     "edge": "rgba(0,0,0,.35)"
+    },
+    "text": "AUTOMATIC",
+    "dialColor": "#e9b3c4",
+    "print": "#4a2532",
+    "id": "b06",
+    "code": "B06",
+    "strap": "leather",
+    "strapColor": "#9a6a3f",
+    "stitch": "#efe0c8",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256802494646018",
+     "title": "Miuksi 36mm/40mm sapphire glass watch case fit NH35 NH36 NH34 ETA2824 2836 Mingzhu DG2813 3804 Miyota8205 8215 PT5000 movement",
+     "price": 29.32,
+     "orig": null,
+     "rating": 4.8,
+     "sold_s": "500",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/H686c619f21fd4f349f6d71b30a811a40r.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256808054842683",
+     "title": "28.5MM Sunburst Pink Watch Dial for NH35 4R 7S Movement Green Luminous Watch Faces Modified Watch Accessories Single Calendar",
+     "price": 1.09,
+     "orig": 6.99,
+     "rating": 5.0,
+     "sold_s": "41",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S46416e73e17943dd8a8fe3e260c4ffeea.jpg_480x480q75.jpg_.avif",
+     "bait": true,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256807553858976",
+     "title": "Mod NH35 NH36 7S26 4R35 Movement Dauphine Watch Hand Silver Black Gold Polished Pointer For SKX007 Diving watch Stainless Steel Other Accessories",
+     "price": 1.09,
+     "orig": 9.66,
+     "rating": 5.0,
+     "sold_s": "23",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sbb65db392b5640c1bec87fc252e8b1a87.jpg_480x480q75.jpg_.avif",
+     "bait": true,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 36.69,
+   "total_clone": 63.53,
+   "total_genuine": 126.07,
+   "why": "파스텔 핑크 + 탄 가죽 — 부드러운 데일리 드레스"
+  },
+  {
+   "code": "B07",
+   "style": "COCKTAIL",
+   "style_kor": "칵테일 드레스 38mm",
+   "name": "칵테일 드레스 38mm · 아이스블루",
+   "spec": "38mm · 아이스블루 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 38,
+    "lug": 20,
+    "l2l": 45,
+    "metal": "steel",
+    "crown": [
+     3.0,
+     5.6
+    ],
+    "domed": true,
+    "bezel": {
+     "type": "smooth",
+     "outer": 18.6,
+     "inner": 17.0
+    },
+    "chapterW": 0.8,
+    "chapterColor": "#d8dde2",
+    "dialFinish": "cocktail",
+    "minuteTrack": true,
+    "lume": "#fff",
+    "markEdge": "#fff",
+    "vign": 0.12,
+    "marks": {
+     "twelve": "baton2",
+     "quarter": "baton",
+     "other": "baton"
+    },
+    "markSize": 1.2,
+    "markInset": 2.8,
+    "date": false,
+    "hands": {
+     "hour": "dauphine",
+     "hl": 0.58,
+     "hw": 1.9,
+     "minute": "dauphine",
+     "ml": 0.92,
+     "mw": 1.5,
+     "lume": false,
+     "sec": "plain",
+     "secColor": "#eef1f3",
+     "edge": "rgba(0,0,0,.35)"
+    },
+    "text": "AUTOMATIC",
+    "dialColor": "#86b3d6",
+    "print": "#ffffff",
+    "id": "b07",
+    "code": "B07",
+    "strap": "leather",
+    "strapColor": "#5a3720",
+    "stitch": "#d9c3a0",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256811532259524",
+     "title": "NH35 36mm/39mm Brass Double Domed Sapphire Glass Watch Cases Suitable for VH31 NH34 NH35 NH36 NH38 ETA2824 PT5000 Movement",
+     "price": 26.59,
+     "orig": 44.32,
+     "rating": 4.5,
+     "sold_s": "80",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S441af38616ec4bccaa5f55fc54be0db8d.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256812909059450",
+     "title": "28.5mm Starry Sky/Sakura Pink/Ice Blue/Light Green Texture Watch Dial With Green Luminous Hands Suitable NH35 Movement Watch",
+     "price": 7.45,
+     "orig": 16.2,
+     "rating": 5.0,
+     "sold_s": "2",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Saf4cb46c78b8494a82cc2449268dfc6c9.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 39.23,
+   "total_clone": 66.07,
+   "total_genuine": 128.61,
+   "why": "칵테일 무늬 다이얼 + 브라운 — 빛 받으면 반짝여요"
+  },
+  {
+   "code": "B08",
+   "style": "FIELD36",
+   "style_kor": "필드워치 38mm",
+   "name": "필드워치 38mm · 크림",
+   "spec": "38mm · 크림 다이얼 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 38,
+    "lug": 20,
+    "l2l": 46,
+    "metal": "steel",
+    "crown": [
+     3.4,
+     6.2
+    ],
+    "bezel": {
+     "type": "smooth",
+     "outer": 18.6,
+     "inner": 16.6
+    },
+    "chapterW": 0.6,
+    "chapterColor": "#e2e2de",
+    "dialFinish": "matte",
+    "minuteTrack": true,
+    "inner24": true,
+    "lume": "#e7ecd8",
+    "markEdge": "#1c1c1e",
+    "vign": 0.12,
+    "marks": {
+     "style": "arabic"
+    },
+    "date": false,
+    "handMetal": "black",
+    "hands": {
+     "hour": "sword",
+     "hl": 0.58,
+     "hw": 2.4,
+     "minute": "sword",
+     "ml": 0.93,
+     "mw": 1.8,
+     "sec": "plain",
+     "secColor": "#1c1c1e",
+     "edge": "rgba(0,0,0,.6)"
+    },
+    "dialColor": "#efe6cf",
+    "print": "#2b2620",
+    "id": "b08",
+    "code": "B08",
+    "strap": "leather",
+    "strapColor": "#9a6a3f",
+    "stitch": "#efe0c8",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256811690556918",
+     "title": "38mm Vintage Watch Case Leather Band Sapphire Glass for NH34 NH35 NH36 ETA 2824 Movement Watch Parts 100m Waterproof NH35 Case Steel tandorio Watchbands&cases Diving",
+     "price": 28.8,
+     "orig": null,
+     "rating": 5.0,
+     "sold_s": "38",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S914703ac9d9c47dea95fafbeca953002P.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "다이얼",
+     "id": "3256813117509760",
+     "title": "RICHUS 28.5mm Pilot Watch Dial Cream, 24H Arabic Numerals Luminous Markers, Fit NH35 YN55 ETA2824 2836 ST2130 Miyota8215 DG VH31",
+     "price": 9.97,
+     "orig": 31.07,
+     "rating": null,
+     "sold_s": "6",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9b5bc59cd5a0468ea4121aae1bbb9941W.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256808343864791",
+     "title": "Silver/Black/Blue/Green/Gold/Rose Gold Watch Hands For NH34 NH35 4R35 NH36 4R36 Movement C3 Green luminous Watch Accessories",
+     "price": 1.09,
+     "orig": 3.71,
+     "rating": 4.8,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S6d4376e99207495da5345008fafcb40eP.jpg_480x480q75.jpg_.avif",
+     "bait": true,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 45.05,
+   "total_clone": 71.89,
+   "total_genuine": 134.43,
+   "why": "크림 필드워치 + 탄 가죽 — 빈티지 캐주얼"
+  },
+  {
+   "code": "B09",
+   "style": "MINI",
+   "style_kor": "미니 다이버 38mm",
+   "name": "미니 다이버 38mm · 화이트",
+   "spec": "38mm · 화이트 다이얼 · 브라운 베젤 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 38,
+    "lug": 20,
+    "l2l": 44,
+    "metal": "steel",
+    "crown": [
+     3.0,
+     5.6
+    ],
+    "crownGuard": true,
+    "bezel": {
+     "type": "diver",
+     "outer": 17.3,
+     "inner": 14.3,
+     "color": "#4a3020",
+     "ink": "#e5c99a",
+     "numSize": 2.3,
+     "ceramic": true
+    },
+    "chapterW": 1.0,
+    "chapterColor": "#eceff2",
+    "chapterTicks": "#30343a",
+    "dialFinish": "matte",
+    "lume": "#f1f6e6",
+    "markEdge": "#2a2e35",
+    "markEdgeW": 2.4,
+    "vign": 0.12,
+    "marks": {
+     "twelve": "tri",
+     "quarter": "bar",
+     "other": "dot"
+    },
+    "markSize": 1.05,
+    "markInset": 2.4,
+    "date": true,
+    "hands": {
+     "hour": "sword",
+     "hl": 0.58,
+     "hw": 2.2,
+     "minute": "sword",
+     "ml": 0.92,
+     "mw": 1.7,
+     "sec": "lolli",
+     "secColor": "#c8402e",
+     "edge": "rgba(20,24,30,.8)"
+    },
+    "text": "AUTOMATIC",
+    "dialColor": "#f3f3f1",
+    "print": "#26282c",
+    "id": "b09",
+    "code": "B09",
+    "strap": "leather",
+    "strapColor": "#5a3720",
+    "stitch": "#d9c3a0",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256809249370712",
+     "title": "SKX013 Stainless Steel 3.8 SKX Mod 38mm Watch Case Sapphire For Seiko NH35 NH36 NH38 NH34 4R36 Movement 120 clicks Ceramic Bezel",
+     "price": 19.55,
+     "orig": 89.02,
+     "rating": 4.9,
+     "sold_s": "98",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S758b87067b5545d0b821b2706a6f7972W.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "옵션에서 베젤/색상 선택"
+    },
+    {
+     "label": "다이얼",
+     "id": "3256809871963191",
+     "title": "NH35 Dials NH34 Dial NH35 28.5MM White Dial For NH35 Movement Watch Dial BGW9 Blue Luminous 28.5MM Dial NH35 Hand NH34 Hand",
+     "price": 9.19,
+     "orig": 36.76,
+     "rating": 4.9,
+     "sold_s": "500+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S824644c1b5724c9680bb4d76bb25b67a7.png_480x480.png_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256807169013078",
+     "title": "New High Quality Watch Hands Polished With Blue Green Japan Lumines For Nh35 Nh36 NH34 Movement Skx007 Assembly Module Part Mods",
+     "price": 6.89,
+     "orig": 10.0,
+     "rating": null,
+     "sold_s": "600+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S3fe3937cfb6c40e89bf05221c4180107t.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 40.82,
+   "total_clone": 67.66,
+   "total_genuine": 130.2,
+   "why": "화이트 다이얼 + 브라운 베젤 + 가죽 — 스포티하지만 부드럽게"
+  },
+  {
+   "code": "B10",
+   "style": "BRONZE36",
+   "style_kor": "브론즈 36mm",
+   "name": "브론즈 36mm · 그린",
+   "spec": "36mm · 그린 다이얼 · 그린 베젤 · 브라운 가죽",
+   "women": true,
+   "cfg": {
+    "caseD": 36,
+    "lug": 20,
+    "l2l": 43,
+    "metal": "bronze",
+    "crown": [
+     3.6,
+     6.8
+    ],
+    "domed": true,
+    "bezel": {
+     "type": "diver",
+     "outer": 17.0,
+     "inner": 13.8,
+     "color": "#1d5a3c",
+     "ink": "#ecefea",
+     "numSize": 2.5
+    },
+    "chapterW": 1.0,
+    "chapterColor": "#28301f",
+    "dialFinish": "sunburst",
+    "minuteTrack": true,
+    "lume": "#e6cb93",
+    "markEdge": "#c99a5e",
+    "markMetal": "gold",
+    "vign": 0.4,
+    "marks": {
+     "twelve": "rect2",
+     "quarter": "rect",
+     "other": "rect"
+    },
+    "markSize": 1.1,
+    "markInset": 3.0,
+    "date": true,
+    "dateBg": "#efe5cc",
+    "handMetal": "gold",
+    "hands": {
+     "hour": "lumebaton",
+     "hl": 0.58,
+     "hw": 1.9,
+     "minute": "lumebaton",
+     "ml": 0.92,
+     "mw": 1.5,
+     "sec": "plain",
+     "secColor": "#c99a5e",
+     "edge": "rgba(90,60,10,.6)"
+    },
+    "text": "AUTOMATIC",
+    "text2": "BRONZE 200m",
+    "dialColor": "#1f5a3c",
+    "print": "#eef3ee",
+    "id": "b10",
+    "code": "B10",
+    "strap": "leather",
+    "strapColor": "#9a6a3f",
+    "stitch": "#efe0c8",
+    "bg": [
+     "#f6f6f4",
+     "#d7d8da"
+    ]
+   },
+   "parts": [
+    {
+     "label": "케이스",
+     "id": "3256808054148935",
+     "title": "36MM/39MM Brushed Brass Bronze Diver Pilot Watch Case AR Blue Domed Sapphire Crystal Fit NH34 NH35 NH36 NH38 NH70 ETA2824 PT5000",
+     "price": 23.82,
+     "orig": 65.95,
+     "rating": 4.7,
+     "sold_s": "167",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sbcfb8ae6e8404aee9a08b9f30026b1827.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "옵션에서 베젤/색상 선택"
+    },
+    {
+     "label": "다이얼",
+     "id": "3256811823830692",
+     "title": "28.5mm cluster watch New shell dial C3 green Luminous suitable for NH35 NH36 automatic movement replacement parts",
+     "price": 7.05,
+     "orig": 32.39,
+     "rating": 4.9,
+     "sold_s": "73",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S8cef3b911d7b46d3a82a6299564e8efdw.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "핸즈",
+     "id": "3256812914536821",
+     "title": "NH35 Pointers Black Gray Gold Silve Rose Gold Gun Watch Hands For NH34 NH35 NH36 4R35 Movement Watches Pointers Green Luminous Stainless Steel Other Accessories",
+     "price": 5.65,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "750",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Sfbea0e8133374beca22455f4062b195de.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": ""
+    },
+    {
+     "label": "스트랩",
+     "id": "3256809850940819",
+     "title": "Vintage Retro Genuine Leather Watch Band 18mm 19mm 20mm 21mm 22mm Men Women Straps Watch Bracelet Quick Release Wristband Light Brown Leather 22 MM Traditional Watch Leather",
+     "price": 5.19,
+     "orig": null,
+     "rating": 4.9,
+     "sold_s": "1K+",
+     "img": "https://ae-pic-a1.aliexpress-media.com/kf/S9e7ecdbe929747739a226142c30aaf75M.jpg_480x480q75.jpg_.avif",
+     "bait": false,
+     "note": "브라운 계열 색상 선택 · 러그 폭(18/20mm) 확인"
+    }
+   ],
+   "strap_included": false,
+   "strap_kor": "브라운 가죽",
+   "parts_total": 41.71,
+   "total_clone": 68.55,
+   "total_genuine": 131.09,
+   "why": "청동 케이스는 쓸수록 갈색빛이 돌아 가죽과 함께 멋스러워져요"
+  }
+ ]
+}

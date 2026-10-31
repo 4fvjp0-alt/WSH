@@ -45,8 +45,15 @@ WEAK = re.compile(r'Prospex|Presage|Seiko logo|Custom Logo|Khaki', re.I)
 NOLOGO = re.compile(r'no[ -]?logo|sterile', re.I)
 
 
+# listings whose photos show a brand logo despite the title (checked by eye)
+BLOCK = {'3256810335640394', '3256811563984647', '3256812704905559'}
+WRONG_SIZE = re.compile(r'\b(3[0-9](\.\d)?|2[0-7](\.\d)?)\s?mm\b(?!.*28\.5)', re.I)
+
+
 def score(p):
     s = p['sold'] * (p['rating'] or 4.5)
+    if re.search(r'\b29\s?mm', p['title'], re.I) and not re.search(r'28\.5', p['title']):
+        s *= 0.3
     if p['rating'] is not None and p['rating'] < 4.3:
         s *= 0.2
     if p['price'] <= 1.2 and p.get('orig'):      # first-shopper bait price
@@ -59,9 +66,11 @@ def candidates(queries, inc=None, exc=None, logo=False, kind=None):
     qs = queries if isinstance(queries, list) else [queries]
     for q in qs:
         for p in BYQ.get(q, []):
-            if p['id'] in seen:
+            if p['id'] in seen or p['id'] in BLOCK:
                 continue
             t = p['title']
+            if kind == 'dial' and WRONG_SIZE.search(t):
+                continue
             if inc and not re.search(inc, t, re.I):
                 continue
             if exc and re.search(exc, t, re.I):
@@ -242,6 +251,8 @@ PREF = {'SUB': '3256806812392828', 'BB': '3256812254952485', 'BRONZE': '32568069
         'PILOT': '3256812410081441', 'DRESS': '3256810323017539', 'OCTA': '3256812525167334',
         'FLUTE36': '3256808915969609', 'EXP36': '3256807066497943', 'MINI': '3256809249370712'}
 
+PREF_HANDS = {'DRESS': '3256807553858976'}
+
 MOVEMENT = {'clone': POOL.get('3256811827697822'), 'genuine': POOL.get('3256805411410101')}
 
 
@@ -261,10 +272,14 @@ def build(code, style, dial_color, bezel, strap, overrides=None, women=False):
         cases = candidates(*st['case'][:1], inc=st['case'][1], exc=st['case'][2])
         case = cases[0] if cases else None
     dial, exact = pick_dial(dial_color, st['dialstyle'])
-    hands_c = candidates(st['hands'][0], inc=st['hands'][1], exc=st['hands'][2], logo=True)
-    hands = hands_c[0] if hands_c else None
+    if PREF_HANDS.get(style) in POOL:
+        hands = POOL[PREF_HANDS[style]]
+    else:
+        hands_c = candidates(st['hands'][0], inc=st['hands'][1], exc=st['hands'][2], logo=True)
+        hands = hands_c[0] if hands_c else None
     dial_has_hands = bool(dial and re.search(r'hands|pointer|needle', dial['title'], re.I))
-    parts = [part(case, '케이스', '옵션에서 베젤/색상 선택' if bezel else ''), part(dial, '다이얼', '' if exact else '색상 옵션 확인')]
+    dnote = ('29mm 다이얼 — 케이스 다이얼 규격 확인' if dial and re.search(r'\b29\s?mm', dial['title']) and '28.5' not in dial['title'] else ('' if exact else '색상 옵션 확인'))
+    parts = [part(case, '케이스', '옵션에서 베젤/색상 선택' if bezel else ''), part(dial, '다이얼', dnote)]
     if not dial_has_hands:
         parts.append(part(hands, '핸즈'))
     ct = case['title'] if case else ''
