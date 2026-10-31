@@ -15,6 +15,16 @@
     "title": "Solid Titanium 40mm Watch Case & Bracelet Sapphire Glass Waterproof Fit NH34 NH35 ETA2824 PT5000 For SUB Wristwatch Mod Parts"
    },
    {
+    "id": "2255800804278570",
+    "label": "베젤 인서트",
+    "note": "38mm 블루 세라믹 · 케이스 블루 옵션은 GMT 베젤이라 교체",
+    "price": 7.38,
+    "orig": 24.0,
+    "rating": 4.9,
+    "sold_s": "131",
+    "title": "Miuksi 38mm Super Blue Green Luminous Ceramic/Titanium Bezel Insert Fit 40mm Watch Case"
+   },
+   {
     "id": "3256809519603920",
     "label": "다이얼",
     "note": "그라데이션 물결 블루 · 날짜창 · 로고 없음",
@@ -35,9 +45,9 @@
     "title": "Watch Pointer Green Luminous Fit NH35 NH36 NH38 Movement Watch SKX Hands Watch Accessories Arrows Watch Parts Clock Hands"
    }
   ],
-  "parts_total": 77.89,
-  "total_clone": 104.73,
-  "total_genuine": 167.27
+  "parts_total": 85.27,
+  "total_clone": 112.11,
+  "total_genuine": 174.65
  },
  {
   "code": "U2",
@@ -57,7 +67,7 @@
    {
     "id": "2255800804278570",
     "label": "베젤 인서트",
-    "note": "38mm 세라믹 · 그린으로 색 맞춤",
+    "note": "38mm 그린 세라믹 · 케이스 기본 베젤 교체",
     "price": 7.38,
     "orig": 24.0,
     "rating": 4.9,
@@ -105,6 +115,16 @@
     "title": "40mm NH35 Watch Case 904L Oyster/ Jubilee Bracelet Ceramic Bezel Sapphire Glass Waterproof for GMT SUB Yacht NH35 NH36 Movement Steel Watchbands&cases Diving"
    },
    {
+    "id": "2255800804278570",
+    "label": "베젤 인서트",
+    "note": "38mm 블루 세라믹 · 케이스 블루 옵션은 GMT 베젤이라 교체",
+    "price": 7.38,
+    "orig": 24.0,
+    "rating": 4.9,
+    "sold_s": "131",
+    "title": "Miuksi 38mm Super Blue Green Luminous Ceramic/Titanium Bezel Insert Fit 40mm Watch Case"
+   },
+   {
     "id": "3256813136690801",
     "label": "다이얼",
     "note": "3D 물결 · 사각 인덱스 · 로고 없음",
@@ -125,9 +145,9 @@
     "title": "Watch Pointer Green Luminous Fit NH35 NH36 NH38 Movement Watch SKX Hands Watch Accessories Arrows Watch Parts Clock Hands"
    }
   ],
-  "parts_total": 50.8,
-  "total_clone": 77.64,
-  "total_genuine": 140.18
+  "parts_total": 58.18,
+  "total_clone": 85.02,
+  "total_genuine": 147.56
  },
  {
   "code": "U4",

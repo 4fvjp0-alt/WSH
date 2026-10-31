@@ -31,4 +31,41 @@ doc = f'''<section class="page"><div class="k">NH35 WATCH MOD · 레퍼런스: �
 <li>4시 크라운 느낌을 원하면 크라운 3.8시 티타늄 케이스(#3256807365144809, $35.70)+ NH35 <b>3.8시 무브먼트</b> 조합도 가능해요(브레이슬릿 별도).</li>
 <li>티타늄 케이스 옵션에 블루 베젤이 있으면 U1은 인서트 추가 구매가 필요 없어요. 다이얼 색은 옵션 사진으로 진하기를 확인하세요.</li></ul>
 <footer>가격: 2026-10-31 aliexpress.us 기준(1달러≈1,400원) · 총액 = 부품 + 무브먼트(클론 $27 ~ 정품 $89) · 이미지는 사양 렌더링(실제 사진 아님)</footer></section>'''
-open('ushio.html', 'w').write(f'<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>{CSS}</style></head><body>{doc}</body></html>')
+M = json.load(open('movements.json'))
+u3 = next(c for c in C if c['code'] == 'U3')
+def prow(p, label=None):
+    return f'''<tr><td class="l">{label or p['label']}</td><td><img src="img/{p['id']}.jpg"></td><td><a href="{link(p['id'])}">{link(p['id'])}</a><div class="nt">{html.escape(p['note'])}</div></td>
+      <td class="p">${p['price']:.2f}<div class="nt">{('★'+str(p['rating'])) if p['rating'] else '평점 없음'} · {p['sold_s']}판매</div></td></tr>'''
+parts_rows = ''.join(prow(p) for p in u3['parts']) + ''.join(prow(p, f'무브먼트 {i+1}') for i, p in enumerate(M['yn55']))
+pt = u3['parts_total']
+mrow = lambda name, price, total, pro, con, cls='': f'<tr class="{cls}"><td><b>{name}</b></td><td>{price}</td><td><b>{total}</b></td><td>{pro}</td><td>{con}</td></tr>'
+mt = (mrow('YN55 (Epson)', '영상 $26 / 미국스토어 $43~76', f'${pt+26.29:.0f} ~ ${pt+76.49:.0f}', 'NH35 케이스·다이얼(무날짜)·핸즈 호환 확인 · 정품급 품질', '크라운 날짜단계 헛돎 · 초침 호환 100% 아님', 'hl')
+      + mrow('NH38 정품', f'${M["nh38"]["price"]:.0f}', f'${pt+M["nh38"]["price"]:.0f}', '날짜 없음 → 크라운 깔끔', '비쌈')
+      + mrow('NH35 정품', '$89', f'${pt+89.38:.0f}', '표준', '날짜단계 헛돎 · 비쌈')
+      + mrow('NH35 클론', '$27', f'${pt+26.84:.0f}', '최저가', '품질 복불복 (영상에서도 고장으로 실패)'))
+page2 = f'''<section class="page"><div class="k">NH35 WATCH MOD · 우시오 스타일 추가 조합</div>
+<div class="h">U3 + YN55 — 블루 · 스틸 가성비, Epson YN55 무브먼트</div>
+<div class="p2"><img class="big" src="U3.png"><div class="i2">
+<div class="intro"><b>왜 U3에 YN55?</b> U3 다이얼(RICHUS 3D 물결)은 <b>날짜창이 없어서</b> YN55의 유일한 큰 문제(NH35 날짜창 다이얼과 날짜 위치 어긋남)가 생기지 않아요.
+YN55는 세이코 그룹(Epson) 정품 무브먼트로 NH35 케이스·다이얼·핸즈와 호환되는 것이 확인됐어요.</div>
+<div class="sum2">부품 합계 <b>${pt:.0f}</b> + YN55 → <b>총 약 ${pt+26.29:.0f}~{pt+76.49:.0f}</b><br><span>영상 구매가($26) 기준 약 {round((pt+26.29)*1400,-3):,.0f}원 · 한국 앱 가격 확인 필수</span></div>
+<table class="cmp"><tr><th>YN55 vs NH35 (영상 실측)</th><th>결과</th></tr>
+<tr><td>NH35 케이스</td><td>✅ 깊이·스템 높이 딱 맞음</td></tr><tr><td>NH35 다이얼 (날짜 없음)</td><td>✅ 다이얼 발 구멍 여러 개라 그대로 장착</td></tr>
+<tr><td>NH35 다이얼 (날짜 있음)</td><td>⚠️ 날짜가 왼쪽으로 어긋남 → Miyota 8215 다이얼 필요</td></tr><tr><td>NH35 핸즈</td><td>✅ 2세트 모두 장착, 몇 주 착용 문제없음 (보장은 아님)</td></tr>
+<tr><td>스템 분리</td><td>스템 옆 작은 구멍 속 버튼 (NH35는 레버)</td></tr><tr><td>소음</td><td>로터 소리가 NH35보다 약간 큼</td></tr></table>
+</div></div>
+<div class="st">부품 링크 (U3 + YN55)</div><table class="pl">{parts_rows}</table>
+<div class="st">U3 무브먼트별 총액 비교</div>
+<table class="mt"><tr><th>무브먼트</th><th>가격</th><th>U3 총액</th><th>장점</th><th>단점</th></tr>{mt}</table>
+<ul class="notes"><li>RICHUS 다이얼은 NH35·Miyota 겸용 → <b>NH35 옵션</b> 선택 (YN55는 둘 다 장착 가능). 판매자에게 <b>날짜창 없음</b> 재확인.</li>
+<li><b>초침 여분</b>을 하나 같이 사 두세요 · 스템은 동봉된 여분으로 조금씩 잘라 맞추기(영상은 약 5.1mm).</li>
+<li>케이스의 '블루' 옵션은 GMT(24시간) 베젤이라 <b>블루 다이버 인서트(Miuksi)로 교체</b>해야 우시오 느낌이 나요.</li>
+<li>참고 영상: AJMWatches 「Build your own YN55 Custom Watch | The Best Budget NH35 Alternative?」(2026-09)</li></ul>
+<footer>가격: 2026-10-31 aliexpress.us 기준(1달러≈1,400원) · YN55 미국 스토어 가격은 부풀려져 있어 한국 앱에서 재확인 · 이미지는 사양 렌더링</footer></section>'''
+CSS2 = '''.page{page-break-after:always}.page:last-child{page-break-after:auto}
+.p2{display:flex;gap:4mm;align-items:stretch}.p2 .big{width:58mm;aspect-ratio:2/3;object-fit:cover;border-radius:2mm}.i2{flex:1;display:flex;flex-direction:column;gap:2mm}
+.sum2{font-size:9pt;color:#374151;background:#eef6ff;border-radius:2mm;padding:2mm 3mm}.sum2 b{color:#0f2a5c;font-size:12pt}.sum2 span{font-size:7pt;color:#6b7280}
+table.cmp th,table.mt th{background:#0f2a5c;color:#fff;font-size:7.4pt;padding:1mm;text-align:left}table.cmp td{font-size:7.2pt}
+.st{font-size:10pt;font-weight:800;color:#0f2a5c;margin-top:1mm}table.pl td a{font-size:6.2pt;word-break:break-all}
+table.mt td{font-size:7.2pt}table.mt tr.hl td{background:#fff7d6}'''
+open('ushio.html', 'w').write(f'<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>{CSS}{CSS2}</style></head><body>{doc}{page2}</body></html>')

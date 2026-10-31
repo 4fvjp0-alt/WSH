@@ -9,6 +9,6 @@ module.exports = [
   base({ id: 'u1l', code: 'U1_LOGO', logo: 'YOUR', logo2: 'Initials', text2: 'DIVER 300m' }),
   base({ id: 'u2l', code: 'U2_LOGO', logo: 'YOUR', logo2: 'Initials', bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1e4a3b', ink: '#eef3ef', ceramic: true }, chapterColor: '#173a2f', dialColor: '#24604c' }),
   base({ id: 'u2', code: 'U2', bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1e4a3b', ink: '#eef3ef', ceramic: true }, chapterColor: '#173a2f', dialColor: '#24604c' }),
-  base({ id: 'u3', code: 'U3', metal: 'steel', bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1c2f63', ink: '#eef1f6', ceramic: true }, dialColor: '#223f86' }),
+  base({ id: 'u3', code: 'U3', date: false, metal: 'steel', bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1c2f63', ink: '#eef1f6', ceramic: true }, dialColor: '#223f86' }),
   base({ id: 'u4', code: 'U4', metal: 'steel', bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1e4a3b', ink: '#eef3ef', ceramic: true }, chapterColor: '#173a2f', dialColor: '#2d7a63' }),
 ];
