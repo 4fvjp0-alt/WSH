@@ -12,6 +12,7 @@ const METAL = {
   bronze:['#f6dcb2', '#c99a5e', '#94653a', '#57391f'],
   gold:  ['#fff6d6', '#f0cf73', '#c79a34', '#7d5a14'],
   black: ['#5a5e64', '#2a2c30', '#16171a', '#050506'],
+  titanium: ['#eef0f1', '#c3c7cb', '#959ba1', '#62686e'],
 };
 
 function metalDefs(id, m) {
@@ -142,6 +143,17 @@ function dialTexture(c, id, r) {
       else w += `<path d="M${CX},${CY}L${P(r, a).map(f)}L${P(r, a + 0.75).map(f)}Z" fill="#000" opacity="${f(b * b * 0.22 * k)}"/>`;
     }
     s += w;
+  }
+  if (c.dialFinish === 'wave') {
+    RNG = 11;
+    s += `<circle cx="${CX}" cy="${CY}" r="${r}" fill="url(#${id}-dialgloss)"/>`;
+    for (let y = -r; y < r; y += 0.75 * MM) {
+      const A = (0.25 + 0.55 * rnd()) * MM, k = (0.9 + 0.8 * rnd()) / MM, ph = rnd() * 6.28;
+      let d = '';
+      for (let x = -r; x <= r; x += 4) d += (x === -r ? 'M' : 'L') + f(CX + x) + ',' + f(CY + y + A * Math.sin(k * x + ph) + 0.4 * A * Math.sin(2.3 * k * x + ph * 1.7));
+      s += `<path d="${d}" fill="none" stroke="#fff" stroke-opacity="${f(0.05 + 0.10 * rnd())}" stroke-width="${f(1.4 + 2.2 * rnd())}"/>`;
+      s += `<path d="${d}" transform="translate(0,3)" fill="none" stroke="#000" stroke-opacity="${f(0.08 + 0.12 * rnd())}" stroke-width="${f(1.2 + 1.6 * rnd())}"/>`;
+    }
   }
   if (c.dialFinish === 'cocktail') {
     for (let k = 0; k < 36; k++) {
