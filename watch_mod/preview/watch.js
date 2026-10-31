@@ -228,6 +228,12 @@ function indices(c, id, r) {
     s += `<rect x="${dx - w / 2}" y="${dy - h / 2}" width="${w}" height="${h}" rx="2" fill="${c.dateBg || '#fff'}" stroke="${c.markEdge}" stroke-width="2.2"/>`;
     s += `<rect x="${dx - w / 2}" y="${dy - h / 2}" width="${w}" height="${h * 0.35}" rx="2" fill="rgba(0,0,0,.10)"/>`;
     s += `<text x="${dx}" y="${dy + 0.75}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="600" font-size="${2.0 * MM}" fill="${c.dateFg || '#111'}">31</text>`;
+    if (c.cyclops) {
+      const cw = w * 1.75, ch = h * 1.75;
+      s += `<rect x="${dx - cw / 2}" y="${dy - ch / 2}" width="${cw}" height="${ch}" rx="${0.9 * MM}" fill="#fff" stroke="rgba(160,190,220,.9)" stroke-width="2.4"/>`;
+      s += `<text x="${dx}" y="${dy + 1}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="700" font-size="${3.4 * MM}" fill="#111">31</text>`;
+      s += `<rect x="${dx - cw / 2 + 2}" y="${dy - ch / 2 + 2}" width="${cw - 4}" height="${ch * 0.42}" rx="${0.7 * MM}" fill="#fff" opacity=".35"/>`;
+    }
   }
   return s;
 }
