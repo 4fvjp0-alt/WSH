@@ -466,6 +466,8 @@ function watchSVG(c) {
   <g>${chapter}</g>
   <g clip-path="url(#${id}-dialclip)">${dialTexture(c, id, dialR)}</g>
   ${indices(c, id, dialR)}
+  ${c.logo ? `<text x="${CX}" y="${CY - dialR * 0.40}" text-anchor="middle" font-family="DejaVu Serif, serif" font-weight="700" font-size="${(c.logoSize || 2.6) * MM}" fill="${dialPrint}" letter-spacing="1">${c.logo}</text>` : ''}
+  ${c.logo2 ? `<text x="${CX}" y="${CY - dialR * 0.40 + 2.2 * MM}" text-anchor="middle" font-family="DejaVu Serif, serif" font-style="italic" font-size="${1.35 * MM}" fill="${dialPrint}" opacity=".9">${c.logo2}</text>` : ''}
   ${c.text ? `<text x="${CX}" y="${CY + dialR * 0.42}" text-anchor="middle" font-family="Inter, sans-serif" font-size="${1.45 * MM}" letter-spacing="1.5" fill="${dialPrint}" opacity=".85">${c.text}</text>` : ''}
   ${c.text2 ? `<text x="${CX}" y="${CY + dialR * 0.42 + 1.9 * MM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="${1.15 * MM}" letter-spacing="1.2" fill="${c.text2Color || dialPrint}" opacity=".85">${c.text2}</text>` : ''}
   ${hands(c, id, dialR)}
