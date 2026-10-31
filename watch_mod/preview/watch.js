@@ -9,6 +9,9 @@ const rnd = () => (RNG = (RNG * 16807) % 2147483647) / 2147483647;
 const METAL = {
   steel: ['#fbfcfd', '#d5d9de', '#9aa1a9', '#6b727a'],
   rose:  ['#fff1e8', '#efc3ab', '#c98d71', '#8e5a45'],
+  bronze:['#f6dcb2', '#c99a5e', '#94653a', '#57391f'],
+  gold:  ['#fff6d6', '#f0cf73', '#c79a34', '#7d5a14'],
+  black: ['#5a5e64', '#2a2c30', '#16171a', '#050506'],
 };
 
 function metalDefs(id, m) {
@@ -36,6 +39,21 @@ function ring(r1, r2, attrs) { // annulus r1 outer, r2 inner
 function wedge(r1, r2, a1, a2) {
   const [x1, y1] = P(r1, a1), [x2, y2] = P(r1, a2), [x3, y3] = P(r2, a2), [x4, y4] = P(r2, a1);
   return `M${f(x1)},${f(y1)} A${r1},${r1} 0 0,1 ${f(x2)},${f(y2)} L${f(x3)},${f(y3)} A${r2},${r2} 0 0,0 ${f(x4)},${f(y4)}Z`;
+}
+
+function cushionPath(R, n) {
+  let d = '';
+  for (let t = 0; t <= 360; t += 2) {
+    const c = Math.cos(rad(t)), sn = Math.sin(rad(t));
+    const x = CX + R * Math.sign(c) * Math.pow(Math.abs(c), 2 / n), y = CY + R * Math.sign(sn) * Math.pow(Math.abs(sn), 2 / n);
+    d += (t ? 'L' : 'M') + f(x) + ',' + f(y);
+  }
+  return d + 'Z';
+}
+function polyPath(R, N, rot) {
+  let d = '';
+  for (let k = 0; k < N; k++) { const [x, y] = P(R, rot + k * 360 / N); d += (k ? 'L' : 'M') + f(x) + ',' + f(y); }
+  return d + 'Z';
 }
 
 /* ---------------- strap / bracelet ---------------- */
@@ -82,15 +100,15 @@ function strap(c, id, top) {
     return s;
   }
   // metal bracelets
-  const rowH = (c.strap === 'oyster' ? 7.2 : 3.8) * MM;
+  const rowH = (c.strap === 'oyster' ? 7.2 : c.strap === 'integrated' ? 5.2 : 3.8) * MM;
   let y = top ? CY : CY, i = 0;
   const rows = [];
   if (top) { for (let yy = CY; yy > -rowH; yy -= rowH) rows.push(yy - rowH); }
   else { for (let yy = CY; yy < H + rowH; yy += rowH) rows.push(yy); }
   for (const ry of rows) {
     const w = taperAt(ry + rowH / 2), L = CX - w / 2, gap = 2.2;
-    if (c.strap === 'oyster') {
-      const cw = w * 0.34;
+    if (c.strap === 'oyster' || c.strap === 'integrated') {
+      const cw = w * (c.strap === 'integrated' ? 0.52 : 0.34);
       s += `<rect x="${L}" y="${ry}" width="${(w - cw) / 2 - gap}" height="${rowH - gap}" rx="3" fill="url(#${id}-brush)"/>`;
       s += `<rect x="${CX + cw / 2 + gap}" y="${ry}" width="${(w - cw) / 2 - gap}" height="${rowH - gap}" rx="3" fill="url(#${id}-brush)"/>`;
       s += `<rect x="${CX - cw / 2}" y="${ry + rowH * 0.1}" width="${cw}" height="${rowH * 0.8 - gap}" rx="4" fill="url(#${id}-pol)"/>`;
@@ -124,6 +142,18 @@ function dialTexture(c, id, r) {
       else w += `<path d="M${CX},${CY}L${P(r, a).map(f)}L${P(r, a + 0.75).map(f)}Z" fill="#000" opacity="${f(b * b * 0.22 * k)}"/>`;
     }
     s += w;
+  }
+  if (c.dialFinish === 'cocktail') {
+    for (let k = 0; k < 36; k++) {
+      const a1 = k * 10, lit = 0.5 + 0.5 * Math.cos(rad(2 * (a1 + 5 - 315)));
+      s += `<path d="M${CX},${CY}L${P(r, a1).map(f)}L${P(r, a1 + 5).map(f)}Z" fill="#fff" opacity="${f(0.05 + 0.28 * lit)}"/>`;
+      s += `<path d="M${CX},${CY}L${P(r, a1 + 5).map(f)}L${P(r, a1 + 10).map(f)}Z" fill="#000" opacity="${f(0.04 + 0.16 * (1 - lit))}"/>`;
+    }
+    for (let rr = r * 0.12; rr < r; rr += 0.55 * MM) s += `<circle cx="${CX}" cy="${CY}" r="${f(rr)}" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width="1"/>`;
+  }
+  if (c.dialFinish === 'tapisserie') {
+    s += `<rect x="${CX - r}" y="${CY - r}" width="${2 * r}" height="${2 * r}" fill="url(#${id}-tap)"/>`;
+    s += `<circle cx="${CX}" cy="${CY}" r="${r}" fill="url(#${id}-dialgloss)"/>`;
   }
   if (c.dialFinish === 'gloss') {
     s += `<circle cx="${CX}" cy="${CY}" r="${r}" fill="url(#${id}-dialgloss)"/>`;
@@ -171,6 +201,12 @@ function indices(c, id, r) {
     let shape = c.marks.other;
     if (h === 0) shape = c.marks.twelve;
     else if (h === 6 || h === 9 || h === 3) shape = c.marks.quarter || shape;
+    if (c.marks.style === 'arabic') {
+      const [tx, ty] = P(r - 3.2 * MM, a);
+      s += `<text x="${f(tx)}" y="${f(ty)}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="700" font-size="${2.8 * MM}" fill="${c.print}">${h === 0 ? 12 : h}</text>`;
+      if (c.inner24) { const [ux, uy] = P(r - 6.9 * MM, a); s += `<text x="${f(ux)}" y="${f(uy)}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="500" font-size="${1.2 * MM}" fill="${c.print}" opacity=".85">${h === 0 ? 24 : h + 12}</text>`; }
+      continue;
+    }
     if (c.marks.style === 'roman') {
       const R = ['XII', 'I', 'II', 'III', 'IIII', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'][h];
       const [tx, ty] = P(r - 3.0 * MM, a);
@@ -209,6 +245,14 @@ function handPath(type, L, w) {
     case 'arrow': return [
       `M${-w * 0.28},${2 * MM} L${-w * 0.28},${-L * 0.62} L${-w * 0.62},${-L * 0.62} L0,${-L} L${w * 0.62},${-L * 0.62} L${w * 0.28},${-L * 0.62} L${w * 0.28},${2 * MM} Z`,
       `M${-w * 0.62 + 4},${-L * 0.65} L0,${-L + 5} L${w * 0.62 - 4},${-L * 0.65} Z`];
+    case 'dauphine': return [
+      `M0,${1.6 * MM} L${-w / 2},${-L * 0.28} L0,${-L} L${w / 2},${-L * 0.28} Z`, null];
+    case 'snowflake': {
+      const cy = -L * 0.64, q = w * 0.62, sw = w * 0.2;
+      return [
+        `M${-sw},${2 * MM} L${-sw},${cy + q} L${-q},${cy} L0,${cy - q} L${q},${cy} L${sw},${cy + q} L${sw},${2 * MM} Z M${-sw * 1.4},${cy - q + 2} L0,${-L} L${sw * 1.4},${cy - q + 2} Z`,
+        `M${-q + 3},${cy} L0,${cy - q + 3} L${q - 3},${cy} L0,${cy + q - 3} Z`];
+    }
     case 'merc': {
       const cy = -L * 0.70, cr = 1.55 * MM, sw = w * 0.42;
       return [
@@ -225,7 +269,8 @@ function hands(c, id, r) {
     const [o, l] = handPath(type, L, w);
     const fill = `url(#${id}-handmetal)`;
     let g = `<path d="${o}" fill="${fill}" stroke="${hs.edge}" stroke-width="0.9"/>`;
-    if (type === 'baton' || !l) g += `<path d="M0,${1.8 * MM} L0,${-L}" stroke="rgba(255,255,255,.55)" stroke-width="${w * 0.35}"/><path d="${o}" fill="url(#${id}-facet)" />`;
+    if (type === 'dauphine') g += `<path d="M0,${1.6 * MM} L0,${-L} L${w / 2},${-L * 0.28} Z" fill="#000" opacity=".22"/>`;
+    else if (type === 'baton' || !l) g += `<path d="M0,${1.8 * MM} L0,${-L}" stroke="rgba(255,255,255,.55)" stroke-width="${w * 0.35}"/><path d="${o}" fill="url(#${id}-facet)" />`;
     if (l && hs.lume !== false) g += `<path d="${l}" fill="${c.lume}"/>`;
     if (type === 'merc' && hs.lume !== false) g += `<path d="M0,${-L * 0.70} L0,${-L * 0.70 - 1.55 * MM + 2.6} M0,${-L * 0.70} L${f(-1.2 * MM)},${f(-L * 0.70 + 0.8 * MM)} M0,${-L * 0.70} L${f(1.2 * MM)},${f(-L * 0.70 + 0.8 * MM)}" stroke="${hs.edge === 'none' ? '#c9cdd2' : '#d8dce0'}" stroke-width="2.6"/>`;
     return `<g transform="translate(${CX + 2.4},${CY + 3.4}) rotate(${ang})" filter="url(#${id}-hshadow)" opacity=".45"><path d="${o}" fill="#000"/></g>
@@ -284,6 +329,10 @@ function bezel(c, id, Rc) {
     const [px, py] = P(mid, 0);
     s += `<path d="M${px - 1.5 * MM},${py - 1.15 * MM} L${px + 1.5 * MM},${py - 1.15 * MM} L${px},${py + 1.25 * MM}Z" fill="${ink}"/>`;
     s += `<circle cx="${px}" cy="${py - 0.2 * MM}" r="${0.62 * MM}" fill="${c.lume}" stroke="#bfc4c9" stroke-width="1.5"/>`;
+  } else if (b.type === 'octagon') {
+    s += `<path fill-rule="evenodd" d="${polyPath(ro, 8, 22.5)} M${CX - ri},${CY} a${ri},${ri} 0 1,0 ${2 * ri},0 a${ri},${ri} 0 1,0 ${-2 * ri},0Z" fill="url(#${id}-lin)" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>`;
+    s += `<path fill-rule="evenodd" d="${polyPath(ro - 0.6 * MM, 8, 22.5)} M${CX - ri - 0.6 * MM},${CY} a${ri + 0.6 * MM},${ri + 0.6 * MM} 0 1,0 ${2 * (ri + 0.6 * MM)},0 a${ri + 0.6 * MM},${ri + 0.6 * MM} 0 1,0 ${-2 * (ri + 0.6 * MM)},0Z" fill="url(#${id}-brush)" opacity=".55"/>`;
+    for (let k = 0; k < 8; k++) { const [x, y] = P((ro + ri) / 2 + 0.3 * MM, 22.5 + k * 45); s += `<circle cx="${f(x)}" cy="${f(y)}" r="${0.75 * MM}" fill="url(#${id}-lin)" stroke="rgba(0,0,0,.4)" stroke-width="1"/><path d="${polyPath(0.42 * MM, 6, 10 + k * 7).replace(/([ML])([\d.]+),([\d.]+)/g, (m0, c0, xx, yy) => c0 + f(+xx - CX + x) + ',' + f(+yy - CY + y))}" fill="#6b7178" opacity=".8"/>`; }
   } else if (b.type === 'fluted') {
     const N = 64;
     for (let k = 0; k < N; k++) {
@@ -329,6 +378,7 @@ function watchSVG(c) {
   <filter id="${id}-brushH" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.85" numOctaves="2" seed="5"/><feColorMatrix type="saturate" values="0"/></filter>
   <radialGradient id="${id}-ar" cx=".72" cy=".78" r=".6"><stop offset="0" stop-color="#7aa7ff" stop-opacity=".10"/><stop offset="1" stop-color="#7aa7ff" stop-opacity="0"/></radialGradient>
   <radialGradient id="${id}-ground" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <pattern id="${id}-tap" width="${0.95 * MM}" height="${0.95 * MM}" patternUnits="userSpaceOnUse"><rect width="${0.95 * MM}" height="${0.95 * MM}" fill="#000" opacity=".28"/><rect x="1.4" y="1.4" width="${0.95 * MM - 2.8}" height="${0.95 * MM - 2.8}" rx="1" fill="#fff" opacity=".10"/><rect x="1.4" y="1.4" width="${0.95 * MM - 2.8}" height="2" fill="#fff" opacity=".18"/></pattern>
   <filter id="${id}-grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter>
   <filter id="${id}-hshadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
   <filter id="${id}-drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="6" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".35"/></filter>
@@ -344,7 +394,7 @@ function watchSVG(c) {
 
   // lugs
   let lugs = '', lugD = '';
-  for (const sy of [-1, 1]) for (const sx of [-1, 1]) {
+  if (!c.noLugs) for (const sy of [-1, 1]) for (const sx of [-1, 1]) {
     const xi = CX + sx * lugW / 2, xt = CX + sx * (lugW / 2 + 2.5 * MM);
     const yTip = CY + sy * l2l / 2, yBase = CY + sy * Rc * 0.45;
     const xb = CX + sx * Rc * 0.89;
@@ -383,12 +433,12 @@ function watchSVG(c) {
   <g filter="url(#${id}-drop)">
     ${lugs}
     ${crown}
-    <circle cx="${CX}" cy="${CY}" r="${Rc}" fill="url(#${id}-lin)"/>
+    ${c.shape === 'cushion' ? `<path d="${cushionPath(Rc, 3.2)}" fill="url(#${id}-lin)" stroke="rgba(0,0,0,.25)" stroke-width="1"/><path d="${cushionPath(Rc - 1.2 * MM, 3.2)}" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2"/>` : `<circle cx="${CX}" cy="${CY}" r="${Rc}" fill="url(#${id}-lin)"/>`}
   </g>
-  <clipPath id="${id}-caseclip">${lugD}<circle cx="${CX}" cy="${CY}" r="${Rc}"/></clipPath>
+  <clipPath id="${id}-caseclip">${lugD}${c.shape === 'cushion' ? `<path d="${cushionPath(Rc, 3.2)}"/>` : `<circle cx="${CX}" cy="${CY}" r="${Rc}"/>`}</clipPath>
   <g clip-path="url(#${id}-caseclip)" style="mix-blend-mode:multiply" opacity=".22"><rect width="${W}" height="${H}" filter="url(#${id}-brushV)"/></g>
-  ${ring(Rc, Rc - 0.6 * MM, `fill="url(#${id}-ring)"`)}
-  ${bezel(c, id, Rc)}
+  ${c.shape === 'cushion' ? '' : ring(Rc, Rc - 0.6 * MM, `fill="url(#${id}-ring)"`)}
+  ${bezel(c, id, c.shape === 'cushion' ? c.bezel.outer * MM + 0.9 * MM : Rc)}
   ${ring(crystalR + 1.5, crystalR - 0.5, 'fill="rgba(0,0,0,.45)"')}
   <g>${chapter}</g>
   <g clip-path="url(#${id}-dialclip)">${dialTexture(c, id, dialR)}</g>
