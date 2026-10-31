@@ -201,6 +201,11 @@ function indices(c, id, r) {
     let shape = c.marks.other;
     if (h === 0) shape = c.marks.twelve;
     else if (h === 6 || h === 9 || h === 3) shape = c.marks.quarter || shape;
+    if (c.marks.style === 'explorer' && (h === 3 || h === 6 || h === 9)) {
+      const [tx, ty] = P(r - 3.1 * MM, a);
+      s += `<text x="${f(tx)}" y="${f(ty)}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="800" font-size="${3.3 * MM}" fill="${c.lume}" stroke="${c.markEdge}" stroke-width="1.6" paint-order="stroke">${h}</text>`;
+      continue;
+    }
     if (c.marks.style === 'arabic') {
       const [tx, ty] = P(r - 3.2 * MM, a);
       s += `<text x="${f(tx)}" y="${f(ty)}" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif" font-weight="700" font-size="${2.8 * MM}" fill="${c.print}">${h === 0 ? 12 : h}</text>`;
