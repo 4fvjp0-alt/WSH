@@ -133,7 +133,7 @@ async function telegram(H, alerts) {
   const tok = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.TELEGRAM_CHAT_ID;
   if (!tok || !chat) { console.log('telegram: TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set, skipped'); return; }
   const last = H[H.length - 1], prev = H[H.length - 2];
-  let text = (alerts.length ? '🔔 ' + alerts.join(' / ') + '\n\n' : '') + '⌚ NH35A/NH38A 정품 가격 (' + new Date(last.ts).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) + ')\n';
+  let text = (alerts.length ? '🔔 최저가! ' + alerts.join(' / ') + '\n\n' : '') + '⌚ NH35A/NH38A 정품 가격 (' + new Date(last.ts).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) + ')\n';
   for (const g of Object.keys(GROUPS)) {
     const c = last.groups[g]?.min_qualified, b = prev?.groups[g]?.min_qualified;
     const lows = H.map(h => h.groups[g]?.min_qualified?.price).filter(Boolean);
