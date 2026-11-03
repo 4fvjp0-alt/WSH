@@ -1,0 +1,30 @@
+const E = 'rgba(0,0,0,.35)';
+const H = { hour: 'baton', hl: .55, hw: 1.4, minute: 'baton', ml: .90, mw: 1.05, lume: false, sec: 'plain', secColor: '#d9dde1', edge: E };
+const dress = o => Object.assign({ caseD: 39, lug: 20, l2l: 46, metal: 'steel', crown: [3.0, 5.6], domed: true,
+  bezel: { type: 'smooth', outer: 19.1, inner: 17.6 }, chapterW: 0.8, chapterColor: '#d8dde2', dialFinish: 'sunburst', minuteTrack: true,
+  lume: '#fff', markEdge: '#fff', vign: .16, marks: { twelve: 'baton2', quarter: 'baton', other: 'baton' }, markSize: 1.2, markInset: 2.8, date: false,
+  hands: H, text: 'AUTOMATIC', bg: ['#f6f5f3', '#d9d7d2'] }, o);
+module.exports = [
+  { id: 'a1', code: 'S01', caseD: 39, lug: 20, l2l: 47, metal: 'steel', crown: [3.4, 6.2], bezel: { type: 'smooth', outer: 19.0, inner: 16.4 }, chapterW: 0.8, chapterColor: '#c9ced3',
+    dialColor: '#0e0f11', dialFinish: 'gloss', print: '#eef0f2', minuteTrack: true, lume: '#f0f4e4', markEdge: '#e9ecef', marks: { style: 'explorer', twelve: 'tri', quarter: 'rect', other: 'rect' }, markSize: 1.15, markInset: 2.9, date: false,
+    hands: { hour: 'merc', hl: .56, hw: 2.2, minute: 'pencil', ml: .93, mw: 1.6, sec: 'lolli', secColor: '#e3e6e9', edge: E }, strap: 'oyster', text: 'AUTOMATIC', bg: ['#f5f6f7', '#d3d6da'] },
+  dress({ id: 'a2', code: 'S02', dialColor: '#d9dce0', print: '#2a2d32', markEdge: '#2a2d32', strap: 'leather', strapColor: '#6b4226', stitch: '#d9c3a0' }),
+  dress({ id: 'a3', code: 'S03', dialColor: '#1d2f57', print: '#eef1f6', strap: 'leather', strapColor: '#1c1c1e', stitch: '#8a8a8a', date: true }),
+  dress({ id: 'a4', code: 'S04', dialColor: '#ece3cc', dialFinish: 'matte', print: '#3a3226', markEdge: '#8a6d3b', markMetal: 'gold', handMetal: 'gold', hands: { ...H, secColor: '#b8913f', edge: 'rgba(90,60,10,.5)' }, strap: 'leather', strapColor: '#4e2f1c', stitch: '#d9c3a0', bg: ['#f7f3ec', '#ddd3c4'] }),
+  { id: 'a5', code: 'S05', caseD: 40, lug: 20, l2l: 47.5, metal: 'steel', crown: [3.4, 6.4], crownGuard: true, bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#0c0d0f', ink: '#e8e8e8', ceramic: true }, chapterW: 0.9, chapterColor: '#1b1c1f',
+    dialColor: '#0b0c0e', dialFinish: 'gloss', print: '#f0f0f0', minuteTrack: true, lume: '#f0f4e4', markEdge: '#e9ecef', marks: { twelve: 'tri', quarter: 'bar', other: 'dot' }, markSize: 1.25, markInset: 3.1, date: true,
+    hands: { hour: 'merc', hl: .56, hw: 2.3, minute: 'pencil', ml: .93, mw: 1.7, sec: 'lolli', secColor: '#e3e6e9', edge: E }, strap: 'oyster', text: 'AUTOMATIC', text2: '300m', bg: ['#f5f6f7', '#d3d6da'] },
+  { id: 'a6', code: 'S06', caseD: 40, lug: 20, l2l: 47.5, metal: 'steel', crown: [3.4, 6.4], crownGuard: true, bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1a2a52', ink: '#eef1f6', ceramic: true }, chapterW: 0.9, chapterColor: '#16213f',
+    dialColor: '#1c2d58', dialFinish: 'sunburst', print: '#eef2f8', minuteTrack: true, lume: '#f0f4e4', markEdge: '#e9ecef', marks: { twelve: 'tri', quarter: 'bar', other: 'dot' }, markSize: 1.25, markInset: 3.1, date: true,
+    hands: { hour: 'merc', hl: .56, hw: 2.3, minute: 'pencil', ml: .93, mw: 1.7, sec: 'lolli', secColor: '#e3e6e9', edge: E }, strap: 'oyster', text: 'AUTOMATIC', text2: '300m', bg: ['#f5f6f7', '#d3d6da'] },
+  { id: 'a7', code: 'S07', caseD: 40, lug: 20, l2l: 47.5, metal: 'steel', crown: [3.4, 6.6], crownGuard: true, bezel: { type: 'diver', outer: 19.0, inner: 15.3, color: '#1c2f63', ink: '#eef1f6', ceramic: true }, chapterW: 0.9, chapterColor: '#1a2547',
+    dialColor: '#223f86', dialFinish: 'wave', print: '#eef2f8', lume: '#eef3e6', markEdge: '#e3e7eb', vign: .55, marks: { twelve: 'rect2', quarter: 'rect', other: 'rect' }, markSize: 1.15, markInset: 2.7, date: false,
+    hands: { hour: 'arrow', hl: .60, hw: 2.9, minute: 'sword', ml: .93, mw: 1.9, sec: 'plain', secColor: '#e3e6e9', edge: E }, strap: 'oyster', text: 'AUTOMATIC', text2: 'DIVER 300m', bg: ['#f3f4f6', '#d2d6db'] },
+  { id: 'a8', code: 'S08', caseD: 39, lug: 20, l2l: 47, metal: 'steel', crown: [3.6, 6.8], domed: true, bezel: { type: 'diver', outer: 18.8, inner: 15.2, color: '#2b2d31', ink: '#e7dcc3', allMinutes: true, numSize: 2.5 }, chapterW: 1.2, chapterColor: '#2a2b2d', chapterTicks: '#e2d3b2',
+    dialColor: '#4a4f56', dialFinish: 'sunburst', print: '#e7dcc3', lume: '#e6cb93', markEdge: '#c9cdd2', vign: .35, marks: { twelve: 'rect2', quarter: 'rect', other: 'rect' }, markSize: 1.1, markInset: 3.0, date: true, dateBg: '#efe5cc',
+    hands: { hour: 'arrow', hl: .60, hw: 2.7, minute: 'lumebaton', ml: .92, mw: 1.6, sec: 'plain', secColor: '#d0d4d8', edge: E }, strap: 'leather', strapColor: '#6b4226', stitch: '#d9c3a0', text: 'AUTOMATIC', text2: 'DIVER 200m', bg: ['#f6f3ee', '#dcd5ca'] },
+  { id: 'a9', code: 'S09', caseD: 38, lug: 20, l2l: 46, metal: 'steel', crown: [3.4, 6.2], bezel: { type: 'smooth', outer: 18.6, inner: 16.6 }, chapterW: 0.6, chapterColor: '#e2e2de',
+    dialColor: '#efe6cf', dialFinish: 'matte', print: '#2b2620', minuteTrack: true, inner24: true, lume: '#e7ecd8', markEdge: '#1c1c1e', vign: .10, marks: { style: 'arabic' }, date: false,
+    handMetal: 'black', hands: { hour: 'sword', hl: .58, hw: 2.4, minute: 'sword', ml: .93, mw: 1.8, sec: 'plain', secColor: '#1c1c1e', edge: 'rgba(0,0,0,.6)' }, strap: 'leather', strapColor: '#8a5a33', stitch: '#efe0c8', bg: ['#f6f4ef', '#dcd6cb'] },
+  dress({ id: 'b0', code: 'S10', dialColor: '#1f4a36', print: '#f2e2b0', markEdge: '#e0bf62', markMetal: 'gold', handMetal: 'gold', bezel: { type: 'fluted', outer: 19.4, inner: 17.0 }, hands: { ...H, secColor: '#e0bf62', edge: 'rgba(90,60,10,.55)' }, date: true, strap: 'jubilee', bg: ['#f5f6f4', '#d8dbd6'] }),
+];
